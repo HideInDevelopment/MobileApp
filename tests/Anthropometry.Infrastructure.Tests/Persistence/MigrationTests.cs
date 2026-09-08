@@ -29,6 +29,22 @@ public sealed class MigrationTests
         Assert.Equal("1", version);
     }
 
+    [Fact]
+    public async Task Initialize_uses_default_migration_when_no_migrations_are_registered()
+    {
+        using var database = new TemporaryDatabase();
+        var factory = new SqliteConnectionFactory(database.Path);
+        var runner = new MigrationRunner(factory, Array.Empty<IMigration>());
+
+        await runner.InitializeAsync(CancellationToken.None);
+
+        using var connection = factory.Create();
+        var profilesTable = connection.ExecuteScalar<string>(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'Profiles'");
+
+        Assert.Equal("Profiles", profilesTable);
+    }
+
     private sealed class TableRow
     {
         public string Name { get; set; } = string.Empty;

@@ -11,7 +11,13 @@ public sealed class MigrationRunner
     public MigrationRunner(SqliteConnectionFactory connectionFactory, IEnumerable<IMigration>? migrations = null)
     {
         _connectionFactory = connectionFactory;
-        _migrations = (migrations ?? [new Migration0001()]).OrderBy(migration => migration.Version).ToArray();
+        var configuredMigrations = migrations?.ToArray();
+        if (configuredMigrations is null || configuredMigrations.Length == 0)
+        {
+            configuredMigrations = [new Migration0001()];
+        }
+
+        _migrations = configuredMigrations.OrderBy(migration => migration.Version).ToArray();
     }
 
     public Task InitializeAsync(CancellationToken cancellationToken)
