@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Anthropometry.App.Features.Measurements.MeasurementEditorPage"
+             Title="New measurement">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="12">
+            <Label Text="New measurement" FontSize="28" FontAttributes="Bold" />
+            <Label Text="Results are estimates, not medical diagnoses." />
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
+                <Label Grid.Row="0" Text="Weight" VerticalOptions="Center" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding WeightText}" Keyboard="Numeric" Placeholder="kg" WidthRequest="150" />
+                <Label Grid.Row="1" Text="Height" VerticalOptions="Center" />
+                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding HeightText}" Keyboard="Numeric" Placeholder="cm" WidthRequest="150" />
+                <Label Grid.Row="2" Text="Neck" VerticalOptions="Center" />
+                <Entry Grid.Row="2" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Numeric" Placeholder="cm" WidthRequest="150" />
+                <Label Grid.Row="3" Text="Abdomen" VerticalOptions="Center" />
+                <Entry Grid.Row="3" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Numeric" Placeholder="cm" WidthRequest="150" />
+                <Label Grid.Row="4" Text="Age" VerticalOptions="Center" />
+                <Entry Grid.Row="4" Grid.Column="1" Text="{Binding AgeText}" Keyboard="Numeric" Placeholder="years" WidthRequest="150" />
+                <Label Grid.Row="5" Text="Activity" VerticalOptions="Center" />
+                <Picker Grid.Row="5" Grid.Column="1" ItemsSource="{Binding ActivityLevels}" SelectedItem="{Binding SelectedActivityLevel}" WidthRequest="150" />
+            </Grid>
+            <Label Text="{Binding ValidationMessage}" TextColor="Red" />
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" />
+            <Button Text="Calculate results" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" MinimumHeightRequest="48" />
+            <Button Text="Cancel" Command="{Binding CancelCommand}" MinimumHeightRequest="48" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

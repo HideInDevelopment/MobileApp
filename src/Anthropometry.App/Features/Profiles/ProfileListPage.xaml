@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Anthropometry.App.Features.Profiles"
+             x:Class="Anthropometry.App.Features.Profiles.ProfileListPage"
+             x:Name="RootPage"
+             Title="Profiles">
+    <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="16">
+        <HorizontalStackLayout Grid.Row="0" Spacing="12">
+            <Label Text="Profiles" FontSize="28" FontAttributes="Bold" VerticalOptions="Center" />
+            <Button Text="New" Command="{Binding CreateCommand}" MinimumHeightRequest="48" />
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsLoading}" Spacing="8">
+            <ActivityIndicator IsRunning="{Binding IsLoading}" />
+            <Label Text="Loading profiles..." HorizontalOptions="Center" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding IsEmpty}" Spacing="12" VerticalOptions="Center">
+            <Label Text="No profiles yet" FontSize="20" HorizontalOptions="Center" />
+            <Label Text="Create a profile to record local measurements." HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+            <Button Text="Create profile" Command="{Binding CreateCommand}" MinimumHeightRequest="48" />
+        </VerticalStackLayout>
+
+        <Grid Grid.Row="2" IsVisible="{Binding IsEmpty, Converter={StaticResource InverseBoolConverter}}">
+            <CollectionView ItemsSource="{Binding Profiles}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="0,8" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                            <local:ProfileRowView Grid.Column="0" BindingContext="{Binding}" />
+                            <Button Grid.Column="1" Text="Open" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                            <Button Grid.Column="2" Text="Delete" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <Label Grid.Row="2" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" VerticalOptions="End" />
+    </Grid>
+</ContentPage>

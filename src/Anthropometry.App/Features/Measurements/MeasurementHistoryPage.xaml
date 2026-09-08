@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Anthropometry.App.Features.Measurements.MeasurementHistoryPage"
+             Title="History">
+    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
+        <Label Grid.Row="0" Text="Measurement history" FontSize="28" FontAttributes="Bold" />
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Measurements}">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Spacing="12" VerticalOptions="Center">
+                    <Label Text="No measurements yet" FontSize="20" HorizontalOptions="Center" />
+                    <Label Text="Saved measurements and their results stay on this device." HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="0,10" ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding MeasuredAtUtc, StringFormat='{0:yyyy-MM-dd HH:mm} UTC'}" FontAttributes="Bold" />
+                            <Label Text="{Binding WeightKg, StringFormat='Weight: {0} kg'}" />
+                            <Label Text="{Binding HeightCm, StringFormat='Height: {0} cm'}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1" Text="View results" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsLoading}" />
+        <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
+    </Grid>
+</ContentPage>

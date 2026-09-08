@@ -32,6 +32,12 @@
 - Domain code never references MAUI, Android, XAML, or SQLite.
 - All user-facing Markdown documentation is written in English.
 
+## Current implementation status
+
+Slices 0 through 7 are implemented with automated Domain, Application, Infrastructure, and plain `net10.0` Presentation verification. The Android target is configured as `net10.0-android`, but the current development machine still needs an Android SDK before the Android build and manual acceptance checklist in Slice 8 can be completed.
+
+The App project also targets plain `net10.0` for ViewModel tests; MAUI pages and platform files remain Android-only. SQLitePCLRaw transitive packages are pinned to version `2.1.13` because the version selected by `sqlite-net-pcl` `1.9.172` is reported by NuGet as vulnerable.
+
 ## Slice dependency map
 
 ```text

@@ -1,0 +1,88 @@
+using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Common;
+using Anthropometry.Domain.Measurements;
+using Anthropometry.Domain.Profiles;
+
+namespace Anthropometry.Domain.Tests.Measurements;
+
+public sealed class MeasurementTests
+{
+    [Fact]
+    public void Create_preserves_metric_values_age_and_activity_level()
+    {
+        var measuredAt = new DateTimeOffset(2026, 9, 8, 12, 30, 0, TimeSpan.Zero);
+        var input = new MeasurementInput(80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, measuredAt);
+
+        var result = Measurement.Create(ProfileId.New(), input, measuredAt);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(80m, result.Value.WeightKg);
+        Assert.Equal(180m, result.Value.HeightCm);
+        Assert.Equal(40m, result.Value.NeckCm);
+        Assert.Equal(90m, result.Value.AbdomenCm);
+        Assert.Equal(35, result.Value.AgeYears);
+        Assert.Equal(ActivityLevel.Moderate, result.Value.ActivityLevel);
+        Assert.Equal(measuredAt, result.Value.MeasuredAtUtc);
+    }
+
+    [Theory]
+    [InlineData(0, "measurement.weight.invalid")]
+    [InlineData(-1, "measurement.weight.invalid")]
+    public void Create_rejects_invalid_weight(decimal weightKg, string expectedCode)
+    {
+        var input = new MeasurementInput(weightKg, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(expectedCode, result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_rejects_invalid_age()
+    {
+        var input = new MeasurementInput(80m, 180m, 40m, 90m, 0, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.age.invalid", result.Error!.Code);
+    }
+
+    [Theory]
+    [InlineData(80, 0, 40, 90, "measurement.height.invalid")]
+    [InlineData(80, 180, 0, 90, "measurement.neck.invalid")]
+    [InlineData(80, 180, 40, 0, "measurement.abdomen.invalid")]
+    public void Create_rejects_invalid_measurement_dimensions(decimal weightKg, decimal heightCm, decimal neckCm, decimal abdomenCm, string expectedCode)
+    {
+        var input = new MeasurementInput(weightKg, heightCm, neckCm, abdomenCm, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(expectedCode, result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_rejects_unknown_activity_level()
+    {
+        var input = new MeasurementInput(80m, 180m, 40m, 90m, 35, (ActivityLevel)99, DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.activity.invalid", result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_rejects_non_utc_timestamp()
+    {
+        var measuredAt = new DateTimeOffset(2026, 9, 8, 12, 30, 0, TimeSpan.FromHours(2));
+        var input = new MeasurementInput(80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, measuredAt);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.measuredAtUtc.invalid", result.Error!.Code);
+    }
+}

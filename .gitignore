@@ -1,0 +1,14 @@
+
+# Build output
+**/bin/
+**/obj/
+
+# IDE/user files
+.vs/
+*.user
+*.suo
+
+# Android and MAUI local state
+*.apk
+*.aab
+*.keystore

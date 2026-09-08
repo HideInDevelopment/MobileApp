@@ -1,0 +1,99 @@
+using Anthropometry.App.Features.Profiles;
+using Anthropometry.Application.Profiles;
+using Anthropometry.App.Tests.Support;
+
+namespace Anthropometry.App.Tests.Features.Profiles;
+
+public sealed class ProfileListViewModelTests
+{
+    [Fact]
+    public async Task Load_shows_empty_state_when_no_profiles_exist()
+    {
+        var repository = new FakeProfileRepository();
+        var viewModel = new ProfileListViewModel(
+            new GetProfiles(repository),
+            new DeleteProfile(repository),
+            new NavigationSpy());
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.False(viewModel.IsLoading);
+        Assert.True(viewModel.IsEmpty);
+        Assert.Empty(viewModel.Profiles);
+        Assert.Null(viewModel.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task Load_exposes_profiles_after_success()
+    {
+        var repository = new FakeProfileRepository();
+        repository.Items.Add(TestData.Profile("Manuel"));
+        var viewModel = new ProfileListViewModel(
+            new GetProfiles(repository),
+            new DeleteProfile(repository),
+            new NavigationSpy());
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        var profile = Assert.Single(viewModel.Profiles);
+        Assert.Equal("Manuel", profile.Name);
+        Assert.False(viewModel.IsEmpty);
+    }
+
+    [Fact]
+    public async Task Delete_refreshes_profiles_after_confirmation()
+    {
+        var repository = new FakeProfileRepository();
+        var profile = TestData.Profile();
+        repository.Items.Add(profile);
+        var navigation = new NavigationSpy { ConfirmDeleteResult = true };
+        var viewModel = new ProfileListViewModel(new GetProfiles(repository), new DeleteProfile(repository), navigation);
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        await viewModel.DeleteCommand.ExecuteAsync(viewModel.Profiles[0]);
+
+        Assert.Empty(viewModel.Profiles);
+        Assert.Equal(profile.Id, navigation.ConfirmedProfileId);
+    }
+
+    [Fact]
+    public async Task Load_shows_error_instead_of_empty_state_when_profiles_cannot_be_read()
+    {
+        var viewModel = new ProfileListViewModel(
+            new GetProfiles(new ThrowingProfileRepository()),
+            new DeleteProfile(new ThrowingProfileRepository()),
+            new NavigationSpy());
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.False(viewModel.IsEmpty);
+        Assert.Equal("We couldn't load profiles. Try again.", viewModel.ErrorMessage);
+    }
+
+    private sealed class NavigationSpy : IProfileNavigation
+    {
+        public bool ConfirmDeleteResult { get; init; }
+
+        public Anthropometry.Domain.Profiles.ProfileId? ConfirmedProfileId { get; private set; }
+
+        public Task CreateProfileAsync() => Task.CompletedTask;
+
+        public Task RenameProfileAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task SelectProfileAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task<bool> ConfirmDeleteAsync(Anthropometry.Application.Common.ProfileDto profile)
+        {
+            ConfirmedProfileId = profile.Id;
+            return Task.FromResult(ConfirmDeleteResult);
+        }
+
+        public Task CloseEditorAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task CreateMeasurementAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task CancelAsync() => Task.CompletedTask;
+
+        public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+    }
+}
