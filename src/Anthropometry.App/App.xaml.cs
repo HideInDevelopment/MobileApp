@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Anthropometry.App;
 
-public partial class App : Application
+public partial class App : Microsoft.Maui.Controls.Application
 {
     private readonly MigrationRunner _migrationRunner;
     private readonly IServiceProvider _services;
@@ -56,7 +56,7 @@ public partial class App : Application
         }
     }
 
-    private static Page CreateLoadingPage()
+    private static ContentPage CreateLoadingPage()
         => new ContentPage
         {
             Title = "Anthropometry",

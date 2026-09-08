@@ -4,6 +4,7 @@ using Anthropometry.App.Features.Results;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
+using Anthropometry.Application.Profiles;
 using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.App;
@@ -41,7 +42,7 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     }
 
     public Task<bool> ConfirmDeleteAsync(ProfileDto profile)
-        => Shell.Current.DisplayAlert(
+        => Shell.Current.DisplayAlertAsync(
             "Delete profile",
             $"Delete {profile.Name} and all of its measurements and results?",
             "Delete",
@@ -76,5 +77,5 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 
     private static Task PushAsync(Page page) => Shell.Current.Navigation.PushAsync(page);
 
-    private static Task PopAsync() => Shell.Current.Navigation.PopAsync();
+    private static Task<Page> PopAsync() => Shell.Current.Navigation.PopAsync();
 }
