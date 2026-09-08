@@ -8,20 +8,38 @@ namespace Anthropometry.App.Tests.Features.Results;
 public sealed class CalculationResultViewModelTests
 {
     [Fact]
-    public async Task Load_exposes_all_results_and_formula_versions()
+    public async Task Load_exposes_friendly_titles_and_two_decimal_values()
     {
         var profile = TestData.Profile();
         var measurement = TestData.Measurement(profile.Id);
         var repository = new FakeCalculationResultRepository();
-        repository.Items.Add(CreateResult(measurement.Id, CalculationType.BodyFatPercentage, 18.46m, "%", "us-navy-male-body-fat"));
+        repository.Items.Add(CreateResult(measurement.Id, CalculationType.BodyFatPercentage, 18.456m, "%", "us-navy-male-body-fat"));
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.BasalMetabolicRate, 1755m, "kcal/day", "mifflin-st-jeor-male-bmr"));
-        repository.Items.Add(CreateResult(measurement.Id, CalculationType.TotalDailyEnergyExpenditure, 2720.25m, "kcal/day", "tdee-activity-multiplier"));
+        repository.Items.Add(CreateResult(measurement.Id, CalculationType.TotalDailyEnergyExpenditure, 2720.256m, "kcal/day", "tdee-activity-multiplier"));
         var viewModel = new CalculationResultViewModel(new GetCalculationResults(repository), measurement.Id);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
-        Assert.Equal(3, viewModel.Results.Count);
-        Assert.Contains("1.0", viewModel.FormulaDetails);
+        Assert.Collection(
+            viewModel.Results,
+            result =>
+            {
+                Assert.Equal("Body Fat Percentage", result.Title);
+                Assert.Equal(18.456m.ToString("F2", System.Globalization.CultureInfo.CurrentCulture), result.Value);
+                Assert.Equal("%", result.Unit);
+            },
+            result =>
+            {
+                Assert.Equal("Basal Metabolic Rate", result.Title);
+                Assert.Equal(1755m.ToString("F2", System.Globalization.CultureInfo.CurrentCulture), result.Value);
+                Assert.Equal("kcal/day", result.Unit);
+            },
+            result =>
+            {
+                Assert.Equal("Total Daily Energy Expenditure", result.Title);
+                Assert.Equal(2720.256m.ToString("F2", System.Globalization.CultureInfo.CurrentCulture), result.Value);
+                Assert.Equal("kcal/day", result.Unit);
+            });
         Assert.False(viewModel.IsLoading);
     }
 

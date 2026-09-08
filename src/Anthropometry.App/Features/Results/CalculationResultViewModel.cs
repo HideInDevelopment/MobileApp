@@ -1,17 +1,20 @@
 using System.Collections.ObjectModel;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
+using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace Anthropometry.App.Features.Results;
 
+public sealed record CalculationResultDisplayItem(string Title, string Value, string Unit);
+
 public sealed class CalculationResultViewModel : ObservableObject
 {
     private readonly GetCalculationResults _getResults;
     private readonly MeasurementId _measurementId;
-    private readonly ObservableCollection<CalculationResultDto> _results = [];
+    private readonly ObservableCollection<CalculationResultDisplayItem> _results = [];
     private bool _isLoading;
     private string? _errorMessage;
 
@@ -19,11 +22,11 @@ public sealed class CalculationResultViewModel : ObservableObject
     {
         _getResults = getResults;
         _measurementId = measurementId;
-        Results = new ReadOnlyObservableCollection<CalculationResultDto>(_results);
+        Results = new ReadOnlyObservableCollection<CalculationResultDisplayItem>(_results);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
     }
 
-    public ReadOnlyObservableCollection<CalculationResultDto> Results { get; }
+    public ReadOnlyObservableCollection<CalculationResultDisplayItem> Results { get; }
 
     public bool IsLoading
     {
@@ -45,10 +48,6 @@ public sealed class CalculationResultViewModel : ObservableObject
         }
     }
 
-    public string FormulaDetails => string.Join(
-        Environment.NewLine,
-        Results.Select(result => $"{result.FormulaId} v{result.FormulaVersion}"));
-
     public IAsyncRelayCommand LoadCommand { get; }
 
     private async Task LoadAsync()
@@ -63,9 +62,8 @@ public sealed class CalculationResultViewModel : ObservableObject
             {
                 foreach (var item in result.Value)
                 {
-                    _results.Add(item);
+                    _results.Add(ToDisplayItem(item));
                 }
-                OnPropertyChanged(nameof(FormulaDetails));
             }
             else
             {
@@ -78,4 +76,16 @@ public sealed class CalculationResultViewModel : ObservableObject
             OnPropertyChanged(nameof(IsEmpty));
         }
     }
+
+    private static CalculationResultDisplayItem ToDisplayItem(CalculationResultDto result)
+        => new(
+            result.CalculationType switch
+            {
+                CalculationType.BodyFatPercentage => "Body Fat Percentage",
+                CalculationType.BasalMetabolicRate => "Basal Metabolic Rate",
+                CalculationType.TotalDailyEnergyExpenditure => "Total Daily Energy Expenditure",
+                _ => result.CalculationType.ToString()
+            },
+            result.Value.ToString("F2", System.Globalization.CultureInfo.CurrentCulture),
+            result.Unit);
 }
