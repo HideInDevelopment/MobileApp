@@ -25,7 +25,13 @@ public sealed class ResponsiveLayoutTests
             new CalculateBodyFat(measurements, results, catalog, new FakeClock()),
             new CalculateBasalMetabolicRate(measurements, results, catalog, new FakeClock()),
             new CalculateTotalDailyEnergyExpenditure(measurements, results, catalog, new FakeClock()),
-            profile.Id,
+            new Anthropometry.Application.Common.ProfileDto(
+                profile.Id,
+                profile.Name,
+                new Anthropometry.Application.Common.ProfileSettingsDto(180m, 35, Anthropometry.Domain.Calculations.ActivityLevel.Moderate),
+                profile.CreatedAtUtc,
+                profile.UpdatedAtUtc),
+            Anthropometry.Domain.Measurements.MeasurementType.WeightOnly,
             new NavigationSpy());
         var profileViewModel = new ProfileListViewModel(
             new Anthropometry.Application.Profiles.GetProfiles(profiles),
@@ -42,6 +48,8 @@ public sealed class ResponsiveLayoutTests
     {
         public Task ShowResultsAsync(Anthropometry.Application.Common.MeasurementDto measurement) => Task.CompletedTask;
 
+        public Task CloseMeasurementAsync() => Task.CompletedTask;
+
         public Task CancelAsync() => Task.CompletedTask;
     }
 
@@ -57,7 +65,7 @@ public sealed class ResponsiveLayoutTests
 
         public Task CloseEditorAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
-        public Task CreateMeasurementAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+        public Task CreateMeasurementAsync(Anthropometry.Application.Common.ProfileDto profile, Anthropometry.Domain.Measurements.MeasurementType type) => Task.CompletedTask;
 
         public Task CancelAsync() => Task.CompletedTask;
 

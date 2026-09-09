@@ -1,4 +1,5 @@
 using Anthropometry.Application.Common;
+using Anthropometry.Domain.Measurements;
 
 namespace Anthropometry.App.Features.Profiles;
 
@@ -14,7 +15,7 @@ public interface IProfileNavigation
 
     Task CloseEditorAsync(ProfileDto profile);
 
-    Task CreateMeasurementAsync(ProfileDto profile);
+    Task CreateMeasurementAsync(ProfileDto profile, MeasurementType type);
 
     Task CancelAsync();
 

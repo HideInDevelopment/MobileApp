@@ -136,7 +136,7 @@ public sealed class ProfileEditorViewModelTests
             return Task.CompletedTask;
         }
 
-        public Task CreateMeasurementAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+        public Task CreateMeasurementAsync(Anthropometry.Application.Common.ProfileDto profile, Anthropometry.Domain.Measurements.MeasurementType type) => Task.CompletedTask;
 
         public Task CancelAsync() => Task.CompletedTask;
 

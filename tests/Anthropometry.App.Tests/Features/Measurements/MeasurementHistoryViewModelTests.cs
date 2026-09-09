@@ -57,6 +57,8 @@ public sealed class MeasurementHistoryViewModelTests
     {
         public Task ShowResultsAsync(Anthropometry.Application.Common.MeasurementDto measurement) => Task.CompletedTask;
 
+        public Task CloseMeasurementAsync() => Task.CompletedTask;
+
         public Task CancelAsync() => Task.CompletedTask;
     }
 }

@@ -1,9 +1,8 @@
 using System.Globalization;
 using Anthropometry.Application.Calculations;
+using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
-using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
-using Anthropometry.Domain.Profiles;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -15,14 +14,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private readonly CalculateBodyFat _calculateBodyFat;
     private readonly CalculateBasalMetabolicRate _calculateBmr;
     private readonly CalculateTotalDailyEnergyExpenditure _calculateTdee;
-    private readonly ProfileId _profileId;
+    private readonly ProfileDto _profile;
+    private readonly MeasurementType _measurementType;
     private readonly IMeasurementNavigation _navigation;
     private string _weightText = string.Empty;
-    private string _heightText = string.Empty;
     private string _neckText = string.Empty;
     private string _abdomenText = string.Empty;
-    private string _ageText = string.Empty;
-    private ActivityLevel _selectedActivityLevel;
     private bool _isBusy;
     private bool _isCompleted;
     private string? _validationMessage;
@@ -33,34 +30,31 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         CalculateBodyFat calculateBodyFat,
         CalculateBasalMetabolicRate calculateBmr,
         CalculateTotalDailyEnergyExpenditure calculateTdee,
-        ProfileId profileId,
+        ProfileDto profile,
+        MeasurementType measurementType,
         IMeasurementNavigation navigation)
     {
         _recordMeasurement = recordMeasurement;
         _calculateBodyFat = calculateBodyFat;
         _calculateBmr = calculateBmr;
         _calculateTdee = calculateTdee;
-        _profileId = profileId;
+        _profile = profile;
+        _measurementType = measurementType;
         _navigation = navigation;
-        ActivityLevels = Enum.GetValues<ActivityLevel>()
-            .Where(level => level != ActivityLevel.Unknown)
-            .ToArray();
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
     }
 
-    public IReadOnlyList<ActivityLevel> ActivityLevels { get; }
+    public string Title => _measurementType == MeasurementType.WeightOnly ? "Add weight" : "Add measurements";
+
+    public string SaveButtonText => _measurementType == MeasurementType.WeightOnly ? "Save weight" : "Calculate results";
+
+    public bool IsExtended => _measurementType == MeasurementType.WeightAndSizes;
 
     public string WeightText
     {
         get => _weightText;
         set => SetInput(ref _weightText, value);
-    }
-
-    public string HeightText
-    {
-        get => _heightText;
-        set => SetInput(ref _heightText, value);
     }
 
     public string NeckText
@@ -73,25 +67,6 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     {
         get => _abdomenText;
         set => SetInput(ref _abdomenText, value);
-    }
-
-    public string AgeText
-    {
-        get => _ageText;
-        set => SetInput(ref _ageText, value);
-    }
-
-    public ActivityLevel SelectedActivityLevel
-    {
-        get => _selectedActivityLevel;
-        set
-        {
-            if (SetProperty(ref _selectedActivityLevel, value))
-            {
-                OnPropertyChanged(nameof(CanSave));
-                SaveCommand.NotifyCanExecuteChanged();
-            }
-        }
     }
 
     public bool IsBusy
@@ -115,11 +90,9 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
     public bool CanSave => !IsBusy
         && TryParseDecimal(WeightText, out var weight) && weight is >= 1m and <= 500m
-        && TryParseDecimal(HeightText, out var height) && height is >= 50m and <= 300m
-        && TryParseDecimal(NeckText, out var neck) && neck is >= 1m and <= 100m
-        && TryParseDecimal(AbdomenText, out var abdomen) && abdomen is >= 1m and <= 400m
-        && int.TryParse(AgeText, NumberStyles.Integer, CultureInfo.CurrentCulture, out var age) && age is >= 1 and <= 120
-        && SelectedActivityLevel != ActivityLevel.Unknown;
+        && (!IsExtended ||
+            (TryParseDecimal(NeckText, out var neck) && neck is >= 1m and <= 100m
+            && TryParseDecimal(AbdomenText, out var abdomen) && abdomen is >= 1m and <= 400m));
 
     public string? ValidationMessage
     {
@@ -141,36 +114,39 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     {
         ValidationMessage = null;
         ErrorMessage = null;
-        if (!CanSave || !TryCreateInput(out var input))
+        if (!CanSave || !TryCreateCommand(out var command))
         {
-            ValidationMessage = "Enter valid metric values for all fields and choose an activity level.";
+            ValidationMessage = IsExtended
+                ? "Enter valid weight, neck, and abdomen values."
+                : "Enter a valid weight.";
             return;
         }
 
         IsBusy = true;
         try
         {
-            var recorded = await _recordMeasurement.ExecuteAsync(
-                new RecordMeasurementCommand(
-                    _profileId,
-                    MeasurementType.WeightAndSizes,
-                    input.WeightKg,
-                    input.NeckCm,
-                    input.AbdomenCm,
-                    input.MeasuredAtUtc),
-                CancellationToken.None);
+            var recorded = await _recordMeasurement.ExecuteAsync(command, CancellationToken.None);
             if (!recorded.IsSuccess)
             {
                 ValidationMessage = recorded.Error!.Code.StartsWith("measurement.", StringComparison.Ordinal)
                     ? "Check the measurement values and try again."
                     : null;
-                ErrorMessage = ValidationMessage is null ? "We couldn't save this measurement. Try again." : null;
+                ErrorMessage = recorded.Error!.Code == "profile.settings.required"
+                    ? "Complete the profile details before adding a measurement."
+                    : ValidationMessage is null ? "We couldn't save this measurement. Try again." : null;
                 return;
             }
 
-            var bodyFat = await _calculateBodyFat.ExecuteAsync(new CalculateBodyFatCommand(_profileId, recorded.Value.Id), CancellationToken.None);
-            var bmr = await _calculateBmr.ExecuteAsync(new CalculateBmrCommand(_profileId, recorded.Value.Id), CancellationToken.None);
-            var tdee = await _calculateTdee.ExecuteAsync(new CalculateTdeeCommand(_profileId, recorded.Value.Id), CancellationToken.None);
+            if (!IsExtended)
+            {
+                IsCompleted = true;
+                await _navigation.CloseMeasurementAsync();
+                return;
+            }
+
+            var bodyFat = await _calculateBodyFat.ExecuteAsync(new CalculateBodyFatCommand(_profile.Id, recorded.Value.Id), CancellationToken.None);
+            var bmr = await _calculateBmr.ExecuteAsync(new CalculateBmrCommand(_profile.Id, recorded.Value.Id), CancellationToken.None);
+            var tdee = await _calculateTdee.ExecuteAsync(new CalculateTdeeCommand(_profile.Id, recorded.Value.Id), CancellationToken.None);
             if (!bodyFat.IsSuccess || !bmr.IsSuccess || !tdee.IsSuccess)
             {
                 ErrorMessage = "We couldn't calculate results. Try again.";
@@ -186,19 +162,30 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         }
     }
 
-    private bool TryCreateInput(out MeasurementInput input)
+    private bool TryCreateCommand(out RecordMeasurementCommand command)
     {
-        if (!TryParseDecimal(WeightText, out var weight)
-            || !TryParseDecimal(HeightText, out var height)
-            || !TryParseDecimal(NeckText, out var neck)
-            || !TryParseDecimal(AbdomenText, out var abdomen)
-            || !int.TryParse(AgeText, NumberStyles.Integer, CultureInfo.CurrentCulture, out var age))
+        if (!TryParseDecimal(WeightText, out var weight))
         {
-            input = null!;
+            command = null!;
             return false;
         }
 
-        input = new MeasurementInput(MeasurementType.WeightAndSizes, weight, height, neck, abdomen, age, SelectedActivityLevel, DateTimeOffset.UtcNow);
+        decimal? neck = null;
+        decimal? abdomen = null;
+        if (IsExtended)
+        {
+            if (!TryParseDecimal(NeckText, out var neckValue)
+                || !TryParseDecimal(AbdomenText, out var abdomenValue))
+            {
+                command = null!;
+                return false;
+            }
+
+            neck = neckValue;
+            abdomen = abdomenValue;
+        }
+
+        command = new RecordMeasurementCommand(_profile.Id, _measurementType, weight, neck, abdomen, DateTimeOffset.UtcNow);
         return true;
     }
 

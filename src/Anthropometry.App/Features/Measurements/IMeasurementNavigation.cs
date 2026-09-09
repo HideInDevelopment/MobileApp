@@ -6,5 +6,7 @@ public interface IMeasurementNavigation
 {
     Task ShowResultsAsync(MeasurementDto measurement);
 
+    Task CloseMeasurementAsync();
+
     Task CancelAsync();
 }

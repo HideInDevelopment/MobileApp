@@ -1,4 +1,5 @@
 using Anthropometry.Application.Common;
+using Anthropometry.Domain.Measurements;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -12,11 +13,17 @@ public sealed class ProfileDetailViewModel : ObservableObject
     {
         Profile = profile;
         _navigation = navigation;
+        AddWeightCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightOnly));
+        AddMeasurementsCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightAndSizes));
         HistoryCommand = new AsyncRelayCommand(() => _navigation.ShowHistoryAsync(Profile));
         EditCommand = new AsyncRelayCommand(() => _navigation.RenameProfileAsync(Profile));
     }
 
     public ProfileDto Profile { get; }
+
+    public IAsyncRelayCommand AddWeightCommand { get; }
+
+    public IAsyncRelayCommand AddMeasurementsCommand { get; }
 
     public IAsyncRelayCommand HistoryCommand { get; }
 

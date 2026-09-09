@@ -6,6 +6,7 @@ using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
 using Anthropometry.Application.Profiles;
 using Anthropometry.Domain.Profiles;
+using Anthropometry.Domain.Measurements;
 
 namespace Anthropometry.App;
 
@@ -50,14 +51,15 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 
     public Task CloseEditorAsync(ProfileDto profile) => PopAsync();
 
-    public Task CreateMeasurementAsync(ProfileDto profile)
+    public Task CreateMeasurementAsync(ProfileDto profile, MeasurementType type)
     {
         var page = new MeasurementEditorPage(new MeasurementEditorViewModel(
             _services.GetRequiredService<RecordMeasurement>(),
             _services.GetRequiredService<CalculateBodyFat>(),
             _services.GetRequiredService<CalculateBasalMetabolicRate>(),
             _services.GetRequiredService<CalculateTotalDailyEnergyExpenditure>(),
-            profile.Id,
+            profile,
+            type,
             this));
         return PushAsync(page);
     }
@@ -72,6 +74,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         => PushAsync(new CalculationResultPage(new CalculationResultViewModel(
             _services.GetRequiredService<GetCalculationResults>(),
             measurement.Id)));
+
+    public Task CloseMeasurementAsync() => PopAsync();
 
     public Task CancelAsync() => PopAsync();
 
