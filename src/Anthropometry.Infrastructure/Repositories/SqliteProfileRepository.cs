@@ -1,4 +1,5 @@
 using Anthropometry.Application.Abstractions;
+using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Profiles;
 using Anthropometry.Infrastructure.Persistence.Sqlite;
 using SQLite;
@@ -19,7 +20,7 @@ public sealed class SqliteProfileRepository : IProfileRepository
         {
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
-            return connection.Query<ProfileRow>("SELECT Id, Name, CreatedAtUtc, UpdatedAtUtc FROM Profiles ORDER BY Name")
+            return connection.Query<ProfileRow>("SELECT Id, Name, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc FROM Profiles ORDER BY Name")
                 .Select(Map)
                 .ToArray();
         }, cancellationToken);
@@ -29,7 +30,7 @@ public sealed class SqliteProfileRepository : IProfileRepository
         {
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
-            var row = connection.FindWithQuery<ProfileRow>("SELECT Id, Name, CreatedAtUtc, UpdatedAtUtc FROM Profiles WHERE Id = ?", id.ToString());
+            var row = connection.FindWithQuery<ProfileRow>("SELECT Id, Name, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc FROM Profiles WHERE Id = ?", id.ToString());
             return row is null ? null : Map(row);
         }, cancellationToken);
 
@@ -39,9 +40,12 @@ public sealed class SqliteProfileRepository : IProfileRepository
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
             connection.Execute(
-                "INSERT INTO Profiles (Id, Name, CreatedAtUtc, UpdatedAtUtc) VALUES (?, ?, ?, ?)",
+                "INSERT INTO Profiles (Id, Name, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 profile.Id.ToString(),
                 profile.Name,
+                profile.Settings?.HeightCm,
+                profile.Settings?.AgeYears,
+                profile.Settings is null ? null : (int)profile.Settings.ActivityLevel,
                 SqliteValueConverter.ToUtcString(profile.CreatedAtUtc),
                 SqliteValueConverter.ToUtcString(profile.UpdatedAtUtc));
         }, cancellationToken);
@@ -52,8 +56,11 @@ public sealed class SqliteProfileRepository : IProfileRepository
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
             var changes = connection.Execute(
-                "UPDATE Profiles SET Name = ?, UpdatedAtUtc = ? WHERE Id = ?",
+                "UPDATE Profiles SET Name = ?, HeightCm = ?, AgeYears = ?, ActivityLevel = ?, UpdatedAtUtc = ? WHERE Id = ?",
                 profile.Name,
+                profile.Settings?.HeightCm,
+                profile.Settings?.AgeYears,
+                profile.Settings is null ? null : (int)profile.Settings.ActivityLevel,
                 SqliteValueConverter.ToUtcString(profile.UpdatedAtUtc),
                 profile.Id.ToString());
             if (changes == 0)
@@ -82,15 +89,35 @@ public sealed class SqliteProfileRepository : IProfileRepository
         var result = Profile.Rehydrate(
             new ProfileId(Guid.Parse(row.Id)),
             row.Name,
+            MapSettings(row),
             SqliteValueConverter.ToUtcDateTimeOffset(row.CreatedAtUtc),
             SqliteValueConverter.ToUtcDateTimeOffset(row.UpdatedAtUtc));
         return result.IsSuccess ? result.Value : throw new InvalidDataException(result.Error!.Code);
+    }
+
+    private static ProfileSettings? MapSettings(ProfileRow row)
+    {
+        if (!row.HeightCm.HasValue && !row.AgeYears.HasValue && !row.ActivityLevel.HasValue)
+        {
+            return null;
+        }
+
+        if (!row.HeightCm.HasValue || !row.AgeYears.HasValue || !row.ActivityLevel.HasValue)
+        {
+            throw new InvalidDataException("profile.settings.incomplete");
+        }
+
+        var settings = ProfileSettings.Create(row.HeightCm.Value, row.AgeYears.Value, (ActivityLevel)row.ActivityLevel.Value);
+        return settings.IsSuccess ? settings.Value : throw new InvalidDataException(settings.Error!.Code);
     }
 
     private sealed class ProfileRow
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public decimal? HeightCm { get; set; }
+        public int? AgeYears { get; set; }
+        public int? ActivityLevel { get; set; }
         public string CreatedAtUtc { get; set; } = string.Empty;
         public string UpdatedAtUtc { get; set; } = string.Empty;
     }

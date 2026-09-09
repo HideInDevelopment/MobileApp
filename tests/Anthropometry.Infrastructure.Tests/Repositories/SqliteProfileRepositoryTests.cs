@@ -18,12 +18,16 @@ public sealed class SqliteProfileRepositoryTests
 
         await repository.AddAsync(profile, CancellationToken.None);
         var loaded = await repository.GetByIdAsync(profile.Id, CancellationToken.None);
-        var renamed = profile.Rename("Updated", DateTimeOffset.UtcNow.AddMinutes(1));
+        var renamed = profile.Update(
+            "Updated",
+            Anthropometry.Domain.Profiles.ProfileSettings.Create(181m, 36, Anthropometry.Domain.Calculations.ActivityLevel.High).Value,
+            DateTimeOffset.UtcNow.AddMinutes(1));
         await repository.UpdateAsync(profile, CancellationToken.None);
 
         Assert.True(renamed.IsSuccess);
         Assert.Equal("Manuel", loaded!.Name);
         Assert.Equal("Updated", (await repository.GetByIdAsync(profile.Id, CancellationToken.None))!.Name);
+        Assert.Equal(181m, (await repository.GetByIdAsync(profile.Id, CancellationToken.None))!.Settings!.HeightCm);
     }
 
     [Fact]

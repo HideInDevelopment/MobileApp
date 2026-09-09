@@ -30,6 +30,8 @@ public static class MauiProgram
 
         var databasePath = Path.Combine(FileSystem.AppDataDirectory, "anthropometry.db3");
         builder.Services.AddSingleton(new SqliteConnectionFactory(databasePath));
+        builder.Services.AddSingleton<IMigration, Migration0001>();
+        builder.Services.AddSingleton<IMigration, Migration0002>();
         builder.Services.AddSingleton<MigrationRunner>();
         builder.Services.AddSingleton<IProfileRepository, SqliteProfileRepository>();
         builder.Services.AddSingleton<IMeasurementRepository, SqliteMeasurementRepository>();

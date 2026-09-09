@@ -2,6 +2,8 @@ using Anthropometry.Infrastructure.Persistence.Migrations;
 using Anthropometry.Infrastructure.Persistence.Sqlite;
 using Anthropometry.Infrastructure.Repositories;
 using Anthropometry.Infrastructure.Tests.Support;
+using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Measurements;
 
 namespace Anthropometry.Infrastructure.Tests.Repositories;
 
@@ -40,5 +42,30 @@ public sealed class SqliteMeasurementRepositoryTests
         var result = await repository.GetByIdAsync(Anthropometry.Domain.Measurements.MeasurementId.New(), CancellationToken.None);
 
         Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task Add_and_get_weight_only_round_trips_missing_sizes()
+    {
+        using var database = new TemporaryDatabase();
+        var factory = new SqliteConnectionFactory(database.Path);
+        await new MigrationRunner(factory).InitializeAsync(CancellationToken.None);
+        var profiles = new SqliteProfileRepository(factory);
+        var repository = new SqliteMeasurementRepository(factory);
+        var profile = TestData.Profile();
+        var measurement = Measurement.Create(
+            profile.Id,
+            new MeasurementInput(MeasurementType.WeightOnly, 79m, 180m, null, null, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow),
+            DateTimeOffset.UtcNow).Value;
+
+        await profiles.AddAsync(profile, CancellationToken.None);
+        await repository.AddAsync(measurement, CancellationToken.None);
+
+        var loaded = await repository.GetByIdAsync(measurement.Id, CancellationToken.None);
+
+        Assert.Equal(MeasurementType.WeightOnly, loaded!.Type);
+        Assert.Null(loaded.NeckCm);
+        Assert.Null(loaded.AbdomenCm);
+        Assert.Equal(79m, loaded.WeightKg);
     }
 }

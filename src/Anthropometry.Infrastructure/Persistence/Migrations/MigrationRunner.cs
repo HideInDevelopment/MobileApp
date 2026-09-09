@@ -14,7 +14,7 @@ public sealed class MigrationRunner
         var configuredMigrations = migrations?.ToArray();
         if (configuredMigrations is null || configuredMigrations.Length == 0)
         {
-            configuredMigrations = [new Migration0001()];
+            configuredMigrations = [new Migration0001(), new Migration0002()];
         }
 
         _migrations = configuredMigrations.OrderBy(migration => migration.Version).ToArray();
