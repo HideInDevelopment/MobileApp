@@ -11,7 +11,7 @@ public sealed class MeasurementTests
     public void Create_preserves_metric_values_age_and_activity_level()
     {
         var measuredAt = new DateTimeOffset(2026, 9, 8, 12, 30, 0, TimeSpan.Zero);
-        var input = new MeasurementInput(80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, measuredAt);
+        var input = new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, measuredAt);
 
         var result = Measurement.Create(ProfileId.New(), input, measuredAt);
 
@@ -30,7 +30,7 @@ public sealed class MeasurementTests
     [InlineData(-1, "measurement.weight.invalid")]
     public void Create_rejects_invalid_weight(decimal weightKg, string expectedCode)
     {
-        var input = new MeasurementInput(weightKg, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
+        var input = new MeasurementInput(MeasurementType.WeightAndSizes, weightKg, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
 
         var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
 
@@ -41,7 +41,7 @@ public sealed class MeasurementTests
     [Fact]
     public void Create_rejects_invalid_age()
     {
-        var input = new MeasurementInput(80m, 180m, 40m, 90m, 0, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
+        var input = new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 0, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
 
         var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
 
@@ -55,7 +55,7 @@ public sealed class MeasurementTests
     [InlineData(80, 180, 40, 0, "measurement.abdomen.invalid")]
     public void Create_rejects_invalid_measurement_dimensions(decimal weightKg, decimal heightCm, decimal neckCm, decimal abdomenCm, string expectedCode)
     {
-        var input = new MeasurementInput(weightKg, heightCm, neckCm, abdomenCm, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
+        var input = new MeasurementInput(MeasurementType.WeightAndSizes, weightKg, heightCm, neckCm, abdomenCm, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow);
 
         var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
 
@@ -66,7 +66,7 @@ public sealed class MeasurementTests
     [Fact]
     public void Create_rejects_unknown_activity_level()
     {
-        var input = new MeasurementInput(80m, 180m, 40m, 90m, 35, (ActivityLevel)99, DateTimeOffset.UtcNow);
+        var input = new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, (ActivityLevel)99, DateTimeOffset.UtcNow);
 
         var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
 
@@ -78,11 +78,108 @@ public sealed class MeasurementTests
     public void Create_rejects_non_utc_timestamp()
     {
         var measuredAt = new DateTimeOffset(2026, 9, 8, 12, 30, 0, TimeSpan.FromHours(2));
-        var input = new MeasurementInput(80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, measuredAt);
+        var input = new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, measuredAt);
 
         var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("measurement.measuredAtUtc.invalid", result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_weight_only_accepts_missing_sizes()
+    {
+        var input = new MeasurementInput(
+            MeasurementType.WeightOnly,
+            80m,
+            180m,
+            null,
+            null,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(MeasurementType.WeightOnly, result.Value.Type);
+        Assert.Null(result.Value.NeckCm);
+        Assert.Null(result.Value.AbdomenCm);
+    }
+
+    [Fact]
+    public void Create_weight_only_rejects_supplied_sizes()
+    {
+        var input = new MeasurementInput(
+            MeasurementType.WeightOnly,
+            80m,
+            180m,
+            40m,
+            90m,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.sizes.notAllowed", result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_weight_and_sizes_requires_both_sizes()
+    {
+        var input = new MeasurementInput(
+            MeasurementType.WeightAndSizes,
+            80m,
+            180m,
+            40m,
+            null,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.sizes.required", result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_weight_and_sizes_validates_size_ranges()
+    {
+        var input = new MeasurementInput(
+            MeasurementType.WeightAndSizes,
+            80m,
+            180m,
+            0m,
+            90m,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.neck.invalid", result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_rejects_unknown_measurement_type()
+    {
+        var input = new MeasurementInput(
+            (MeasurementType)99,
+            80m,
+            180m,
+            null,
+            null,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.type.invalid", result.Error!.Code);
     }
 }

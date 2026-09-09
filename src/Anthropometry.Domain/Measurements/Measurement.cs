@@ -13,6 +13,7 @@ public sealed class Measurement
     {
         Id = id;
         ProfileId = profileId;
+        Type = input.Type;
         WeightKg = input.WeightKg;
         HeightCm = input.HeightCm;
         NeckCm = input.NeckCm;
@@ -26,15 +27,17 @@ public sealed class Measurement
 
     public ProfileId ProfileId { get; }
 
+    public MeasurementType Type { get; }
+
     public DateTimeOffset MeasuredAtUtc { get; }
 
     public decimal WeightKg { get; }
 
     public decimal HeightCm { get; }
 
-    public decimal NeckCm { get; }
+    public decimal? NeckCm { get; }
 
-    public decimal AbdomenCm { get; }
+    public decimal? AbdomenCm { get; }
 
     public int AgeYears { get; }
 
@@ -76,6 +79,11 @@ public sealed class Measurement
 
     private static DomainError? Validate(MeasurementInput input)
     {
+        if (!Enum.IsDefined(input.Type))
+        {
+            return new DomainError("measurement.type.invalid", "Errors.MeasurementTypeInvalid");
+        }
+
         if (input.WeightKg is < 1m or > 500m)
         {
             return new DomainError("measurement.weight.invalid", "Errors.MeasurementWeightInvalid");
@@ -84,6 +92,16 @@ public sealed class Measurement
         if (input.HeightCm is < 50m or > 300m)
         {
             return new DomainError("measurement.height.invalid", "Errors.MeasurementHeightInvalid");
+        }
+
+        if (input.Type == MeasurementType.WeightOnly && (input.NeckCm.HasValue || input.AbdomenCm.HasValue))
+        {
+            return new DomainError("measurement.sizes.notAllowed", "Errors.MeasurementSizesNotAllowed");
+        }
+
+        if (input.Type == MeasurementType.WeightAndSizes && (!input.NeckCm.HasValue || !input.AbdomenCm.HasValue))
+        {
+            return new DomainError("measurement.sizes.required", "Errors.MeasurementSizesRequired");
         }
 
         if (input.NeckCm is < 1m or > 100m)
