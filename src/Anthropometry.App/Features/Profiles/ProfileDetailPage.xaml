@@ -6,6 +6,14 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
             <Label Text="{Binding Profile.Name}" FontSize="28" FontAttributes="Bold" />
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="⚠"
+                       IsVisible="{Binding ShowWarningIcon}"
+                       TextColor="Orange"
+                       SemanticProperties.Description="Some profile measurements need to be updated." />
+                <Label Text="{Binding ErrorMessage}" TextColor="Red" />
+            </HorizontalStackLayout>
+            <ActivityIndicator IsRunning="{Binding IsLoading}" />
             <Label Text="Measurements and results are estimates, not medical diagnoses." />
             <Button Text="Add weight" Command="{Binding AddWeightCommand}" MinimumHeightRequest="48" />
             <Button Text="Add measurements" Command="{Binding AddMeasurementsCommand}" MinimumHeightRequest="48" />

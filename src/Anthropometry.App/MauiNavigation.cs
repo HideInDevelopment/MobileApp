@@ -30,7 +30,10 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     }
 
     public Task SelectProfileAsync(ProfileDto profile)
-        => PushAsync(new ProfileDetailPage(profile, this));
+        => PushAsync(new ProfileDetailPage(
+            profile,
+            _services.GetRequiredService<GetMeasurementHistory>(),
+            this));
 
     public Task RenameProfileAsync(ProfileDto profile)
     {

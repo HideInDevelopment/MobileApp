@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
+using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -12,7 +14,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     private readonly GetMeasurementHistory _getHistory;
     private readonly ProfileId _profileId;
     private readonly IMeasurementNavigation _navigation;
-    private readonly ObservableCollection<MeasurementDto> _measurements = [];
+    private readonly ObservableCollection<MeasurementHistoryItem> _measurements = [];
     private bool _isLoading;
     private string? _errorMessage;
 
@@ -21,12 +23,12 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         _getHistory = getHistory;
         _profileId = profileId;
         _navigation = navigation;
-        Measurements = new ReadOnlyObservableCollection<MeasurementDto>(_measurements);
+        Measurements = new ReadOnlyObservableCollection<MeasurementHistoryItem>(_measurements);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
-        SelectCommand = new AsyncRelayCommand<MeasurementDto?>(SelectAsync);
+        SelectCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(SelectAsync);
     }
 
-    public ReadOnlyObservableCollection<MeasurementDto> Measurements { get; }
+    public ReadOnlyObservableCollection<MeasurementHistoryItem> Measurements { get; }
 
     public bool IsLoading
     {
@@ -50,7 +52,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
 
     public IAsyncRelayCommand LoadCommand { get; }
 
-    public IAsyncRelayCommand<MeasurementDto?> SelectCommand { get; }
+    public IAsyncRelayCommand<MeasurementHistoryItem?> SelectCommand { get; }
 
     private async Task LoadAsync()
     {
@@ -64,7 +66,10 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
             {
                 foreach (var measurement in result.Value)
                 {
-                    _measurements.Add(measurement);
+                    _measurements.Add(new MeasurementHistoryItem(
+                        measurement,
+                        measurement.MeasuredAtUtc.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture),
+                        measurement.Type == MeasurementType.WeightOnly ? "Weight only" : "Weight and sizes"));
                 }
             }
             else
@@ -79,6 +84,8 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         }
     }
 
-    private Task SelectAsync(MeasurementDto? measurement)
-        => measurement is null ? Task.CompletedTask : _navigation.ShowResultsAsync(measurement);
+    private Task SelectAsync(MeasurementHistoryItem? item)
+        => item is null || !item.CanViewResults
+            ? Task.CompletedTask
+            : _navigation.ShowResultsAsync(item.Measurement);
 }
