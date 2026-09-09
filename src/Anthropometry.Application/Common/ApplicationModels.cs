@@ -4,20 +4,27 @@ using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Application.Common;
 
+public sealed record ProfileSettingsDto(
+    decimal HeightCm,
+    int AgeYears,
+    ActivityLevel ActivityLevel);
+
 public sealed record ProfileDto(
     ProfileId Id,
     string Name,
+    ProfileSettingsDto? Settings,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc);
 
 public sealed record MeasurementDto(
     MeasurementId Id,
     ProfileId ProfileId,
+    MeasurementType Type,
     DateTimeOffset MeasuredAtUtc,
     decimal WeightKg,
     decimal HeightCm,
-    decimal NeckCm,
-    decimal AbdomenCm,
+    decimal? NeckCm,
+    decimal? AbdomenCm,
     int AgeYears,
     ActivityLevel ActivityLevel);
 
@@ -34,10 +41,17 @@ public sealed record CalculationResultDto(
 internal static class ApplicationModels
 {
     public static ProfileDto ToDto(Profile profile)
-        => new(profile.Id, profile.Name, profile.CreatedAtUtc, profile.UpdatedAtUtc);
+        => new(
+            profile.Id,
+            profile.Name,
+            profile.Settings is null
+                ? null
+                : new ProfileSettingsDto(profile.Settings.HeightCm, profile.Settings.AgeYears, profile.Settings.ActivityLevel),
+            profile.CreatedAtUtc,
+            profile.UpdatedAtUtc);
 
     public static MeasurementDto ToDto(Measurement measurement)
-        => new(measurement.Id, measurement.ProfileId, measurement.MeasuredAtUtc, measurement.WeightKg, measurement.HeightCm, measurement.NeckCm, measurement.AbdomenCm, measurement.AgeYears, measurement.ActivityLevel);
+        => new(measurement.Id, measurement.ProfileId, measurement.Type, measurement.MeasuredAtUtc, measurement.WeightKg, measurement.HeightCm, measurement.NeckCm, measurement.AbdomenCm, measurement.AgeYears, measurement.ActivityLevel);
 
     public static CalculationResultDto ToDto(CalculationResult result)
         => new(result.Id, result.MeasurementId, result.CalculationType, result.FormulaId, result.FormulaVersion, result.Value, result.Unit, result.CalculatedAtUtc);

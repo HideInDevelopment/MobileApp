@@ -35,7 +35,14 @@ public sealed class CalculateBodyFat
                 return Result.Failure<CalculationResultDto>(ApplicationErrors.MeasurementNotFound);
             }
 
-            var calculated = _catalog.BodyFat.Calculate(new BodyFatInput(measurement.AbdomenCm, measurement.NeckCm, measurement.HeightCm));
+            if (measurement.Type != MeasurementType.WeightAndSizes
+                || !measurement.NeckCm.HasValue
+                || !measurement.AbdomenCm.HasValue)
+            {
+                return Result.Failure<CalculationResultDto>(ApplicationErrors.CalculationUnavailableForMeasurementType);
+            }
+
+            var calculated = _catalog.BodyFat.Calculate(new BodyFatInput(measurement.AbdomenCm.Value, measurement.NeckCm.Value, measurement.HeightCm));
             if (!calculated.IsSuccess)
             {
                 return Result.Failure<CalculationResultDto>(calculated.Error!);

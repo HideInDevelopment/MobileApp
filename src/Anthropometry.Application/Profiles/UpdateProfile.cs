@@ -1,22 +1,27 @@
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Common;
+using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Common;
 using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Application.Profiles;
 
-public sealed class RenameProfile
+public sealed class UpdateProfile
 {
     private readonly IProfileRepository _repository;
     private readonly IClock _clock;
 
-    public RenameProfile(IProfileRepository repository, IClock clock)
+    public UpdateProfile(IProfileRepository repository, IClock clock)
     {
         _repository = repository;
         _clock = clock;
     }
 
-    public async Task<Result<ProfileDto>> ExecuteAsync(ProfileId id, string name, CancellationToken cancellationToken)
+    public async Task<Result<ProfileDto>> ExecuteAsync(
+        ProfileId id,
+        string name,
+        ProfileSettingsInput settingsInput,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -26,10 +31,16 @@ public sealed class RenameProfile
                 return Result.Failure<ProfileDto>(ApplicationErrors.ProfileNotFound);
             }
 
-            var renamed = profile.Rename(name, _clock.UtcNow);
-            if (!renamed.IsSuccess)
+            var settings = ProfileSettings.Create(settingsInput.HeightCm, settingsInput.AgeYears, settingsInput.ActivityLevel);
+            if (!settings.IsSuccess)
             {
-                return Result.Failure<ProfileDto>(renamed.Error!);
+                return Result.Failure<ProfileDto>(settings.Error!);
+            }
+
+            var updated = profile.Update(name, settings.Value, _clock.UtcNow);
+            if (!updated.IsSuccess)
+            {
+                return Result.Failure<ProfileDto>(updated.Error!);
             }
 
             await _repository.UpdateAsync(profile, cancellationToken);
