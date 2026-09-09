@@ -157,10 +157,11 @@ Minimum properties:
 
 - `ProfileId`, stable identifier.
 - `Name`, non-empty with a defined maximum length.
+- `Settings`, containing the current height in centimeters, age in years, and named activity level.
 - `CreatedAtUtc`.
 - `UpdatedAtUtc`.
 
-The profile will not store passwords or authentication data. It may be deleted together with its measurements and results through an explicit operation.
+New and edited profiles require valid settings. `Settings` may be absent only on a legacy profile that predates the settings migration and must be completed before recording a new measurement. The profile will not store passwords or authentication data. It may be deleted together with its measurements and results through an explicit operation.
 
 ### 5.2 Measurement
 
@@ -171,14 +172,14 @@ Minimum data:
 - `MeasurementId`.
 - `ProfileId`.
 - `MeasuredAtUtc`.
+- `MeasurementType`, either `WeightOnly` or `WeightAndSizes`.
 - `WeightKg`.
-- `HeightCm`.
-- `NeckCm`.
-- `AbdomenCm`.
+- `HeightCm`, copied from the profile settings at capture time.
+- `NeckCm` and `AbdomenCm`, required for `WeightAndSizes` and absent for `WeightOnly`.
 - `AgeYears`, captured in the measurement so the age used by historical calculations is preserved.
-- `ActivityLevel`.
+- `ActivityLevel`, captured in the measurement so later profile edits do not change historical context.
 
-The measurement must preserve the entered values, not only derived results. This allows recalculation, auditing, and adding new formulas later.
+`WeightOnly` records a new weight and timestamp without creating calculation results. `WeightAndSizes` records both sizes and creates the body-fat, BMR, and TDEE results through the existing versioned calculation pipeline. The measurement must preserve the entered values, not only derived results. This allows recalculation, auditing, and adding new formulas later.
 
 ### 5.3 CalculationResult
 
@@ -284,7 +285,7 @@ The activity factor will not be stored as an anonymous UI number. It will be rep
 Application will expose small, testable use cases:
 
 - `CreateProfile`.
-- `RenameProfile`.
+- `UpdateProfile`.
 - `DeleteProfile`.
 - `GetProfiles`.
 - `RecordMeasurement`.
@@ -345,6 +346,9 @@ Infrastructure is responsible for:
 Profiles
   Id
   Name
+  HeightCm (nullable for legacy incomplete profiles)
+  AgeYears (nullable for legacy incomplete profiles)
+  ActivityLevel (nullable for legacy incomplete profiles)
   CreatedAtUtc
   UpdatedAtUtc
 
@@ -352,10 +356,11 @@ Measurements
   Id
   ProfileId
   MeasuredAtUtc
+  MeasurementType
   WeightKg
   HeightCm
-  NeckCm
-  AbdomenCm
+  NeckCm (nullable for WeightOnly)
+  AbdomenCm (nullable for WeightOnly)
   AgeYears
   ActivityLevel
 
@@ -378,7 +383,7 @@ Tables must have indexes for `ProfileId`, `MeasurementId`, and measurement dates
 
 ### 8.3 Migrations
 
-Every schema change has a version and a migration test from the previous version. Updating the application must not lose user data.
+Every schema change has a version and a migration test from the previous version. The current schema is version 2: it adds persisted profile settings, adds `MeasurementType`, and makes neck and abdomen nullable for weight-only records. Existing measurements are migrated as `WeightAndSizes`, and profile settings are backfilled from each profile's latest measurement when possible. Updating the application must not lose user data.
 
 The database will initialize asynchronously before the first screen depends on it. An initialization failure must prevent operation with incomplete data and show a recoverable error screen.
 
@@ -390,7 +395,8 @@ Initial navigation:
 Profile list
     ├── Create profile
     └── Profile detail
-          ├── New measurement
+          ├── Add weight
+          ├── Add measurements
           ├── Current result
           └── History
 ```
@@ -413,6 +419,8 @@ Minimum states for each flow:
 - invalid input;
 - recoverable error;
 - operation completed.
+
+The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen shows a warning icon when its newest measurement is weight-only; the icon is hidden after a size-based measurement or when there is no history. History uses `dd/MM/yyyy` dates and offers results only for size-based measurements. `Settings` and `Help` are visible toolbar placeholders with no behavior in this slice.
 
 The visual style will be minimal and functional:
 

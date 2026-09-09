@@ -34,7 +34,7 @@
 
 ## Current implementation status
 
-Slices 0 through 7 are implemented with automated Domain, Application, Infrastructure, and plain `net10.0` Presentation verification. The Android target is configured as `net10.0-android`, but the current development machine still needs an Android SDK before the Android build and manual acceptance checklist in Slice 8 can be completed.
+Slices 0 through 7 are implemented with automated Domain, Application, Infrastructure, and plain `net10.0` Presentation verification. The approved profile-settings and measurement-modes feature slice is implemented and tracked below. The Android target is configured as `net10.0-android`; release verification and the manual Android acceptance checklist remain the final handoff steps.
 
 The App project also targets plain `net10.0` for ViewModel tests; MAUI pages and platform files remain Android-only. SQLitePCLRaw transitive packages are pinned to version `2.1.13` because the version selected by `sqlite-net-pcl` `1.9.172` is reported by NuGet as vulnerable.
 
@@ -678,6 +678,41 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
+### Post-MVP feature slice: Profile settings and measurement modes
+
+**Status:** Implemented on `master` in the approved inline execution.
+
+**Review boundary:** Profiles persist the settings needed for future measurements, users can choose between weight-only and extended entries, and the UI communicates when the latest profile data has not refreshed size-based results.
+
+**Acceptance criteria:**
+
+- [x] Profiles persist height, age, and activity level locally, and profile edits update these settings.
+- [x] New profiles are limited to four by the Application use case.
+- [x] Zero profiles show only the centered create action; existing profiles show top `Add profile`.
+- [x] At four profiles, `Add profile` remains visible and is disabled.
+- [x] `Add weight` stores only the new weight and does not create or alter calculation results.
+- [x] `Add measurements` stores weight plus neck and abdomen and runs the existing three calculations.
+- [x] Measurement records retain the profile-setting snapshot used at capture time.
+- [x] The profile detail screen shows a warning icon when the newest measurement is weight-only.
+- [x] History uses friendly measurement labels and `dd/MM/yyyy` dates, and only extended entries expose `View results`.
+- [x] Visible profile actions and labels use friendly copy; `Settings` and `Help` are visible toolbar placeholders with no behavior.
+
+**Implementation records:**
+
+- Design: `docs/superpowers/specs/2026-09-09-profile-measurement-ux-design.md`
+- Execution plan: `docs/superpowers/plans/2026-09-09-profile-measurement-ux.md`
+- Manual checklist: `docs/testing/profile-measurement-acceptance.md`
+
+**Automated verification completed on 2026-09-09:**
+
+- [x] `dotnet restore -m:1`
+- [x] `dotnet build --configuration Release -m:1`
+- [x] `dotnet test --configuration Release -m:1` — 93 tests passed across Domain, Application, Infrastructure, and App projects.
+- [x] `dotnet build src/Anthropometry.App/Anthropometry.App.csproj -f net10.0-android -c Release -m:1` — Android target built with 0 warnings and 0 errors.
+- [ ] Manual Android acceptance checklist — pending a device/emulator pass.
+
+---
+
 ### Slice 8: Release verification and handoff
 
 **Review boundary:** The MVP is reproducibly buildable, testable, privacy-reviewed, and ready for a manual Android acceptance pass.
@@ -687,6 +722,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 - Create: `.editorconfig`
 - Create: `README.md`
 - Create: `docs/testing/android-acceptance.md`
+- Create: `docs/testing/profile-measurement-acceptance.md`
 - Modify: `ARCHITECTURE.md` if an implementation decision changed
 - Modify: `AGENTS.md` if agent workflow or constraints changed
 - Modify: `PLAN.md` to mark completed slices and record verified commands
