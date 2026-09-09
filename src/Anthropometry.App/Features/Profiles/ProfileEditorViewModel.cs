@@ -1,5 +1,7 @@
+using System.Globalization;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
+using Anthropometry.Domain.Calculations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -8,10 +10,13 @@ namespace Anthropometry.App.Features.Profiles;
 public sealed class ProfileEditorViewModel : ObservableObject
 {
     private readonly CreateProfile _createProfile;
-    private readonly RenameProfile _renameProfile;
+    private readonly UpdateProfile _updateProfile;
     private readonly ProfileDto? _existingProfile;
     private readonly IProfileNavigation _navigation;
     private string _name;
+    private string _heightText;
+    private string _ageText;
+    private ActivityLevelOption? _selectedActivityLevel;
     private string? _validationMessage;
     private string? _errorMessage;
     private bool _isBusy;
@@ -19,15 +24,28 @@ public sealed class ProfileEditorViewModel : ObservableObject
 
     public ProfileEditorViewModel(
         CreateProfile createProfile,
-        RenameProfile renameProfile,
+        UpdateProfile updateProfile,
         ProfileDto? existingProfile,
         IProfileNavigation navigation)
     {
         _createProfile = createProfile;
-        _renameProfile = renameProfile;
+        _updateProfile = updateProfile;
         _existingProfile = existingProfile;
         _navigation = navigation;
         _name = existingProfile?.Name ?? string.Empty;
+        _heightText = existingProfile?.Settings?.HeightCm.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
+        _ageText = existingProfile?.Settings?.AgeYears.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
+        ActivityLevels =
+        [
+            new(ActivityLevel.Sedentary, "Sedentary"),
+            new(ActivityLevel.Light, "Lightly active"),
+            new(ActivityLevel.Moderate, "Moderately active"),
+            new(ActivityLevel.High, "Highly active"),
+            new(ActivityLevel.VeryHigh, "Very highly active")
+        ];
+        _selectedActivityLevel = existingProfile?.Settings is { } settings
+            ? ActivityLevels.SingleOrDefault(option => option.Value == settings.ActivityLevel)
+            : null;
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
     }
@@ -38,7 +56,27 @@ public sealed class ProfileEditorViewModel : ObservableObject
         set => SetProperty(ref _name, value);
     }
 
-    public string Title => _existingProfile is null ? "New profile" : "Rename profile";
+    public string HeightText
+    {
+        get => _heightText;
+        set => SetProperty(ref _heightText, value);
+    }
+
+    public string AgeText
+    {
+        get => _ageText;
+        set => SetProperty(ref _ageText, value);
+    }
+
+    public IReadOnlyList<ActivityLevelOption> ActivityLevels { get; }
+
+    public ActivityLevelOption? SelectedActivityLevel
+    {
+        get => _selectedActivityLevel;
+        set => SetProperty(ref _selectedActivityLevel, value);
+    }
+
+    public string Title => _existingProfile is null ? "Create profile" : "Edit profile";
 
     public string? ValidationMessage
     {
@@ -78,15 +116,23 @@ public sealed class ProfileEditorViewModel : ObservableObject
             return;
         }
 
+        if (!TryCreateSettings(out var settings))
+        {
+            ValidationMessage = "Enter a valid height, age, and activity level.";
+            return;
+        }
+
         IsBusy = true;
         try
         {
             var result = _existingProfile is null
-                ? await _createProfile.ExecuteAsync(Name, CancellationToken.None)
-                : await _renameProfile.ExecuteAsync(_existingProfile.Id, Name, CancellationToken.None);
+                ? await _createProfile.ExecuteAsync(new CreateProfileCommand(Name, settings), CancellationToken.None)
+                : await _updateProfile.ExecuteAsync(_existingProfile.Id, Name, settings, CancellationToken.None);
             if (!result.IsSuccess)
             {
-                ErrorMessage = "We couldn't save this profile. Try again.";
+                ErrorMessage = result.Error!.Code == "profile.limit.reached"
+                    ? "You can create up to 4 profiles."
+                    : "We couldn't save this profile. Try again.";
                 return;
             }
 
@@ -97,5 +143,22 @@ public sealed class ProfileEditorViewModel : ObservableObject
         {
             IsBusy = false;
         }
+    }
+
+    private bool TryCreateSettings(out ProfileSettingsInput settings)
+    {
+        if ((!decimal.TryParse(HeightText, NumberStyles.Number, CultureInfo.CurrentCulture, out var height)
+                && !decimal.TryParse(HeightText, NumberStyles.Number, CultureInfo.InvariantCulture, out height))
+            || !int.TryParse(AgeText, NumberStyles.Integer, CultureInfo.CurrentCulture, out var age)
+            || height is < 50m or > 300m
+            || age is < 1 or > 120
+            || SelectedActivityLevel is null)
+        {
+            settings = null!;
+            return false;
+        }
+
+        settings = new ProfileSettingsInput(height, age, SelectedActivityLevel.Value);
+        return true;
     }
 }

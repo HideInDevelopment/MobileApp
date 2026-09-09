@@ -7,7 +7,15 @@
         <VerticalStackLayout Padding="20" Spacing="16">
             <Label Text="{Binding Title}" FontSize="28" FontAttributes="Bold" />
             <Label Text="Profile name" />
-            <Entry Text="{Binding Name}" Placeholder="Name" ClearButtonVisibility="WhileEditing" />
+            <Entry Text="{Binding Name}" Placeholder="Profile name" ClearButtonVisibility="WhileEditing" />
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
+                <Label Grid.Row="0" Text="Height" VerticalOptions="Center" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding HeightText}" Keyboard="Numeric" Placeholder="cm" WidthRequest="150" />
+                <Label Grid.Row="1" Text="Age" VerticalOptions="Center" />
+                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AgeText}" Keyboard="Numeric" Placeholder="years" WidthRequest="150" />
+                <Label Grid.Row="2" Text="Activity level" VerticalOptions="Center" />
+                <Picker Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ActivityLevels}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedActivityLevel}" WidthRequest="150" />
+            </Grid>
             <Label Text="{Binding ValidationMessage}" TextColor="Red" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />
             <ActivityIndicator IsRunning="{Binding IsBusy}" />

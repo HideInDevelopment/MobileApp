@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
@@ -22,7 +23,9 @@ public sealed class ProfileListViewModel : ObservableObject
         _navigation = navigation;
         Profiles = new ReadOnlyObservableCollection<ProfileDto>(_profiles);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
-        CreateCommand = new AsyncRelayCommand(_navigation.CreateProfileAsync);
+        CreateCommand = new AsyncRelayCommand(_navigation.CreateProfileAsync, () => CanAddProfile);
+        SettingsCommand = new RelayCommand(() => { });
+        HelpCommand = new RelayCommand(() => { });
         SelectCommand = new AsyncRelayCommand<ProfileDto?>(SelectAsync);
         DeleteCommand = new AsyncRelayCommand<ProfileDto?>(DeleteAsync);
     }
@@ -35,7 +38,11 @@ public sealed class ProfileListViewModel : ObservableObject
         private set => SetProperty(ref _isLoading, value);
     }
 
-    public bool IsEmpty => !IsLoading && _profiles.Count == 0 && ErrorMessage is null;
+    public bool HasProfiles => _profiles.Count > 0;
+
+    public bool CanAddProfile => _profiles.Count < 4;
+
+    public bool IsEmpty => !IsLoading && !HasProfiles && ErrorMessage is null;
 
     public string? ErrorMessage
     {
@@ -52,6 +59,10 @@ public sealed class ProfileListViewModel : ObservableObject
     public IAsyncRelayCommand LoadCommand { get; }
 
     public IAsyncRelayCommand CreateCommand { get; }
+
+    public ICommand SettingsCommand { get; }
+
+    public ICommand HelpCommand { get; }
 
     public IAsyncRelayCommand<ProfileDto?> SelectCommand { get; }
 
@@ -77,6 +88,7 @@ public sealed class ProfileListViewModel : ObservableObject
             {
                 ErrorMessage = "We couldn't load profiles. Try again.";
             }
+            NotifyProfileStateChanged();
         }
         catch (OperationCanceledException)
         {
@@ -107,5 +119,13 @@ public sealed class ProfileListViewModel : ObservableObject
         }
 
         await LoadAsync();
+    }
+
+    private void NotifyProfileStateChanged()
+    {
+        OnPropertyChanged(nameof(HasProfiles));
+        OnPropertyChanged(nameof(CanAddProfile));
+        OnPropertyChanged(nameof(IsEmpty));
+        CreateCommand.NotifyCanExecuteChanged();
     }
 }

@@ -1,6 +1,8 @@
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Tests.Support;
+using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Measurements;
 
 namespace Anthropometry.App.Tests.Features.Measurements;
 
@@ -27,7 +29,7 @@ public sealed class MeasurementHistoryViewModelTests
     {
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
-        repository.Items.Add(Anthropometry.Domain.Measurements.Measurement.Create(profile.Id, new Anthropometry.Domain.Measurements.MeasurementInput(80m, 180m, 40m, 90m, 35, Anthropometry.Domain.Calculations.ActivityLevel.Moderate, DateTimeOffset.UtcNow.AddDays(-1)), DateTimeOffset.UtcNow).Value);
+        repository.Items.Add(Anthropometry.Domain.Measurements.Measurement.Create(profile.Id, new Anthropometry.Domain.Measurements.MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow.AddDays(-1)), DateTimeOffset.UtcNow).Value);
         repository.Items.Add(TestData.Measurement(profile.Id));
         var viewModel = new MeasurementHistoryViewModel(new GetMeasurementHistory(repository), profile.Id, new NavigationSpy());
 

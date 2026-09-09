@@ -51,12 +51,15 @@ public sealed class ThrowingProfileRepository : IProfileRepository
 public static class TestData
 {
     public static Profile Profile(string name = "Manuel")
-        => Anthropometry.Domain.Profiles.Profile.Create(name, DateTimeOffset.UtcNow).Value;
+        => Anthropometry.Domain.Profiles.Profile.Create(
+            name,
+            Anthropometry.Domain.Profiles.ProfileSettings.Create(180m, 35, ActivityLevel.Moderate).Value,
+            DateTimeOffset.UtcNow).Value;
 
     public static Measurement Measurement(ProfileId profileId)
         => Anthropometry.Domain.Measurements.Measurement.Create(
             profileId,
-            new MeasurementInput(80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow),
+            new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow),
             DateTimeOffset.UtcNow).Value;
 }
 

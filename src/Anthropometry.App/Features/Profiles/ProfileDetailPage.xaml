@@ -7,8 +7,7 @@
         <VerticalStackLayout Padding="20" Spacing="16">
             <Label Text="{Binding Profile.Name}" FontSize="28" FontAttributes="Bold" />
             <Label Text="Measurements and results are estimates, not medical diagnoses." />
-            <Button Text="New measurement" Command="{Binding NewMeasurementCommand}" MinimumHeightRequest="48" />
-            <Button Text="Rename profile" Command="{Binding RenameCommand}" MinimumHeightRequest="48" />
+            <Button Text="Edit profile" Command="{Binding EditCommand}" MinimumHeightRequest="48" />
             <Button Text="History" Command="{Binding HistoryCommand}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
     </ScrollView>

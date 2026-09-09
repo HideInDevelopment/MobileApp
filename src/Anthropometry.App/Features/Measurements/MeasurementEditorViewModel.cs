@@ -150,7 +150,15 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            var recorded = await _recordMeasurement.ExecuteAsync(new RecordMeasurementCommand(_profileId, input), CancellationToken.None);
+            var recorded = await _recordMeasurement.ExecuteAsync(
+                new RecordMeasurementCommand(
+                    _profileId,
+                    MeasurementType.WeightAndSizes,
+                    input.WeightKg,
+                    input.NeckCm,
+                    input.AbdomenCm,
+                    input.MeasuredAtUtc),
+                CancellationToken.None);
             if (!recorded.IsSuccess)
             {
                 ValidationMessage = recorded.Error!.Code.StartsWith("measurement.", StringComparison.Ordinal)
@@ -190,7 +198,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             return false;
         }
 
-        input = new MeasurementInput(weight, height, neck, abdomen, age, SelectedActivityLevel, DateTimeOffset.UtcNow);
+        input = new MeasurementInput(MeasurementType.WeightAndSizes, weight, height, neck, abdomen, age, SelectedActivityLevel, DateTimeOffset.UtcNow);
         return true;
     }
 

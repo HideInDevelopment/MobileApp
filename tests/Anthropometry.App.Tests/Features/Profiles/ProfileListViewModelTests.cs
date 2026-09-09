@@ -19,6 +19,8 @@ public sealed class ProfileListViewModelTests
 
         Assert.False(viewModel.IsLoading);
         Assert.True(viewModel.IsEmpty);
+        Assert.False(viewModel.HasProfiles);
+        Assert.True(viewModel.CanAddProfile);
         Assert.Empty(viewModel.Profiles);
         Assert.Null(viewModel.ErrorMessage);
     }
@@ -38,6 +40,8 @@ public sealed class ProfileListViewModelTests
         var profile = Assert.Single(viewModel.Profiles);
         Assert.Equal("Manuel", profile.Name);
         Assert.False(viewModel.IsEmpty);
+        Assert.True(viewModel.HasProfiles);
+        Assert.True(viewModel.CanAddProfile);
     }
 
     [Fact]
@@ -68,6 +72,27 @@ public sealed class ProfileListViewModelTests
 
         Assert.False(viewModel.IsEmpty);
         Assert.Equal("We couldn't load profiles. Try again.", viewModel.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task Load_disables_add_profile_at_four_profiles()
+    {
+        var repository = new FakeProfileRepository();
+        for (var index = 0; index < 4; index++)
+        {
+            repository.Items.Add(TestData.Profile($"Profile {index}"));
+        }
+
+        var viewModel = new ProfileListViewModel(
+            new GetProfiles(repository),
+            new DeleteProfile(repository),
+            new NavigationSpy());
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.True(viewModel.HasProfiles);
+        Assert.False(viewModel.CanAddProfile);
+        Assert.False(viewModel.CreateCommand.CanExecute(null));
     }
 
     private sealed class NavigationSpy : IProfileNavigation

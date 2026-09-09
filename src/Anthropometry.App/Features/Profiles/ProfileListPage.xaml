@@ -5,10 +5,14 @@
              x:Class="Anthropometry.App.Features.Profiles.ProfileListPage"
              x:Name="RootPage"
              Title="Profiles">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Settings" Command="{Binding SettingsCommand}" />
+        <ToolbarItem Text="Help" Command="{Binding HelpCommand}" />
+    </ContentPage.ToolbarItems>
     <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="16">
         <HorizontalStackLayout Grid.Row="0" Spacing="12">
             <Label Text="Profiles" FontSize="28" FontAttributes="Bold" VerticalOptions="Center" />
-            <Button Text="New" Command="{Binding CreateCommand}" MinimumHeightRequest="48" />
+            <Button Text="Add profile" Command="{Binding CreateCommand}" IsVisible="{Binding HasProfiles}" IsEnabled="{Binding CanAddProfile}" MinimumHeightRequest="48" />
         </HorizontalStackLayout>
 
         <VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsLoading}" Spacing="8">
@@ -17,8 +21,8 @@
         </VerticalStackLayout>
 
         <VerticalStackLayout Grid.Row="2" IsVisible="{Binding IsEmpty}" Spacing="12" VerticalOptions="Center">
-            <Label Text="No profiles yet" FontSize="20" HorizontalOptions="Center" />
-            <Label Text="Create a profile to record local measurements." HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+            <Label Text="No profile yet" FontSize="20" HorizontalOptions="Center" />
+            <Label Text="Create one to get started." HorizontalOptions="Center" HorizontalTextAlignment="Center" />
             <Button Text="Create profile" Command="{Binding CreateCommand}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
 
@@ -28,8 +32,8 @@
                     <DataTemplate>
                         <Grid Padding="0,8" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                             <local:ProfileRowView Grid.Column="0" BindingContext="{Binding}" />
-                            <Button Grid.Column="1" Text="Open" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
-                            <Button Grid.Column="2" Text="Delete" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                            <Button Grid.Column="1" Text="Open profile" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                            <Button Grid.Column="2" Text="Delete profile" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

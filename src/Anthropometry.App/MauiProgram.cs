@@ -47,7 +47,7 @@ public static class MauiProgram
             services.GetRequiredService<TdeeFormula>()));
 
         builder.Services.AddTransient<CreateProfile>();
-        builder.Services.AddTransient<RenameProfile>();
+        builder.Services.AddTransient<UpdateProfile>();
         builder.Services.AddTransient<DeleteProfile>();
         builder.Services.AddTransient<GetProfiles>();
         builder.Services.AddTransient<RecordMeasurement>();

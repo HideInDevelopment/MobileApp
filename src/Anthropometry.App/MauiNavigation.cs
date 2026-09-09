@@ -22,7 +22,7 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     {
         var page = new ProfileEditorPage(new ProfileEditorViewModel(
             _services.GetRequiredService<CreateProfile>(),
-            _services.GetRequiredService<RenameProfile>(),
+            _services.GetRequiredService<UpdateProfile>(),
             null,
             this));
         return PushAsync(page);
@@ -35,7 +35,7 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     {
         var page = new ProfileEditorPage(new ProfileEditorViewModel(
             _services.GetRequiredService<CreateProfile>(),
-            _services.GetRequiredService<RenameProfile>(),
+            _services.GetRequiredService<UpdateProfile>(),
             profile,
             this));
         return PushAsync(page);

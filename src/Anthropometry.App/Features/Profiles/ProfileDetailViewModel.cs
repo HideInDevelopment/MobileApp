@@ -12,16 +12,13 @@ public sealed class ProfileDetailViewModel : ObservableObject
     {
         Profile = profile;
         _navigation = navigation;
-        NewMeasurementCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile));
         HistoryCommand = new AsyncRelayCommand(() => _navigation.ShowHistoryAsync(Profile));
-        RenameCommand = new AsyncRelayCommand(() => _navigation.RenameProfileAsync(Profile));
+        EditCommand = new AsyncRelayCommand(() => _navigation.RenameProfileAsync(Profile));
     }
 
     public ProfileDto Profile { get; }
 
-    public IAsyncRelayCommand NewMeasurementCommand { get; }
-
     public IAsyncRelayCommand HistoryCommand { get; }
 
-    public IAsyncRelayCommand RenameCommand { get; }
+    public IAsyncRelayCommand EditCommand { get; }
 }
