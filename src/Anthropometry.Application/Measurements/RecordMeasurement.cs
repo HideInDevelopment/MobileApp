@@ -6,7 +6,13 @@ using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Application.Measurements;
 
-public sealed record RecordMeasurementCommand(ProfileId ProfileId, MeasurementInput Input);
+public sealed record RecordMeasurementCommand(
+    ProfileId ProfileId,
+    MeasurementType Type,
+    decimal WeightKg,
+    decimal? NeckCm,
+    decimal? AbdomenCm,
+    DateTimeOffset MeasuredAtUtc);
 
 public sealed class RecordMeasurement
 {
@@ -25,12 +31,27 @@ public sealed class RecordMeasurement
     {
         try
         {
-            if (await _profiles.GetByIdAsync(command.ProfileId, cancellationToken) is null)
+            var profile = await _profiles.GetByIdAsync(command.ProfileId, cancellationToken);
+            if (profile is null)
             {
                 return Result.Failure<MeasurementDto>(ApplicationErrors.ProfileNotFound);
             }
 
-            var measurement = Measurement.Create(command.ProfileId, command.Input, _clock.UtcNow);
+            if (profile.Settings is null)
+            {
+                return Result.Failure<MeasurementDto>(ApplicationErrors.ProfileSettingsRequired);
+            }
+
+            var input = new MeasurementInput(
+                command.Type,
+                command.WeightKg,
+                profile.Settings.HeightCm,
+                command.NeckCm,
+                command.AbdomenCm,
+                profile.Settings.AgeYears,
+                profile.Settings.ActivityLevel,
+                command.MeasuredAtUtc);
+            var measurement = Measurement.Create(command.ProfileId, input, _clock.UtcNow);
             if (!measurement.IsSuccess)
             {
                 return Result.Failure<MeasurementDto>(measurement.Error!);

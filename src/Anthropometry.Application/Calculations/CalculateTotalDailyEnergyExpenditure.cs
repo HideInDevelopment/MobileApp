@@ -36,6 +36,11 @@ public sealed class CalculateTotalDailyEnergyExpenditure
                 return Result.Failure<CalculationResultDto>(ApplicationErrors.MeasurementNotFound);
             }
 
+            if (measurement.Type != MeasurementType.WeightAndSizes)
+            {
+                return Result.Failure<CalculationResultDto>(ApplicationErrors.CalculationUnavailableForMeasurementType);
+            }
+
             var bmr = _catalog.Bmr.Calculate(new BmrInput(measurement.WeightKg, measurement.HeightCm, measurement.AgeYears));
             if (!bmr.IsSuccess)
             {

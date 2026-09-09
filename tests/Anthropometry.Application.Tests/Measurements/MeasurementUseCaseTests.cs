@@ -1,5 +1,7 @@
 using Anthropometry.Application.Measurements;
 using Anthropometry.Application.Tests.Support;
+using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Application.Tests.Measurements;
@@ -11,7 +13,7 @@ public sealed class MeasurementUseCaseTests
     {
         var profiles = new FakeProfileRepository();
         var measurements = new FakeMeasurementRepository();
-        var command = new RecordMeasurementCommand(ProfileId.New(), TestData.MeasurementInput());
+        var command = new RecordMeasurementCommand(ProfileId.New(), MeasurementType.WeightAndSizes, 80m, 40m, 90m, DateTimeOffset.UtcNow);
 
         var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(command, CancellationToken.None);
 
@@ -29,7 +31,7 @@ public sealed class MeasurementUseCaseTests
         profiles.Items.Add(profile);
 
         var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
-            new RecordMeasurementCommand(profile.Id, TestData.MeasurementInput()),
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 80m, 40m, 90m, DateTimeOffset.UtcNow),
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -44,10 +46,8 @@ public sealed class MeasurementUseCaseTests
         var profiles = new FakeProfileRepository();
         profiles.Items.Add(profile);
         var measurements = new FakeMeasurementRepository();
-        var invalidInput = TestData.MeasurementInput() with { WeightKg = 0m };
-
         var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
-            new RecordMeasurementCommand(profile.Id, invalidInput),
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 0m, 40m, 90m, DateTimeOffset.UtcNow),
             CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -69,5 +69,62 @@ public sealed class MeasurementUseCaseTests
 
         Assert.True(result.IsSuccess);
         Assert.True(result.Value[0].MeasuredAtUtc > result.Value[1].MeasuredAtUtc);
+    }
+
+    [Fact]
+    public async Task Record_measurement_weight_only_uses_profile_settings_and_persists_no_sizes()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+
+        var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightOnly, 79m, null, null, DateTimeOffset.UtcNow),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        var saved = Assert.Single(measurements.Items);
+        Assert.Equal(MeasurementType.WeightOnly, saved.Type);
+        Assert.Equal(79m, saved.WeightKg);
+        Assert.Equal(180m, saved.HeightCm);
+        Assert.Equal(35, saved.AgeYears);
+        Assert.Equal(ActivityLevel.Moderate, saved.ActivityLevel);
+        Assert.Null(saved.NeckCm);
+        Assert.Null(saved.AbdomenCm);
+    }
+
+    [Fact]
+    public async Task Record_measurement_extended_uses_profile_settings()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+
+        var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 80m, 40m, 90m, DateTimeOffset.UtcNow),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(180m, Assert.Single(measurements.Items).HeightCm);
+        Assert.Equal(35, measurements.Items[0].AgeYears);
+        Assert.Equal(ActivityLevel.Moderate, measurements.Items[0].ActivityLevel);
+    }
+
+    [Fact]
+    public async Task Record_measurement_rejects_incomplete_profile_settings()
+    {
+        var timestamp = DateTimeOffset.UtcNow;
+        var profile = Profile.Rehydrate(ProfileId.New(), "Legacy", null, timestamp, timestamp).Value;
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+
+        var result = await new RecordMeasurement(profiles, new FakeMeasurementRepository(), new FakeClock()).ExecuteAsync(
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightOnly, 79m, null, null, timestamp),
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("profile.settings.required", result.Error!.Code);
     }
 }

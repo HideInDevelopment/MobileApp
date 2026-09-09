@@ -35,6 +35,11 @@ public sealed class CalculateBasalMetabolicRate
                 return Result.Failure<CalculationResultDto>(ApplicationErrors.MeasurementNotFound);
             }
 
+            if (measurement.Type != MeasurementType.WeightAndSizes)
+            {
+                return Result.Failure<CalculationResultDto>(ApplicationErrors.CalculationUnavailableForMeasurementType);
+            }
+
             var calculated = _catalog.Bmr.Calculate(new BmrInput(measurement.WeightKg, measurement.HeightCm, measurement.AgeYears));
             if (!calculated.IsSuccess)
             {
