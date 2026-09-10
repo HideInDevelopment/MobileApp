@@ -48,6 +48,8 @@ public sealed class ResponsiveLayoutTests
     {
         public Task ShowResultsAsync(Anthropometry.Application.Common.MeasurementDto measurement) => Task.CompletedTask;
 
+        public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 
         public Task CancelAsync() => Task.CompletedTask;

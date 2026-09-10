@@ -420,7 +420,7 @@ Minimum states for each flow:
 - recoverable error;
 - operation completed.
 
-The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only results show a warning icon because they reuse the previous neck and abdomen values. `Settings` and `Help` are visible toolbar placeholders with no behavior in this slice.
+The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow shadow because their results reuse the previous neck and abdomen values. `Settings` and `Help` are visible toolbar placeholders with no behavior in this slice.
 
 The visual style will be minimal and functional:
 

@@ -6,6 +6,8 @@ public interface IMeasurementNavigation
 {
     Task ShowResultsAsync(MeasurementDto measurement);
 
+    Task ShowHistoryAsync(ProfileDto profile);
+
     Task CloseMeasurementAsync();
 
     Task CancelAsync();

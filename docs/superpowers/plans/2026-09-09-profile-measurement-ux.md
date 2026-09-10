@@ -451,7 +451,7 @@ Expected: compilation failures because the editor constructor and navigation con
 
 - [ ] **Step 3: Implement the two editor modes**
 
-For weight-only success, call `RecordMeasurement`, run the existing three calculation use cases against the new weight and the latest earlier sizes, set `IsCompleted`, and call `CloseMeasurementAsync`. For weight-and-sizes success, call the same three calculation use cases, set `IsCompleted`, and call `CloseMeasurementAsync`; results remain available from History. Keep the current recoverable persistence and calculation error translation, but make validation mention the relevant fields instead of “all fields”.
+For weight-only success, call `RecordMeasurement`, run the existing three calculation use cases against the new weight and the latest earlier sizes, set `IsCompleted`, close the editor, and open the refreshed History page. For weight-and-sizes success, call the same three calculation use cases, set `IsCompleted`, close the editor, and open History; results remain available for both types. Keep the current recoverable persistence and calculation error translation, but make validation mention the relevant fields instead of “all fields”.
 
 - [ ] **Step 4: Add profile actions and navigation construction**
 
@@ -523,7 +523,7 @@ Format dates using `DateTimeOffset.ToString("dd/MM/yyyy", CultureInfo.CurrentCul
 
 - [ ] **Step 5: Normalize remaining visible copy**
 
-Replace any remaining raw or awkward labels in the changed screens and startup error UI. Use `Create profile`, `Add profile`, `Add weight`, `Add measurements`, `Edit profile`, `Measurement history`, `View results`, `Settings`, and `Help`. Keep the existing result-card behavior: friendly calculation titles, exactly two decimals, value, and unit only; do not reintroduce formula IDs or versions into the visible result cards.
+Replace any remaining raw or awkward labels in the changed screens and startup error UI. Use `Create profile`, `Add profile`, `Add weight`, `Add measurements`, `Edit profile`, `Measurement history`, `View results`, `Settings`, and `Help`. Keep the existing result-card behavior: friendly calculation titles, exactly two decimals, value, and unit only; do not reintroduce formula IDs or versions into the visible result cards. In History, show the weight-only warning icon before the centered date and apply its yellow shadow to that row.
 
 - [ ] **Step 6: Run App tests and commit**
 
@@ -552,7 +552,7 @@ Add a clearly labeled post-MVP feature slice with checked acceptance criteria on
 
 - [ ] **Step 3: Write the Android acceptance checklist**
 
-In `docs/testing/profile-measurement-acceptance.md`, list these manual checks: first launch with zero profiles shows only the centered create action; creating profiles 1–3 keeps enabled `Add profile`; profile 4 leaves `Add profile` visible but disabled; profile editing saves height/age/activity; `Add weight` is disabled until an extended measurement exists; `Add measurements` calculates the three results; a later weight-only entry returns to the profile, keeps the profile warning-free, and exposes recalculated results with a warning icon in History; history dates display `dd/MM/yyyy`; Settings and Help appear in the top bar and do nothing; reopening the app preserves local data.
+In `docs/testing/profile-measurement-acceptance.md`, list these manual checks: first launch with zero profiles shows only the centered create action; creating profiles 1–3 keeps enabled `Add profile`; profile 4 leaves `Add profile` visible but disabled; profile editing saves height/age/activity; `Add weight` is disabled until an extended measurement exists; both save flows open History; `Add measurements` calculates the three results; a later weight-only entry leaves prior results unchanged, exposes recalculated results with the new weight, and shows a centered warning icon before its date with a yellow shadow; history dates display `dd/MM/yyyy`; Settings and Help appear in the top bar and do nothing; reopening the app preserves local data.
 
 - [ ] **Step 4: Run the complete verification commands**
 

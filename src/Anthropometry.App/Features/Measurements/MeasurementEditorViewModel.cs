@@ -148,6 +148,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
             IsCompleted = true;
             await _navigation.CloseMeasurementAsync();
+            await _navigation.ShowHistoryAsync(_profile);
         }
         finally
         {

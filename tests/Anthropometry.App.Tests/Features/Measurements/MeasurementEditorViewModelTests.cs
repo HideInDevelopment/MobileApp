@@ -15,7 +15,7 @@ namespace Anthropometry.App.Tests.Features.Measurements;
 public sealed class MeasurementEditorViewModelTests
 {
     [Fact]
-    public async Task Weight_only_save_requires_only_weight()
+    public async Task Weight_only_save_requires_only_weight_and_returns_to_history()
     {
         var profile = TestData.Profile();
         var profiles = new FakeProfileRepository();
@@ -38,6 +38,7 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Null(saved.AbdomenCm);
         Assert.Equal(3, results.Items.Count);
         Assert.Equal(1, navigation.CloseCalls);
+        Assert.Equal(1, navigation.HistoryCalls);
         Assert.Null(navigation.SavedMeasurement);
     }
 
@@ -62,7 +63,7 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
-    public async Task Weight_and_sizes_save_calculates_three_results_and_returns_to_profile()
+    public async Task Weight_and_sizes_save_calculates_three_results_and_returns_to_history()
     {
         var profile = TestData.Profile();
         var profiles = new FakeProfileRepository();
@@ -83,6 +84,7 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(3, results.Items.Count);
         Assert.Null(navigation.SavedMeasurement);
         Assert.Equal(1, navigation.CloseCalls);
+        Assert.Equal(1, navigation.HistoryCalls);
     }
 
     [Fact]
@@ -132,6 +134,7 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(1745m * 1.55m, results.Items.Single(result => result.MeasurementId == measurements.Items[1].Id && result.CalculationType == CalculationType.TotalDailyEnergyExpenditure).Value);
         Assert.Null(navigation.SavedMeasurement);
         Assert.Equal(1, navigation.CloseCalls);
+        Assert.Equal(1, navigation.HistoryCalls);
     }
 
     private static MeasurementEditorViewModel CreateViewModel(
@@ -166,6 +169,8 @@ public sealed class MeasurementEditorViewModelTests
 
         public int CloseCalls { get; private set; }
 
+        public int HistoryCalls { get; private set; }
+
         public Task ShowResultsAsync(MeasurementDto measurement)
         {
             SavedMeasurement = measurement;
@@ -175,6 +180,12 @@ public sealed class MeasurementEditorViewModelTests
         public Task CloseMeasurementAsync()
         {
             CloseCalls++;
+            return Task.CompletedTask;
+        }
+
+        public Task ShowHistoryAsync(ProfileDto profile)
+        {
+            HistoryCalls++;
             return Task.CompletedTask;
         }
 

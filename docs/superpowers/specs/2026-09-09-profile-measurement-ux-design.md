@@ -51,9 +51,9 @@ The UI presents only the fields relevant to the selected method. Height, age, an
 
 ### Results and warning state
 
-Saving either measurement type returns to the profile without opening a results page. Add weight is disabled until an earlier extended measurement exists. Weight-only saves persist new results for the new weight using the earlier neck and abdomen values; extended saves persist results from their entered sizes. Both remain available from History. The profile detail screen does not show a warning icon; the results page shows it for weight-only entries.
+Saving either measurement type closes the editor and opens the refreshed History page without opening a results page. Add weight is disabled until an earlier extended measurement exists. Weight-only saves persist new results for the new weight using the earlier neck and abdomen values; extended saves persist results from their entered sizes. Both remain available from History. The profile detail screen does not show a warning icon; weight-only history rows show a centered warning icon before the date with a yellow shadow.
 
-The results page keeps two-decimal values, friendly titles, and units only. Weight-only results additionally show a warning icon.
+The results page keeps two-decimal values, friendly titles, and units only. Weight-only results remain available from History and can be opened normally.
 
 ### Profile list behavior
 

@@ -34,8 +34,10 @@ public sealed class MeasurementHistoryViewModelTests
         Assert.Equal(2, viewModel.Measurements.Count);
         Assert.Equal("08/09/2026", viewModel.Measurements[0].DateText);
         Assert.Equal("Weight only", viewModel.Measurements[0].MeasurementTypeText);
+        Assert.True(viewModel.Measurements[0].ShowWarningIcon);
         Assert.Equal("07/09/2026", viewModel.Measurements[1].DateText);
         Assert.Equal("Weight and sizes", viewModel.Measurements[1].MeasurementTypeText);
+        Assert.False(viewModel.Measurements[1].ShowWarningIcon);
     }
 
     [Fact]
@@ -50,6 +52,7 @@ public sealed class MeasurementHistoryViewModelTests
         await viewModel.SelectCommand.ExecuteAsync(viewModel.Measurements[0]);
 
         Assert.True(viewModel.Measurements[0].CanViewResults);
+        Assert.True(viewModel.Measurements[0].ShowWarningIcon);
         Assert.Equal(viewModel.Measurements[0].Measurement.Id, navigation.SelectedMeasurementId);
     }
 
@@ -65,6 +68,7 @@ public sealed class MeasurementHistoryViewModelTests
         await viewModel.SelectCommand.ExecuteAsync(viewModel.Measurements[0]);
 
         Assert.True(viewModel.Measurements[0].CanViewResults);
+        Assert.False(viewModel.Measurements[0].ShowWarningIcon);
         Assert.Equal(viewModel.Measurements[0].Measurement.Id, navigation.SelectedMeasurementId);
     }
 
@@ -94,6 +98,8 @@ public sealed class MeasurementHistoryViewModelTests
             SelectedMeasurementId = measurement.Id;
             return Task.CompletedTask;
         }
+
+        public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 
