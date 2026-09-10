@@ -127,11 +127,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
 
     private void RefreshSampleDataAvailability()
     {
-#if DEBUG
         CanGenerateSampleData = CanAddWeight && _measurementCount < 30;
-#else
-        CanGenerateSampleData = false;
-#endif
     }
 
     private async Task GenerateSampleDataAsync()

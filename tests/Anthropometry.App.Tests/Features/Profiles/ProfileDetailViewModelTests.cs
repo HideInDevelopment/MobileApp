@@ -43,6 +43,19 @@ public sealed class ProfileDetailViewModelTests
     }
 
     [Fact]
+    public async Task Sample_data_generation_is_available_in_the_normal_build_after_a_size_measurement()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, DateTimeOffset.UtcNow));
+        var viewModel = CreateViewModel(profile, repository);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.True(viewModel.CanGenerateSampleData);
+    }
+
+    [Fact]
     public async Task No_measurements_disable_add_weight()
     {
         var viewModel = CreateViewModel(TestData.Profile(), new FakeMeasurementRepository());

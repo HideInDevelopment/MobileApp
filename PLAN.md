@@ -742,11 +742,11 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
-### Post-MVP feature slice: Debug sample measurement history
+### Post-MVP feature slice: Sample measurement history
 
-**Status:** Implemented on `master` as a temporary development fixture.
+**Status:** Implemented on `master` as a temporary fixture.
 
-**Review boundary:** Profile detail can generate a deterministic 30-day local history from an existing size-based measurement. The fixture alternates extended and weight-only records, varies weight and sizes within the approved ranges, persists the normal body-fat/BMR/TDEE results, and is hidden from Release builds. It uses the existing schema and repositories; no migration or dependency is added.
+**Review boundary:** Profile detail can generate a deterministic 30-day local history from an existing size-based measurement. The fixture alternates extended and weight-only records, varies weight and sizes within the approved ranges, persists the normal body-fat/BMR/TDEE results, and is available in regular builds. It uses the existing schema and repositories; no migration or dependency is added.
 
 **Acceptance criteria:**
 
@@ -755,7 +755,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] Weight varies by up to 3 kg and sizes vary by up to 10 cm from the latest size-based measurement.
 - [x] Each generated measurement receives the existing three persisted calculation results.
 - [x] Repeating the action for the same 30-day window does not create duplicates.
-- [x] The Profile detail action and feedback are localized in English, Spanish, and German and are available only in Debug builds.
+- [x] The Profile detail action and feedback are localized in English, Spanish, and German and are available in regular builds.
 
 **Verification:**
 
