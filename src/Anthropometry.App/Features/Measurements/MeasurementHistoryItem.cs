@@ -11,4 +11,6 @@ public sealed record MeasurementHistoryItem(
     public bool CanViewResults => Measurement.Type is MeasurementType.WeightOnly or MeasurementType.WeightAndSizes;
 
     public bool ShowWarningIcon => Measurement.Type == MeasurementType.WeightOnly;
+
+    public bool ShowStandardLayout => !ShowWarningIcon;
 }

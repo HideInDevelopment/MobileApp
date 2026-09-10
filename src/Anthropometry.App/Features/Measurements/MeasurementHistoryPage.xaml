@@ -27,12 +27,7 @@
                                 </Setter>
                             </DataTrigger>
                         </Border.Triggers>
-                        <Grid ColumnDefinitions="*,Auto" IsVisible="False">
-                            <Grid.Triggers>
-                                <DataTrigger TargetType="Grid" Binding="{Binding ShowWarningIcon}" Value="False">
-                                    <Setter Property="IsVisible" Value="True" />
-                                </DataTrigger>
-                            </Grid.Triggers>
+                        <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding ShowStandardLayout}">
                             <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" HorizontalOptions="End">
                                 <Label Text="{Binding DateText}" FontAttributes="Bold" HorizontalTextAlignment="End" />
                                 <Label Text="{Binding Measurement.WeightKg, StringFormat='Weight: {0} kg'}" HorizontalTextAlignment="End" />
@@ -41,12 +36,7 @@
                             </VerticalStackLayout>
                             <Button Grid.Column="1" Text="View results" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
                         </Grid>
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" IsVisible="False">
-                            <Grid.Triggers>
-                                <DataTrigger TargetType="Grid" Binding="{Binding ShowWarningIcon}" Value="True">
-                                    <Setter Property="IsVisible" Value="True" />
-                                </DataTrigger>
-                            </Grid.Triggers>
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" IsVisible="{Binding ShowWarningIcon}">
                             <Label Grid.Column="0"
                                    Text="⚠"
                                    TextColor="Orange"
