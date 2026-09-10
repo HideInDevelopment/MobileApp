@@ -1,6 +1,7 @@
 using Anthropometry.App.Common;
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Features.Profiles;
+using Anthropometry.App.Localization;
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Measurements;
@@ -37,6 +38,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<IMeasurementRepository, SqliteMeasurementRepository>();
         builder.Services.AddSingleton<ICalculationResultRepository, SqliteCalculationResultRepository>();
         builder.Services.AddSingleton<IClock, SystemClock>();
+        builder.Services.AddSingleton<ILanguagePreferenceStore, PreferencesLanguagePreferenceStore>();
+        builder.Services.AddSingleton<LanguageService>();
 
         builder.Services.AddSingleton<UsNavyMaleBodyFatFormula>();
         builder.Services.AddSingleton<MifflinStJeorMaleBmrFormula>();

@@ -2,14 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Measurements.MeasurementHistoryPage"
-             Title="Measurement history">
+             Title="{DynamicResource MeasurementHistory}">
     <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
-        <Label Grid.Row="0" Text="Measurement history" FontSize="28" FontAttributes="Bold" />
+        <Label Grid.Row="0" Text="{DynamicResource MeasurementHistory}" FontSize="28" FontAttributes="Bold" />
         <CollectionView Grid.Row="1" ItemsSource="{Binding Measurements}">
             <CollectionView.EmptyView>
                 <VerticalStackLayout Spacing="12" VerticalOptions="Center">
-                    <Label Text="No measurements yet" FontSize="20" HorizontalOptions="Center" />
-                    <Label Text="Saved measurements and their results stay on this device." HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                    <Label Text="{DynamicResource NoMeasurements}" FontSize="20" HorizontalOptions="Center" />
+                    <Label Text="{DynamicResource SavedMeasurementsLocal}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
@@ -28,14 +28,14 @@
                                    IsVisible="{Binding ShowWarningIcon}"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center"
-                                   SemanticProperties.Description="These results reuse the previous neck and abdomen measurements." />
+                                   SemanticProperties.Description="{DynamicResource ReusedMeasurementsDescription}" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
                                 <Label Text="{Binding DateText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
-                                <Label Text="{Binding Measurement.WeightKg, StringFormat='Weight: {0} kg'}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
-                                <Label Text="{Binding Measurement.HeightCm, StringFormat='Height: {0} cm'}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Text="{Binding WeightText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Text="{Binding HeightText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
                                 <Label Text="{Binding MeasurementTypeText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
                             </VerticalStackLayout>
-                            <Button Grid.Column="2" Text="View results" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                            <Button Grid.Column="2" Text="{DynamicResource ViewResults}" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
                         </Grid>
                     </Border>
                 </DataTemplate>

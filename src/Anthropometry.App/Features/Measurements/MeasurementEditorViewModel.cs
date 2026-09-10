@@ -2,6 +2,7 @@ using System.Globalization;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
+using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -17,6 +18,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private readonly ProfileDto _profile;
     private readonly MeasurementType _measurementType;
     private readonly IMeasurementNavigation _navigation;
+    private readonly LanguageService _languageService;
     private string _weightText = string.Empty;
     private string _neckText = string.Empty;
     private string _abdomenText = string.Empty;
@@ -32,7 +34,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         CalculateTotalDailyEnergyExpenditure calculateTdee,
         ProfileDto profile,
         MeasurementType measurementType,
-        IMeasurementNavigation navigation)
+        IMeasurementNavigation navigation,
+        LanguageService languageService)
     {
         _recordMeasurement = recordMeasurement;
         _calculateBodyFat = calculateBodyFat;
@@ -41,13 +44,18 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _profile = profile;
         _measurementType = measurementType;
         _navigation = navigation;
+        _languageService = languageService;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
     }
 
-    public string Title => _measurementType == MeasurementType.WeightOnly ? "Add weight" : "Add measurements";
+    public string Title => _measurementType == MeasurementType.WeightOnly
+        ? _languageService.Get("AddWeight")
+        : _languageService.Get("AddMeasurements");
 
-    public string SaveButtonText => _measurementType == MeasurementType.WeightOnly ? "Save weight" : "Calculate results";
+    public string SaveButtonText => _measurementType == MeasurementType.WeightOnly
+        ? _languageService.Get("SaveWeight")
+        : _languageService.Get("CalculateResults");
 
     public bool IsExtended => _measurementType == MeasurementType.WeightAndSizes;
 
@@ -117,8 +125,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         if (!CanSave || !TryCreateCommand(out var command))
         {
             ValidationMessage = IsExtended
-                ? "Enter valid weight, neck, and abdomen values."
-                : "Enter a valid weight.";
+                ? _languageService.Get("ValidMeasurementExtended")
+                : _languageService.Get("ValidWeight");
             return;
         }
 
@@ -129,11 +137,11 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             if (!recorded.IsSuccess)
             {
                 ValidationMessage = recorded.Error!.Code.StartsWith("measurement.", StringComparison.Ordinal)
-                    ? "Check the measurement values and try again."
+                    ? _languageService.Get("MeasurementValuesError")
                     : null;
                 ErrorMessage = recorded.Error!.Code == "profile.settings.required"
-                    ? "Complete the profile details before adding a measurement."
-                    : ValidationMessage is null ? "We couldn't save this measurement. Try again." : null;
+                    ? _languageService.Get("CompleteProfileDetails")
+                    : ValidationMessage is null ? _languageService.Get("SaveMeasurementError") : null;
                 return;
             }
 
@@ -142,7 +150,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             var tdee = await _calculateTdee.ExecuteAsync(new CalculateTdeeCommand(_profile.Id, recorded.Value.Id), CancellationToken.None);
             if (!bodyFat.IsSuccess || !bmr.IsSuccess || !tdee.IsSuccess)
             {
-                ErrorMessage = "We couldn't calculate results. Try again.";
+                ErrorMessage = _languageService.Get("CalculationError");
                 return;
             }
 

@@ -32,11 +32,13 @@ public sealed class ResponsiveLayoutTests
                 profile.CreatedAtUtc,
                 profile.UpdatedAtUtc),
             Anthropometry.Domain.Measurements.MeasurementType.WeightOnly,
-            new NavigationSpy());
+            new NavigationSpy(),
+            TestData.LanguageService());
         var profileViewModel = new ProfileListViewModel(
             new Anthropometry.Application.Profiles.GetProfiles(profiles),
             new Anthropometry.Application.Profiles.DeleteProfile(profiles),
-            new ProfileNavigationSpy());
+            new ProfileNavigationSpy(),
+            TestData.LanguageService());
 
         Assert.NotNull(measurementViewModel.SaveCommand);
         Assert.NotNull(measurementViewModel.CancelCommand);
@@ -72,5 +74,7 @@ public sealed class ResponsiveLayoutTests
         public Task CancelAsync() => Task.CompletedTask;
 
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task ShowSettingsAsync() => Task.CompletedTask;
     }
 }

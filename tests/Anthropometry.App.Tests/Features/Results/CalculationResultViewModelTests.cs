@@ -17,7 +17,7 @@ public sealed class CalculationResultViewModelTests
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.BodyFatPercentage, 18.456m, "%", "us-navy-male-body-fat"));
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.BasalMetabolicRate, 1755m, "kcal/day", "mifflin-st-jeor-male-bmr"));
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.TotalDailyEnergyExpenditure, 2720.256m, "kcal/day", "tdee-activity-multiplier"));
-        var viewModel = new CalculationResultViewModel(new GetCalculationResults(repository), measurement.Id, MeasurementType.WeightAndSizes);
+        var viewModel = new CalculationResultViewModel(new GetCalculationResults(repository), measurement.Id, MeasurementType.WeightAndSizes, TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -49,7 +49,7 @@ public sealed class CalculationResultViewModelTests
     public async Task Load_shows_recoverable_error_when_results_cannot_be_read()
     {
         var measurementId = Anthropometry.Domain.Measurements.MeasurementId.New();
-        var viewModel = new CalculationResultViewModel(new GetCalculationResults(new ThrowingCalculationResultRepository()), measurementId, MeasurementType.WeightAndSizes);
+        var viewModel = new CalculationResultViewModel(new GetCalculationResults(new ThrowingCalculationResultRepository()), measurementId, MeasurementType.WeightAndSizes, TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -58,12 +58,33 @@ public sealed class CalculationResultViewModelTests
     }
 
     [Fact]
+    public async Task Load_uses_the_selected_language_for_result_titles()
+    {
+        var profile = TestData.Profile();
+        var measurement = TestData.Measurement(profile.Id);
+        var repository = new FakeCalculationResultRepository();
+        repository.Items.Add(CreateResult(measurement.Id, CalculationType.BodyFatPercentage, 18.456m, "%", "us-navy-male-body-fat"));
+        var languageService = TestData.LanguageService();
+        languageService.SetLanguage("es");
+        var viewModel = new CalculationResultViewModel(
+            new GetCalculationResults(repository),
+            measurement.Id,
+            MeasurementType.WeightAndSizes,
+            languageService);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal("Porcentaje de grasa corporal", Assert.Single(viewModel.Results).Title);
+    }
+
+    [Fact]
     public void Weight_only_results_show_warning()
     {
         var viewModel = new CalculationResultViewModel(
             new GetCalculationResults(new FakeCalculationResultRepository()),
             Anthropometry.Domain.Measurements.MeasurementId.New(),
-            MeasurementType.WeightOnly);
+            MeasurementType.WeightOnly,
+            TestData.LanguageService());
 
         Assert.True(viewModel.ShowWarningIcon);
     }

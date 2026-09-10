@@ -13,7 +13,8 @@ public sealed class ProfileListViewModelTests
         var viewModel = new ProfileListViewModel(
             new GetProfiles(repository),
             new DeleteProfile(repository),
-            new NavigationSpy());
+            new NavigationSpy(),
+            TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -33,7 +34,8 @@ public sealed class ProfileListViewModelTests
         var viewModel = new ProfileListViewModel(
             new GetProfiles(repository),
             new DeleteProfile(repository),
-            new NavigationSpy());
+            new NavigationSpy(),
+            TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -51,7 +53,7 @@ public sealed class ProfileListViewModelTests
         var profile = TestData.Profile();
         repository.Items.Add(profile);
         var navigation = new NavigationSpy { ConfirmDeleteResult = true };
-        var viewModel = new ProfileListViewModel(new GetProfiles(repository), new DeleteProfile(repository), navigation);
+        var viewModel = new ProfileListViewModel(new GetProfiles(repository), new DeleteProfile(repository), navigation, TestData.LanguageService());
         await viewModel.LoadCommand.ExecuteAsync(null);
 
         await viewModel.DeleteCommand.ExecuteAsync(viewModel.Profiles[0]);
@@ -66,7 +68,8 @@ public sealed class ProfileListViewModelTests
         var viewModel = new ProfileListViewModel(
             new GetProfiles(new ThrowingProfileRepository()),
             new DeleteProfile(new ThrowingProfileRepository()),
-            new NavigationSpy());
+            new NavigationSpy(),
+            TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -86,7 +89,8 @@ public sealed class ProfileListViewModelTests
         var viewModel = new ProfileListViewModel(
             new GetProfiles(repository),
             new DeleteProfile(repository),
-            new NavigationSpy());
+            new NavigationSpy(),
+            TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -95,13 +99,40 @@ public sealed class ProfileListViewModelTests
         Assert.False(viewModel.CreateCommand.CanExecute(null));
     }
 
+    [Fact]
+    public async Task Settings_command_opens_settings()
+    {
+        var navigation = new NavigationSpy();
+        var viewModel = new ProfileListViewModel(
+            new GetProfiles(new FakeProfileRepository()),
+            new DeleteProfile(new FakeProfileRepository()),
+            navigation,
+            TestData.LanguageService());
+
+        viewModel.SettingsCommand.Execute(null);
+
+        await navigation.SettingsTask;
+        Assert.Equal(1, navigation.SettingsCalls);
+    }
+
     private sealed class NavigationSpy : IProfileNavigation
     {
         public bool ConfirmDeleteResult { get; init; }
 
         public Anthropometry.Domain.Profiles.ProfileId? ConfirmedProfileId { get; private set; }
 
+        public int SettingsCalls { get; private set; }
+
+        public Task SettingsTask { get; private set; } = Task.CompletedTask;
+
         public Task CreateProfileAsync() => Task.CompletedTask;
+
+        public Task ShowSettingsAsync()
+        {
+            SettingsCalls++;
+            SettingsTask = Task.CompletedTask;
+            return SettingsTask;
+        }
 
         public Task RenameProfileAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 

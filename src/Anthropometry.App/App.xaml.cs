@@ -1,4 +1,5 @@
 using Anthropometry.Infrastructure.Persistence.Migrations;
+using Anthropometry.App.Localization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anthropometry.App;
@@ -7,12 +8,17 @@ public partial class App : Microsoft.Maui.Controls.Application
 {
     private readonly MigrationRunner _migrationRunner;
     private readonly IServiceProvider _services;
+    private readonly LanguageService _languageService;
 
-    public App(MigrationRunner migrationRunner, IServiceProvider services)
+    public App(MigrationRunner migrationRunner, IServiceProvider services, LanguageService languageService)
     {
         InitializeComponent();
         _migrationRunner = migrationRunner;
         _services = services;
+        _languageService = languageService;
+        _languageService.LanguageChanged += (_, _) => ApplyLocalizedResources();
+        _languageService.Initialize();
+        ApplyLocalizedResources();
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -31,7 +37,7 @@ public partial class App : Microsoft.Maui.Controls.Application
         }
         catch (Exception)
         {
-            var retry = new Button { Text = "Retry", MinimumHeightRequest = 48 };
+            var retry = new Button { Text = _languageService.Get("Retry"), MinimumHeightRequest = 48 };
             retry.Clicked += async (_, _) =>
             {
                 retry.IsEnabled = false;
@@ -40,7 +46,7 @@ public partial class App : Microsoft.Maui.Controls.Application
             };
             window.Page = new ContentPage
             {
-                Title = "Database unavailable",
+                Title = _languageService.Get("DatabaseUnavailableTitle"),
                 Content = new VerticalStackLayout
                 {
                     Padding = 20,
@@ -48,7 +54,7 @@ public partial class App : Microsoft.Maui.Controls.Application
                     VerticalOptions = LayoutOptions.Center,
                     Children =
                     {
-                        new Label { Text = "We couldn't open local storage. Try again.", HorizontalTextAlignment = TextAlignment.Center },
+                        new Label { Text = _languageService.Get("DatabaseUnavailableMessage"), HorizontalTextAlignment = TextAlignment.Center },
                         retry
                     }
                 }
@@ -56,10 +62,18 @@ public partial class App : Microsoft.Maui.Controls.Application
         }
     }
 
-    private static ContentPage CreateLoadingPage()
+    private ContentPage CreateLoadingPage()
         => new ContentPage
         {
-            Title = "Anthropometry",
+            Title = _languageService.Get("AppTitle"),
             Content = new ActivityIndicator { IsRunning = true, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center }
         };
+
+    private void ApplyLocalizedResources()
+    {
+        foreach (var key in LanguageService.ResourceKeys)
+        {
+            Resources[key] = _languageService.Get(key);
+        }
+    }
 }

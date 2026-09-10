@@ -6,22 +6,22 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="12">
             <Label Text="{Binding Title}" FontSize="28" FontAttributes="Bold" />
-            <Label Text="Results are estimates, not medical diagnoses." />
+            <Label Text="{DynamicResource ResultsEstimateDisclaimer}" />
             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" RowSpacing="10" ColumnSpacing="8">
-                <Label Grid.Row="0" Text="Weight" VerticalOptions="Center" />
-                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding WeightText}" Keyboard="Numeric" Placeholder="kg" WidthRequest="150" />
+                <Label Grid.Row="0" Text="{DynamicResource Weight}" VerticalOptions="Center" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding WeightText}" Keyboard="Numeric" Placeholder="{DynamicResource Kg}" WidthRequest="150" />
             </Grid>
             <Grid IsVisible="{Binding IsExtended}" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="8">
-                <Label Grid.Row="0" Text="Neck" VerticalOptions="Center" />
-                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Numeric" Placeholder="cm" WidthRequest="150" />
-                <Label Grid.Row="1" Text="Abdomen" VerticalOptions="Center" />
-                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Numeric" Placeholder="cm" WidthRequest="150" />
+                <Label Grid.Row="0" Text="{DynamicResource Neck}" VerticalOptions="Center" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Numeric" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Label Grid.Row="1" Text="{DynamicResource Abdomen}" VerticalOptions="Center" />
+                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Numeric" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
             </Grid>
             <Label Text="{Binding ValidationMessage}" TextColor="Red" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />
             <ActivityIndicator IsRunning="{Binding IsBusy}" />
             <Button Text="{Binding SaveButtonText}" Command="{Binding SaveCommand}" IsEnabled="{Binding CanSave}" MinimumHeightRequest="48" />
-            <Button Text="Cancel" Command="{Binding CancelCommand}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource Cancel}" Command="{Binding CancelCommand}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

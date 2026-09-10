@@ -1,4 +1,5 @@
 using Anthropometry.Application.Abstractions;
+using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
@@ -50,6 +51,13 @@ public sealed class ThrowingProfileRepository : IProfileRepository
 
 public static class TestData
 {
+    public static LanguageService LanguageService()
+    {
+        var service = new LanguageService(new InMemoryLanguagePreferenceStore());
+        service.Initialize();
+        return service;
+    }
+
     public static Profile Profile(string name = "Manuel")
         => Anthropometry.Domain.Profiles.Profile.Create(
             name,
@@ -61,6 +69,15 @@ public static class TestData
             profileId,
             new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow),
             DateTimeOffset.UtcNow).Value;
+}
+
+internal sealed class InMemoryLanguagePreferenceStore : ILanguagePreferenceStore
+{
+    public string? LanguageCode { get; private set; }
+
+    public string? GetLanguageCode() => LanguageCode;
+
+    public void SetLanguageCode(string code) => LanguageCode = code;
 }
 
 public sealed class FakeMeasurementRepository : IMeasurementRepository

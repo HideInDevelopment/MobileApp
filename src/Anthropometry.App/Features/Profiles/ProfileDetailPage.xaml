@@ -8,11 +8,11 @@
             <Label Text="{Binding Profile.Name}" FontSize="28" FontAttributes="Bold" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />
             <ActivityIndicator IsRunning="{Binding IsLoading}" />
-            <Label Text="Measurements and results are estimates, not medical diagnoses." />
-            <Button Text="Add weight" Command="{Binding AddWeightCommand}" IsEnabled="{Binding CanAddWeight}" MinimumHeightRequest="48" />
-            <Button Text="Add measurements" Command="{Binding AddMeasurementsCommand}" MinimumHeightRequest="48" />
-            <Button Text="Edit profile" Command="{Binding EditCommand}" MinimumHeightRequest="48" />
-            <Button Text="History" Command="{Binding HistoryCommand}" MinimumHeightRequest="48" />
+            <Label Text="{DynamicResource EstimateDisclaimer}" />
+            <Button Text="{DynamicResource AddWeight}" Command="{Binding AddWeightCommand}" IsEnabled="{Binding CanAddWeight}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource AddMeasurements}" Command="{Binding AddMeasurementsCommand}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource EditProfile}" Command="{Binding EditCommand}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource History}" Command="{Binding HistoryCommand}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

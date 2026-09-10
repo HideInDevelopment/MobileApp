@@ -6,21 +6,21 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
             <Label Text="{Binding Title}" FontSize="28" FontAttributes="Bold" />
-            <Label Text="Profile name" />
-            <Entry Text="{Binding Name}" Placeholder="Profile name" ClearButtonVisibility="WhileEditing" />
+            <Label Text="{DynamicResource ProfileName}" />
+            <Entry Text="{Binding Name}" Placeholder="{DynamicResource ProfileName}" ClearButtonVisibility="WhileEditing" />
             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
-                <Label Grid.Row="0" Text="Height" VerticalOptions="Center" />
-                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding HeightText}" Keyboard="Numeric" Placeholder="cm" WidthRequest="150" />
-                <Label Grid.Row="1" Text="Age" VerticalOptions="Center" />
-                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AgeText}" Keyboard="Numeric" Placeholder="years" WidthRequest="150" />
-                <Label Grid.Row="2" Text="Activity level" VerticalOptions="Center" />
+                <Label Grid.Row="0" Text="{DynamicResource Height}" VerticalOptions="Center" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding HeightText}" Keyboard="Numeric" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Label Grid.Row="1" Text="{DynamicResource Age}" VerticalOptions="Center" />
+                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AgeText}" Keyboard="Numeric" Placeholder="{DynamicResource Years}" WidthRequest="150" />
+                <Label Grid.Row="2" Text="{DynamicResource ActivityLevel}" VerticalOptions="Center" />
                 <Picker Grid.Row="2" Grid.Column="1" ItemsSource="{Binding ActivityLevels}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedActivityLevel}" WidthRequest="150" />
             </Grid>
             <Label Text="{Binding ValidationMessage}" TextColor="Red" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />
             <ActivityIndicator IsRunning="{Binding IsBusy}" />
-            <Button Text="Save" Command="{Binding SaveCommand}" MinimumHeightRequest="48" />
-            <Button Text="Cancel" Command="{Binding CancelCommand}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource Save}" Command="{Binding SaveCommand}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource Cancel}" Command="{Binding CancelCommand}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

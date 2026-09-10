@@ -2,14 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Results.CalculationResultPage"
-             Title="Results">
+             Title="{DynamicResource ResultsTitle}">
     <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
         <HorizontalStackLayout Grid.Row="0" Spacing="8">
-            <Label Text="Estimated results" FontSize="28" FontAttributes="Bold" />
+            <Label Text="{DynamicResource EstimatedResults}" FontSize="28" FontAttributes="Bold" />
             <Label Text="⚠"
                    IsVisible="{Binding ShowWarningIcon}"
                    TextColor="Orange"
-                   SemanticProperties.Description="These results reuse the previous neck and abdomen measurements." />
+                   SemanticProperties.Description="{DynamicResource ReusedMeasurementsDescription}" />
         </HorizontalStackLayout>
         <CollectionView Grid.Row="1" ItemsSource="{Binding Results}">
             <CollectionView.ItemTemplate>

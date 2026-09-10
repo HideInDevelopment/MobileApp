@@ -1,6 +1,7 @@
 using System.Globalization;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
+using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,6 +14,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     private readonly UpdateProfile _updateProfile;
     private readonly ProfileDto? _existingProfile;
     private readonly IProfileNavigation _navigation;
+    private readonly LanguageService _languageService;
     private string _name;
     private string _heightText;
     private string _ageText;
@@ -26,22 +28,24 @@ public sealed class ProfileEditorViewModel : ObservableObject
         CreateProfile createProfile,
         UpdateProfile updateProfile,
         ProfileDto? existingProfile,
-        IProfileNavigation navigation)
+        IProfileNavigation navigation,
+        LanguageService languageService)
     {
         _createProfile = createProfile;
         _updateProfile = updateProfile;
         _existingProfile = existingProfile;
         _navigation = navigation;
+        _languageService = languageService;
         _name = existingProfile?.Name ?? string.Empty;
         _heightText = existingProfile?.Settings?.HeightCm.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
         _ageText = existingProfile?.Settings?.AgeYears.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
         ActivityLevels =
         [
-            new(ActivityLevel.Sedentary, "Sedentary"),
-            new(ActivityLevel.Light, "Lightly active"),
-            new(ActivityLevel.Moderate, "Moderately active"),
-            new(ActivityLevel.High, "Highly active"),
-            new(ActivityLevel.VeryHigh, "Very highly active")
+            new(ActivityLevel.Sedentary, _languageService.Get("Sedentary")),
+            new(ActivityLevel.Light, _languageService.Get("LightlyActive")),
+            new(ActivityLevel.Moderate, _languageService.Get("ModeratelyActive")),
+            new(ActivityLevel.High, _languageService.Get("HighlyActive")),
+            new(ActivityLevel.VeryHigh, _languageService.Get("VeryHighlyActive"))
         ];
         _selectedActivityLevel = existingProfile?.Settings is { } settings
             ? ActivityLevels.SingleOrDefault(option => option.Value == settings.ActivityLevel)
@@ -76,7 +80,9 @@ public sealed class ProfileEditorViewModel : ObservableObject
         set => SetProperty(ref _selectedActivityLevel, value);
     }
 
-    public string Title => _existingProfile is null ? "Create profile" : "Edit profile";
+    public string Title => _existingProfile is null
+        ? _languageService.Get("CreateProfileTitle")
+        : _languageService.Get("EditProfileTitle");
 
     public string? ValidationMessage
     {
@@ -112,13 +118,13 @@ public sealed class ProfileEditorViewModel : ObservableObject
         ErrorMessage = null;
         if (string.IsNullOrWhiteSpace(Name))
         {
-            ValidationMessage = "A profile name is required.";
+            ValidationMessage = _languageService.Get("ProfileNameRequired");
             return;
         }
 
         if (!TryCreateSettings(out var settings))
         {
-            ValidationMessage = "Enter a valid height, age, and activity level.";
+            ValidationMessage = _languageService.Get("ValidProfileSettings");
             return;
         }
 
@@ -131,8 +137,8 @@ public sealed class ProfileEditorViewModel : ObservableObject
             if (!result.IsSuccess)
             {
                 ErrorMessage = result.Error!.Code == "profile.limit.reached"
-                    ? "You can create up to 4 profiles."
-                    : "We couldn't save this profile. Try again.";
+                    ? _languageService.Get("ProfileLimitReached")
+                    : _languageService.Get("SaveProfileError");
                 return;
             }
 

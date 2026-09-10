@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
+using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -14,15 +15,21 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     private readonly GetMeasurementHistory _getHistory;
     private readonly ProfileId _profileId;
     private readonly IMeasurementNavigation _navigation;
+    private readonly LanguageService _languageService;
     private readonly ObservableCollection<MeasurementHistoryItem> _measurements = [];
     private bool _isLoading;
     private string? _errorMessage;
 
-    public MeasurementHistoryViewModel(GetMeasurementHistory getHistory, ProfileId profileId, IMeasurementNavigation navigation)
+    public MeasurementHistoryViewModel(
+        GetMeasurementHistory getHistory,
+        ProfileId profileId,
+        IMeasurementNavigation navigation,
+        LanguageService languageService)
     {
         _getHistory = getHistory;
         _profileId = profileId;
         _navigation = navigation;
+        _languageService = languageService;
         Measurements = new ReadOnlyObservableCollection<MeasurementHistoryItem>(_measurements);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SelectCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(SelectAsync);
@@ -69,12 +76,18 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
                     _measurements.Add(new MeasurementHistoryItem(
                         measurement,
                         measurement.MeasuredAtUtc.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture),
-                        measurement.Type == MeasurementType.WeightOnly ? "Weight only" : "Weight and sizes"));
+                        measurement.Type == MeasurementType.WeightOnly
+                            ? _languageService.Get("WeightOnly")
+                            : _languageService.Get("WeightAndSizes"),
+                        string.Format(CultureInfo.CurrentCulture, "{0}: {1} {2}",
+                            _languageService.Get("Weight"), measurement.WeightKg, _languageService.Get("Kg")),
+                        string.Format(CultureInfo.CurrentCulture, "{0}: {1} {2}",
+                            _languageService.Get("Height"), measurement.HeightCm, _languageService.Get("Cm"))));
                 }
             }
             else
             {
-                ErrorMessage = "We couldn't load history. Try again.";
+                ErrorMessage = _languageService.Get("LoadHistoryError");
             }
         }
         finally

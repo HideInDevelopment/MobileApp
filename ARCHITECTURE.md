@@ -420,7 +420,7 @@ Minimum states for each flow:
 - recoverable error;
 - operation completed.
 
-The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow shadow because their results reuse the previous neck and abdomen values. `Settings` and `Help` are visible toolbar placeholders with no behavior in this slice.
+The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow background because their results reuse the previous neck and abdomen values. The toolbar uses icon-only Settings and Help actions; Settings opens a Presentation-only settings screen where English, Spanish, and German can be selected. The selected language is persisted in local MAUI Preferences and restored before the first feature page is created.
 
 The visual style will be minimal and functional:
 
@@ -433,6 +433,8 @@ The visual style will be minimal and functional:
 - suitable touch targets and support for larger text.
 
 The UI will use `Grid`, `VerticalStackLayout`, `ScrollView`, `CollectionView`, and shared styles. Absolute positioning is avoided unless there is a specific visual reason. Screens will be tested at small and large sizes, with the keyboard visible, and in every supported orientation.
+
+Localization resources and the language preference remain in Presentation. ViewModels consume the Presentation language service for derived labels and errors, while XAML uses dynamic resource keys for static copy. Domain and Application do not reference cultures, resource files, MAUI, or Preferences.
 
 ## 10. Dependency injection and configuration
 

@@ -41,6 +41,23 @@ public sealed class MeasurementHistoryViewModelTests
     }
 
     [Fact]
+    public async Task Load_uses_the_selected_language_for_history_labels()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, DateTimeOffset.UtcNow));
+        var languageService = TestData.LanguageService();
+        languageService.SetLanguage("es");
+        var viewModel = CreateViewModel(repository, out _, profile.Id, languageService);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal("Solo peso", viewModel.Measurements[0].MeasurementTypeText);
+        Assert.Equal("Peso: 80 kg", viewModel.Measurements[0].WeightText);
+        Assert.Equal("Altura: 180 cm", viewModel.Measurements[0].HeightText);
+    }
+
+    [Fact]
     public async Task Weight_only_history_item_opens_results()
     {
         var profile = TestData.Profile();
@@ -72,13 +89,18 @@ public sealed class MeasurementHistoryViewModelTests
         Assert.Equal(viewModel.Measurements[0].Measurement.Id, navigation.SelectedMeasurementId);
     }
 
-    private static MeasurementHistoryViewModel CreateViewModel(FakeMeasurementRepository repository, out NavigationSpy navigation, Anthropometry.Domain.Profiles.ProfileId profileId)
+    private static MeasurementHistoryViewModel CreateViewModel(
+        FakeMeasurementRepository repository,
+        out NavigationSpy navigation,
+        Anthropometry.Domain.Profiles.ProfileId profileId,
+        Anthropometry.App.Localization.LanguageService? languageService = null)
     {
         navigation = new NavigationSpy();
         return new MeasurementHistoryViewModel(
             new GetMeasurementHistory(repository),
             profileId,
-            navigation);
+            navigation,
+            languageService ?? TestData.LanguageService());
     }
 
     private static Measurement CreateMeasurement(Anthropometry.Domain.Profiles.ProfileId profileId, MeasurementType type, DateTimeOffset measuredAtUtc)

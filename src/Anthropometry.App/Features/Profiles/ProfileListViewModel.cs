@@ -2,6 +2,7 @@ using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
+using Anthropometry.App.Localization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -12,19 +13,25 @@ public sealed class ProfileListViewModel : ObservableObject
     private readonly GetProfiles _getProfiles;
     private readonly DeleteProfile _deleteProfile;
     private readonly IProfileNavigation _navigation;
+    private readonly LanguageService _languageService;
     private readonly ObservableCollection<ProfileDto> _profiles = [];
     private bool _isLoading;
     private string? _errorMessage;
 
-    public ProfileListViewModel(GetProfiles getProfiles, DeleteProfile deleteProfile, IProfileNavigation navigation)
+    public ProfileListViewModel(
+        GetProfiles getProfiles,
+        DeleteProfile deleteProfile,
+        IProfileNavigation navigation,
+        LanguageService languageService)
     {
         _getProfiles = getProfiles;
         _deleteProfile = deleteProfile;
         _navigation = navigation;
+        _languageService = languageService;
         Profiles = new ReadOnlyObservableCollection<ProfileDto>(_profiles);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         CreateCommand = new AsyncRelayCommand(_navigation.CreateProfileAsync, () => CanAddProfile);
-        SettingsCommand = new RelayCommand(() => { });
+        SettingsCommand = new AsyncRelayCommand(_navigation.ShowSettingsAsync);
         HelpCommand = new RelayCommand(() => { });
         SelectCommand = new AsyncRelayCommand<ProfileDto?>(SelectAsync);
         DeleteCommand = new AsyncRelayCommand<ProfileDto?>(DeleteAsync);
@@ -60,7 +67,7 @@ public sealed class ProfileListViewModel : ObservableObject
 
     public IAsyncRelayCommand CreateCommand { get; }
 
-    public ICommand SettingsCommand { get; }
+    public IAsyncRelayCommand SettingsCommand { get; }
 
     public ICommand HelpCommand { get; }
 
@@ -86,7 +93,7 @@ public sealed class ProfileListViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = "We couldn't load profiles. Try again.";
+                ErrorMessage = _languageService.Get("LoadProfilesError");
             }
             NotifyProfileStateChanged();
         }
@@ -114,7 +121,7 @@ public sealed class ProfileListViewModel : ObservableObject
         var result = await _deleteProfile.ExecuteAsync(profile.Id, CancellationToken.None);
         if (!result.IsSuccess)
         {
-            ErrorMessage = "We couldn't delete this profile. Try again.";
+            ErrorMessage = _languageService.Get("DeleteProfileError");
             return;
         }
 

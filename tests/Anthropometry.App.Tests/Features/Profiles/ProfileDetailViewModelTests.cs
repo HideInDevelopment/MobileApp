@@ -71,7 +71,8 @@ public sealed class ProfileDetailViewModelTests
                 profile.CreatedAtUtc,
                 profile.UpdatedAtUtc),
             new GetMeasurementHistory(repository),
-            new NavigationSpy());
+            new NavigationSpy(),
+            TestData.LanguageService());
 
     private static Measurement CreateMeasurement(Anthropometry.Domain.Profiles.ProfileId profileId, MeasurementType type, DateTimeOffset measuredAtUtc)
         => Measurement.Create(
@@ -98,5 +99,7 @@ public sealed class ProfileDetailViewModelTests
         public Task CancelAsync() => Task.CompletedTask;
 
         public Task ShowHistoryAsync(ProfileDto profile) => Task.CompletedTask;
+
+        public Task ShowSettingsAsync() => Task.CompletedTask;
     }
 }

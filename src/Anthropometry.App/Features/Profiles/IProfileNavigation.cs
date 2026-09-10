@@ -20,4 +20,6 @@ public interface IProfileNavigation
     Task CancelAsync();
 
     Task ShowHistoryAsync(ProfileDto profile);
+
+    Task ShowSettingsAsync();
 }

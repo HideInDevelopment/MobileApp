@@ -696,7 +696,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] Measurement records retain the profile-setting snapshot used at capture time.
 - [x] The profile detail screen does not show a warning icon; weight-only history rows show a centered warning icon before the date with a yellow shadow.
 - [x] History uses friendly measurement labels and `dd/MM/yyyy` dates, and both measurement types expose `View results`.
-- [x] Visible profile actions and labels use friendly copy; `Settings` and `Help` are visible toolbar placeholders with no behavior.
+- [x] Visible profile actions and labels use friendly copy; toolbar Settings and Help actions use accessible gear and question-mark icons.
 
 **Implementation records:**
 
@@ -711,6 +711,34 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] `dotnet test --configuration Release -m:1` — 93 tests passed across Domain, Application, Infrastructure, and App projects.
 - [x] `dotnet build src/Anthropometry.App/Anthropometry.App.csproj -f net10.0-android -c Release -m:1` — Android target built with 0 warnings and 0 errors.
 - [ ] Manual Android acceptance checklist — pending a device/emulator pass.
+
+---
+
+### Post-MVP feature slice: Settings and persisted localization
+
+**Status:** Implemented on `master` in the approved inline execution.
+
+**Review boundary:** The app provides a Presentation-only Settings screen, icon-only toolbar actions, and persisted English, Spanish, and German translations without adding a database migration or external dependency.
+
+**Acceptance criteria:**
+
+- [x] Settings opens from the gear toolbar icon and Help remains available from the question-mark toolbar icon.
+- [x] The Settings screen offers exactly English, Spanish, and German.
+- [x] Selecting a language applies translated visible copy immediately and persists the language code locally.
+- [x] App startup restores the persisted language before the first feature page is created; English is the fallback when no valid preference exists.
+- [x] Existing user-facing labels, buttons, validation messages, activity levels, history labels, and result titles use localized resources.
+- [x] Localization remains in Presentation; Domain and Application stay independent of MAUI and resource storage.
+
+**Implementation records:**
+
+- Design: `docs/superpowers/specs/2026-09-10-settings-localization-design.md`
+- Execution plan: `docs/superpowers/plans/2026-09-10-settings-localization.md`
+
+**Verification on 2026-09-10:**
+
+- [x] `dotnet test Anthropometry.sln -f net10.0 --configuration Release -m:1` — 107 tests passed.
+- [x] `dotnet build src/Anthropometry.App/Anthropometry.App.csproj -f net10.0-android -c Debug -m:1` — 0 warnings and 0 errors.
+- [x] Emulator smoke check with an isolated package — Settings opened, Spanish applied immediately, and Spanish was restored after a cold restart.
 
 ---
 

@@ -160,7 +160,8 @@ public sealed class MeasurementEditorViewModelTests
             new CalculateTotalDailyEnergyExpenditure(measurements, results, catalog, clock),
             profileDto,
             measurementType,
-            navigation ?? new NavigationSpy());
+            navigation ?? new NavigationSpy(),
+            TestData.LanguageService());
     }
 
     private sealed class NavigationSpy : IMeasurementNavigation

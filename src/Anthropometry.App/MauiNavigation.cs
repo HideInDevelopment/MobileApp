@@ -1,6 +1,9 @@
+using System.Globalization;
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Features.Results;
+using Anthropometry.App.Features.Settings;
+using Anthropometry.App.Localization;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
@@ -13,10 +16,12 @@ namespace Anthropometry.App;
 public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 {
     private readonly IServiceProvider _services;
+    private readonly LanguageService _languageService;
 
-    public MauiNavigation(IServiceProvider services)
+    public MauiNavigation(IServiceProvider services, LanguageService languageService)
     {
         _services = services;
+        _languageService = languageService;
     }
 
     public Task CreateProfileAsync()
@@ -25,7 +30,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _services.GetRequiredService<CreateProfile>(),
             _services.GetRequiredService<UpdateProfile>(),
             null,
-            this));
+            this,
+            _languageService));
         return PushAsync(page);
     }
 
@@ -33,7 +39,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         => PushAsync(new ProfileDetailPage(
             profile,
             _services.GetRequiredService<GetMeasurementHistory>(),
-            this));
+            this,
+            _languageService));
 
     public Task RenameProfileAsync(ProfileDto profile)
     {
@@ -41,16 +48,17 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _services.GetRequiredService<CreateProfile>(),
             _services.GetRequiredService<UpdateProfile>(),
             profile,
-            this));
+            this,
+            _languageService));
         return PushAsync(page);
     }
 
     public Task<bool> ConfirmDeleteAsync(ProfileDto profile)
         => Shell.Current.DisplayAlertAsync(
-            "Delete profile",
-            $"Delete {profile.Name} and all of its measurements and results?",
-            "Delete",
-            "Cancel");
+            _languageService.Get("DeleteProfileTitle"),
+            string.Format(CultureInfo.CurrentCulture, _languageService.Get("DeleteProfileMessage"), profile.Name),
+            _languageService.Get("DeleteAction"),
+            _languageService.Get("Cancel"));
 
     public Task CloseEditorAsync(ProfileDto profile) => PopAsync();
 
@@ -63,7 +71,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _services.GetRequiredService<CalculateTotalDailyEnergyExpenditure>(),
             profile,
             type,
-            this));
+            this,
+            _languageService));
         return PushAsync(page);
     }
 
@@ -71,13 +80,19 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         => PushAsync(new MeasurementHistoryPage(new MeasurementHistoryViewModel(
             _services.GetRequiredService<GetMeasurementHistory>(),
             profile.Id,
-            this)));
+            this,
+            _languageService)));
+
+    public Task ShowSettingsAsync()
+        => PushAsync(new SettingsPage(new SettingsViewModel(
+            _services.GetRequiredService<LanguageService>())));
 
     public Task ShowResultsAsync(MeasurementDto measurement)
         => PushAsync(new CalculationResultPage(new CalculationResultViewModel(
             _services.GetRequiredService<GetCalculationResults>(),
             measurement.Id,
-            measurement.Type)));
+            measurement.Type,
+            _languageService)));
 
     public Task CloseMeasurementAsync() => PopAsync();
 

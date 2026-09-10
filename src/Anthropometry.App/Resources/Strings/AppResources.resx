@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppTitle" xml:space="preserve"><value>Anthropometry</value></data>
+  <data name="ProfilesTitle" xml:space="preserve"><value>Profiles</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Settings</value></data>
+  <data name="HelpTitle" xml:space="preserve"><value>Help</value></data>
+  <data name="Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="DatabaseUnavailableTitle" xml:space="preserve"><value>Database unavailable</value></data>
+  <data name="DatabaseUnavailableMessage" xml:space="preserve"><value>We couldn't open local storage. Try again.</value></data>
+  <data name="SettingsLabel" xml:space="preserve"><value>Settings</value></data>
+  <data name="HelpLabel" xml:space="preserve"><value>Help</value></data>
+  <data name="AddProfile" xml:space="preserve"><value>Add profile</value></data>
+  <data name="LoadingProfiles" xml:space="preserve"><value>Loading profiles...</value></data>
+  <data name="NoProfileYet" xml:space="preserve"><value>No profile yet</value></data>
+  <data name="CreateOneToGetStarted" xml:space="preserve"><value>Create one to get started.</value></data>
+  <data name="CreateProfile" xml:space="preserve"><value>Create profile</value></data>
+  <data name="OpenProfile" xml:space="preserve"><value>Open profile</value></data>
+  <data name="DeleteProfile" xml:space="preserve"><value>Delete profile</value></data>
+  <data name="ProfileName" xml:space="preserve"><value>Profile name</value></data>
+  <data name="Height" xml:space="preserve"><value>Height</value></data>
+  <data name="Age" xml:space="preserve"><value>Age</value></data>
+  <data name="ActivityLevel" xml:space="preserve"><value>Activity level</value></data>
+  <data name="Years" xml:space="preserve"><value>years</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="CreateProfileTitle" xml:space="preserve"><value>Create profile</value></data>
+  <data name="EditProfileTitle" xml:space="preserve"><value>Edit profile</value></data>
+  <data name="ProfileNameRequired" xml:space="preserve"><value>A profile name is required.</value></data>
+  <data name="ValidProfileSettings" xml:space="preserve"><value>Enter a valid height, age, and activity level.</value></data>
+  <data name="ProfileLimitReached" xml:space="preserve"><value>You can create up to 4 profiles.</value></data>
+  <data name="SaveProfileError" xml:space="preserve"><value>We couldn't save this profile. Try again.</value></data>
+  <data name="LoadProfilesError" xml:space="preserve"><value>We couldn't load profiles. Try again.</value></data>
+  <data name="DeleteProfileError" xml:space="preserve"><value>We couldn't delete this profile. Try again.</value></data>
+  <data name="ProfileDetailsError" xml:space="preserve"><value>We couldn't load profile details. Try again.</value></data>
+  <data name="AddWeight" xml:space="preserve"><value>Add weight</value></data>
+  <data name="AddMeasurements" xml:space="preserve"><value>Add measurements</value></data>
+  <data name="EditProfile" xml:space="preserve"><value>Edit profile</value></data>
+  <data name="History" xml:space="preserve"><value>History</value></data>
+  <data name="EstimateDisclaimer" xml:space="preserve"><value>Measurements and results are estimates, not medical diagnoses.</value></data>
+  <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Results are estimates, not medical diagnoses.</value></data>
+  <data name="Weight" xml:space="preserve"><value>Weight</value></data>
+  <data name="Neck" xml:space="preserve"><value>Neck</value></data>
+  <data name="Abdomen" xml:space="preserve"><value>Abdomen</value></data>
+  <data name="Kg" xml:space="preserve"><value>kg</value></data>
+  <data name="Cm" xml:space="preserve"><value>cm</value></data>
+  <data name="SaveWeight" xml:space="preserve"><value>Save weight</value></data>
+  <data name="CalculateResults" xml:space="preserve"><value>Calculate results</value></data>
+  <data name="ValidMeasurementExtended" xml:space="preserve"><value>Enter valid weight, neck, and abdomen values.</value></data>
+  <data name="ValidWeight" xml:space="preserve"><value>Enter a valid weight.</value></data>
+  <data name="MeasurementValuesError" xml:space="preserve"><value>Check the measurement values and try again.</value></data>
+  <data name="CompleteProfileDetails" xml:space="preserve"><value>Complete the profile details before adding a measurement.</value></data>
+  <data name="SaveMeasurementError" xml:space="preserve"><value>We couldn't save this measurement. Try again.</value></data>
+  <data name="CalculationError" xml:space="preserve"><value>We couldn't calculate results. Try again.</value></data>
+  <data name="LoadHistoryError" xml:space="preserve"><value>We couldn't load history. Try again.</value></data>
+  <data name="MeasurementHistory" xml:space="preserve"><value>Measurement history</value></data>
+  <data name="NoMeasurements" xml:space="preserve"><value>No measurements yet</value></data>
+  <data name="SavedMeasurementsLocal" xml:space="preserve"><value>Saved measurements and their results stay on this device.</value></data>
+  <data name="ViewResults" xml:space="preserve"><value>View results</value></data>
+  <data name="WeightOnly" xml:space="preserve"><value>Weight only</value></data>
+  <data name="WeightAndSizes" xml:space="preserve"><value>Weight and sizes</value></data>
+  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>These results reuse the previous neck and abdomen measurements.</value></data>
+  <data name="EstimatedResults" xml:space="preserve"><value>Estimated results</value></data>
+  <data name="ResultsTitle" xml:space="preserve"><value>Results</value></data>
+  <data name="BodyFatPercentage" xml:space="preserve"><value>Body Fat Percentage</value></data>
+  <data name="BasalMetabolicRate" xml:space="preserve"><value>Basal Metabolic Rate</value></data>
+  <data name="TotalDailyEnergyExpenditure" xml:space="preserve"><value>Total Daily Energy Expenditure</value></data>
+  <data name="ResultsLoadError" xml:space="preserve"><value>We couldn't load results. Try again.</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Sedentary" xml:space="preserve"><value>Sedentary</value></data>
+  <data name="LightlyActive" xml:space="preserve"><value>Lightly active</value></data>
+  <data name="ModeratelyActive" xml:space="preserve"><value>Moderately active</value></data>
+  <data name="HighlyActive" xml:space="preserve"><value>Highly active</value></data>
+  <data name="VeryHighlyActive" xml:space="preserve"><value>Very highly active</value></data>
+  <data name="DeleteProfileTitle" xml:space="preserve"><value>Delete profile</value></data>
+  <data name="DeleteProfileMessage" xml:space="preserve"><value>Delete {0} and all of its measurements and results?</value></data>
+  <data name="DeleteAction" xml:space="preserve"><value>Delete</value></data>
+</root>

@@ -16,7 +16,8 @@ public sealed class ProfileEditorViewModelTests
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
             null,
-            new NavigationSpy());
+            new NavigationSpy(),
+            TestData.LanguageService());
         viewModel.Name = " ";
 
         await viewModel.SaveCommand.ExecuteAsync(null);
@@ -34,7 +35,8 @@ public sealed class ProfileEditorViewModelTests
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
             null,
-            navigation)
+            navigation,
+            TestData.LanguageService())
         {
             Name = "Manuel",
             HeightText = "180",
@@ -57,7 +59,8 @@ public sealed class ProfileEditorViewModelTests
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
             null,
-            new NavigationSpy())
+            new NavigationSpy(),
+            TestData.LanguageService())
         {
             Name = "Manuel",
             HeightText = "180",
@@ -79,7 +82,8 @@ public sealed class ProfileEditorViewModelTests
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
             null,
-            new NavigationSpy())
+            new NavigationSpy(),
+            TestData.LanguageService())
         {
             Name = "Manuel",
             HeightText = "0",
@@ -103,7 +107,8 @@ public sealed class ProfileEditorViewModelTests
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
             new ProfileDto(profile.Id, profile.Name, new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate), profile.CreatedAtUtc, profile.UpdatedAtUtc),
-            new NavigationSpy())
+            new NavigationSpy(),
+            TestData.LanguageService())
         {
             Name = "Updated",
             HeightText = "181",
@@ -141,6 +146,8 @@ public sealed class ProfileEditorViewModelTests
         public Task CancelAsync() => Task.CompletedTask;
 
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task ShowSettingsAsync() => Task.CompletedTask;
     }
 
 }

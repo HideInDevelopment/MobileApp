@@ -1,5 +1,6 @@
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
+using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,15 +11,21 @@ public sealed class ProfileDetailViewModel : ObservableObject
 {
     private readonly IProfileNavigation _navigation;
     private readonly GetMeasurementHistory _getHistory;
+    private readonly LanguageService _languageService;
     private bool _isLoading;
     private string? _errorMessage;
     private bool _canAddWeight;
 
-    public ProfileDetailViewModel(ProfileDto profile, GetMeasurementHistory getHistory, IProfileNavigation navigation)
+    public ProfileDetailViewModel(
+        ProfileDto profile,
+        GetMeasurementHistory getHistory,
+        IProfileNavigation navigation,
+        LanguageService languageService)
     {
         Profile = profile;
         _getHistory = getHistory;
         _navigation = navigation;
+        _languageService = languageService;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         AddWeightCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightOnly), () => CanAddWeight);
         AddMeasurementsCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightAndSizes));
@@ -76,7 +83,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = "We couldn't load profile details. Try again.";
+                ErrorMessage = _languageService.Get("ProfileDetailsError");
             }
         }
         finally

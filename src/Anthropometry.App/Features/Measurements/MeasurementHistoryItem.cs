@@ -6,7 +6,9 @@ namespace Anthropometry.App.Features.Measurements;
 public sealed record MeasurementHistoryItem(
     MeasurementDto Measurement,
     string DateText,
-    string MeasurementTypeText)
+    string MeasurementTypeText,
+    string WeightText,
+    string HeightText)
 {
     public bool CanViewResults => Measurement.Type is MeasurementType.WeightOnly or MeasurementType.WeightAndSizes;
 

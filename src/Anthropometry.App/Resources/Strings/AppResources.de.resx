@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppTitle" xml:space="preserve"><value>Anthropometrie</value></data>
+  <data name="ProfilesTitle" xml:space="preserve"><value>Profile</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="HelpTitle" xml:space="preserve"><value>Hilfe</value></data>
+  <data name="Retry" xml:space="preserve"><value>Erneut versuchen</value></data>
+  <data name="DatabaseUnavailableTitle" xml:space="preserve"><value>Datenbank nicht verfügbar</value></data>
+  <data name="DatabaseUnavailableMessage" xml:space="preserve"><value>Der lokale Speicher konnte nicht geöffnet werden. Bitte versuche es erneut.</value></data>
+  <data name="SettingsLabel" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="HelpLabel" xml:space="preserve"><value>Hilfe</value></data>
+  <data name="AddProfile" xml:space="preserve"><value>Profil hinzufügen</value></data>
+  <data name="LoadingProfiles" xml:space="preserve"><value>Profile werden geladen...</value></data>
+  <data name="NoProfileYet" xml:space="preserve"><value>Noch kein Profil</value></data>
+  <data name="CreateOneToGetStarted" xml:space="preserve"><value>Erstelle eines, um zu beginnen.</value></data>
+  <data name="CreateProfile" xml:space="preserve"><value>Profil erstellen</value></data>
+  <data name="OpenProfile" xml:space="preserve"><value>Profil öffnen</value></data>
+  <data name="DeleteProfile" xml:space="preserve"><value>Profil löschen</value></data>
+  <data name="ProfileName" xml:space="preserve"><value>Profilname</value></data>
+  <data name="Height" xml:space="preserve"><value>Größe</value></data>
+  <data name="Age" xml:space="preserve"><value>Alter</value></data>
+  <data name="ActivityLevel" xml:space="preserve"><value>Aktivitätsniveau</value></data>
+  <data name="Years" xml:space="preserve"><value>Jahre</value></data>
+  <data name="Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="CreateProfileTitle" xml:space="preserve"><value>Profil erstellen</value></data>
+  <data name="EditProfileTitle" xml:space="preserve"><value>Profil bearbeiten</value></data>
+  <data name="ProfileNameRequired" xml:space="preserve"><value>Ein Profilname ist erforderlich.</value></data>
+  <data name="ValidProfileSettings" xml:space="preserve"><value>Gib eine gültige Größe, ein gültiges Alter und ein Aktivitätsniveau ein.</value></data>
+  <data name="ProfileLimitReached" xml:space="preserve"><value>Du kannst bis zu 4 Profile erstellen.</value></data>
+  <data name="SaveProfileError" xml:space="preserve"><value>Das Profil konnte nicht gespeichert werden. Bitte versuche es erneut.</value></data>
+  <data name="LoadProfilesError" xml:space="preserve"><value>Die Profile konnten nicht geladen werden. Bitte versuche es erneut.</value></data>
+  <data name="DeleteProfileError" xml:space="preserve"><value>Das Profil konnte nicht gelöscht werden. Bitte versuche es erneut.</value></data>
+  <data name="ProfileDetailsError" xml:space="preserve"><value>Die Profildetails konnten nicht geladen werden. Bitte versuche es erneut.</value></data>
+  <data name="AddWeight" xml:space="preserve"><value>Gewicht hinzufügen</value></data>
+  <data name="AddMeasurements" xml:space="preserve"><value>Maße hinzufügen</value></data>
+  <data name="EditProfile" xml:space="preserve"><value>Profil bearbeiten</value></data>
+  <data name="History" xml:space="preserve"><value>Verlauf</value></data>
+  <data name="EstimateDisclaimer" xml:space="preserve"><value>Messungen und Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
+  <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
+  <data name="Weight" xml:space="preserve"><value>Gewicht</value></data>
+  <data name="Neck" xml:space="preserve"><value>Hals</value></data>
+  <data name="Abdomen" xml:space="preserve"><value>Bauch</value></data>
+  <data name="Kg" xml:space="preserve"><value>kg</value></data>
+  <data name="Cm" xml:space="preserve"><value>cm</value></data>
+  <data name="SaveWeight" xml:space="preserve"><value>Gewicht speichern</value></data>
+  <data name="CalculateResults" xml:space="preserve"><value>Ergebnisse berechnen</value></data>
+  <data name="ValidMeasurementExtended" xml:space="preserve"><value>Gib gültige Werte für Gewicht, Hals und Bauch ein.</value></data>
+  <data name="ValidWeight" xml:space="preserve"><value>Gib ein gültiges Gewicht ein.</value></data>
+  <data name="MeasurementValuesError" xml:space="preserve"><value>Überprüfe die Messwerte und versuche es erneut.</value></data>
+  <data name="CompleteProfileDetails" xml:space="preserve"><value>Vervollständige die Profildaten, bevor du eine Messung hinzufügst.</value></data>
+  <data name="SaveMeasurementError" xml:space="preserve"><value>Die Messung konnte nicht gespeichert werden. Bitte versuche es erneut.</value></data>
+  <data name="CalculationError" xml:space="preserve"><value>Die Ergebnisse konnten nicht berechnet werden. Bitte versuche es erneut.</value></data>
+  <data name="LoadHistoryError" xml:space="preserve"><value>Der Verlauf konnte nicht geladen werden. Bitte versuche es erneut.</value></data>
+  <data name="MeasurementHistory" xml:space="preserve"><value>Messverlauf</value></data>
+  <data name="NoMeasurements" xml:space="preserve"><value>Noch keine Messungen</value></data>
+  <data name="SavedMeasurementsLocal" xml:space="preserve"><value>Gespeicherte Messungen und Ergebnisse bleiben auf diesem Gerät.</value></data>
+  <data name="ViewResults" xml:space="preserve"><value>Ergebnisse anzeigen</value></data>
+  <data name="WeightOnly" xml:space="preserve"><value>Nur Gewicht</value></data>
+  <data name="WeightAndSizes" xml:space="preserve"><value>Gewicht und Maße</value></data>
+  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>Diese Ergebnisse verwenden die vorherigen Hals- und Bauchmessungen erneut.</value></data>
+  <data name="EstimatedResults" xml:space="preserve"><value>Geschätzte Ergebnisse</value></data>
+  <data name="ResultsTitle" xml:space="preserve"><value>Ergebnisse</value></data>
+  <data name="BodyFatPercentage" xml:space="preserve"><value>Körperfettanteil</value></data>
+  <data name="BasalMetabolicRate" xml:space="preserve"><value>Grundumsatz</value></data>
+  <data name="TotalDailyEnergyExpenditure" xml:space="preserve"><value>Gesamter täglicher Energieverbrauch</value></data>
+  <data name="ResultsLoadError" xml:space="preserve"><value>Die Ergebnisse konnten nicht geladen werden. Bitte versuche es erneut.</value></data>
+  <data name="Language" xml:space="preserve"><value>Sprache</value></data>
+  <data name="Sedentary" xml:space="preserve"><value>Sitzend</value></data>
+  <data name="LightlyActive" xml:space="preserve"><value>Leicht aktiv</value></data>
+  <data name="ModeratelyActive" xml:space="preserve"><value>Moderat aktiv</value></data>
+  <data name="HighlyActive" xml:space="preserve"><value>Sehr aktiv</value></data>
+  <data name="VeryHighlyActive" xml:space="preserve"><value>Extrem aktiv</value></data>
+  <data name="DeleteProfileTitle" xml:space="preserve"><value>Profil löschen</value></data>
+  <data name="DeleteProfileMessage" xml:space="preserve"><value>{0} und alle zugehörigen Messungen und Ergebnisse löschen?</value></data>
+  <data name="DeleteAction" xml:space="preserve"><value>Löschen</value></data>
+</root>
