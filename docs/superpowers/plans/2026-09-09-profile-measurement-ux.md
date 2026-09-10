@@ -451,11 +451,11 @@ Expected: compilation failures because the editor constructor and navigation con
 
 - [ ] **Step 3: Implement the two editor modes**
 
-For weight-only success, call `RecordMeasurement`, set `IsCompleted`, and call `CloseMeasurementAsync`; do not call any calculation use case. For weight-and-sizes success, call the existing three calculation use cases and then `ShowResultsAsync`. Keep the current recoverable persistence and calculation error translation, but make validation mention the relevant fields instead of “all fields”.
+For weight-only success, call `RecordMeasurement`, set `IsCompleted`, and call `CloseMeasurementAsync`; do not call any calculation use case. For weight-and-sizes success, call the existing three calculation use cases, set `IsCompleted`, and call `CloseMeasurementAsync`; results remain available from History. Keep the current recoverable persistence and calculation error translation, but make validation mention the relevant fields instead of “all fields”.
 
 - [ ] **Step 4: Add profile actions and navigation construction**
 
-Replace `New measurement` with two friendly actions: `Add weight` and `Add measurements`. `MauiNavigation.CreateMeasurementAsync` passes the profile and selected `MeasurementType` to the editor. `CloseMeasurementAsync` pops the editor after a successful weight-only save.
+Replace `New measurement` with two friendly actions: `Add weight` and `Add measurements`. `MauiNavigation.CreateMeasurementAsync` passes the profile and selected `MeasurementType` to the editor. `CloseMeasurementAsync` pops the editor after either successful save.
 
 - [ ] **Step 5: Update XAML and responsive tests**
 

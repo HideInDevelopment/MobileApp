@@ -51,7 +51,7 @@ The UI presents only the fields relevant to the selected method. Height, age, an
 
 ### Results and warning state
 
-Saving a weight-only measurement returns to the profile without navigating to a new results page and without changing any existing calculation result. The profile detail screen shows the current weight and a warning icon when the latest measurement is weight-only. The icon is not shown when the latest measurement is extended or when no measurement exists.
+Saving either measurement type returns to the profile without opening a results page. Weight-only saves do not create or change calculation results; extended saves persist the new calculation results, which remain available from History. The profile detail screen shows a warning icon when the latest measurement is weight-only. The icon is not shown when the latest measurement is extended or when no measurement exists.
 
 The existing results page remains unchanged for extended measurements, including two-decimal values, friendly titles, and units only.
 

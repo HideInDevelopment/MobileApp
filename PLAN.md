@@ -692,6 +692,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] At four profiles, `Add profile` remains visible and is disabled.
 - [x] `Add weight` stores only the new weight and does not create or alter calculation results.
 - [x] `Add measurements` stores weight plus neck and abdomen and runs the existing three calculations.
+- [x] Both measurement save flows return to the profile screen; extended results remain available from History.
 - [x] Measurement records retain the profile-setting snapshot used at capture time.
 - [x] The profile detail screen shows a warning icon when the newest measurement is weight-only.
 - [x] History uses friendly measurement labels and `dd/MM/yyyy` dates, and only extended entries expose `View results`.

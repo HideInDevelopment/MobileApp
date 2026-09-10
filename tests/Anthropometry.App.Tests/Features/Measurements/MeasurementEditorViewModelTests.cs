@@ -60,7 +60,7 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
-    public async Task Weight_and_sizes_save_calculates_three_results()
+    public async Task Weight_and_sizes_save_calculates_three_results_and_returns_to_profile()
     {
         var profile = TestData.Profile();
         var profiles = new FakeProfileRepository();
@@ -79,8 +79,8 @@ public sealed class MeasurementEditorViewModelTests
         Assert.True(viewModel.IsCompleted);
         Assert.Single(measurements.Items);
         Assert.Equal(3, results.Items.Count);
-        Assert.Equal(measurements.Items[0].Id, navigation.SavedMeasurement!.Id);
-        Assert.Equal(0, navigation.CloseCalls);
+        Assert.Null(navigation.SavedMeasurement);
+        Assert.Equal(1, navigation.CloseCalls);
     }
 
     [Fact]

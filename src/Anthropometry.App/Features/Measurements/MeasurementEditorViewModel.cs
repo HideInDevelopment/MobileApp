@@ -154,7 +154,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             }
 
             IsCompleted = true;
-            await _navigation.ShowResultsAsync(recorded.Value);
+            await _navigation.CloseMeasurementAsync();
         }
         finally
         {
