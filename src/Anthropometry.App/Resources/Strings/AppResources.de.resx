@@ -78,4 +78,8 @@
   <data name="DeleteProfileTitle" xml:space="preserve"><value>Profil löschen</value></data>
   <data name="DeleteProfileMessage" xml:space="preserve"><value>{0} und alle zugehörigen Messungen und Ergebnisse löschen?</value></data>
   <data name="DeleteAction" xml:space="preserve"><value>Löschen</value></data>
+  <data name="GenerateSampleData" xml:space="preserve"><value>Beispieldaten generieren</value></data>
+  <data name="SampleDataGenerated" xml:space="preserve"><value>Beispieldaten wurden generiert.</value></data>
+  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Füge zuerst eine Messung mit Nacken- und Bauchumfang hinzu.</value></data>
+  <data name="SampleDataError" xml:space="preserve"><value>Beispieldaten konnten nicht generiert werden. Versuche es erneut.</value></data>
 </root>

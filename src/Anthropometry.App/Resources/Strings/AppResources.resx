@@ -78,4 +78,8 @@
   <data name="DeleteProfileTitle" xml:space="preserve"><value>Delete profile</value></data>
   <data name="DeleteProfileMessage" xml:space="preserve"><value>Delete {0} and all of its measurements and results?</value></data>
   <data name="DeleteAction" xml:space="preserve"><value>Delete</value></data>
+  <data name="GenerateSampleData" xml:space="preserve"><value>Generate sample data</value></data>
+  <data name="SampleDataGenerated" xml:space="preserve"><value>Sample data generated.</value></data>
+  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Add a measurement with neck and abdomen sizes before generating sample data.</value></data>
+  <data name="SampleDataError" xml:space="preserve"><value>We couldn't generate sample data. Try again.</value></data>
 </root>

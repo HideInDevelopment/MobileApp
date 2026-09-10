@@ -78,4 +78,8 @@
   <data name="DeleteProfileTitle" xml:space="preserve"><value>Eliminar perfil</value></data>
   <data name="DeleteProfileMessage" xml:space="preserve"><value>¿Eliminar {0} y todas sus medidas y resultados?</value></data>
   <data name="DeleteAction" xml:space="preserve"><value>Eliminar</value></data>
+  <data name="GenerateSampleData" xml:space="preserve"><value>Generar datos de prueba</value></data>
+  <data name="SampleDataGenerated" xml:space="preserve"><value>Datos de prueba generados.</value></data>
+  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Añade una medición con cuello y abdomen antes de generar datos de prueba.</value></data>
+  <data name="SampleDataError" xml:space="preserve"><value>No se pudieron generar los datos de prueba. Inténtalo de nuevo.</value></data>
 </root>

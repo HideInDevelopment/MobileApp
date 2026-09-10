@@ -9,11 +9,12 @@ public partial class ProfileDetailPage : ContentPage
     public ProfileDetailPage(
         ProfileDto profile,
         GetMeasurementHistory getHistory,
+        GenerateSampleMeasurementHistory generateSampleData,
         IProfileNavigation navigation,
         LanguageService languageService)
     {
         InitializeComponent();
-        BindingContext = new ProfileDetailViewModel(profile, getHistory, navigation, languageService);
+        BindingContext = new ProfileDetailViewModel(profile, getHistory, generateSampleData, navigation, languageService);
     }
 
     protected override async void OnAppearing()

@@ -36,7 +36,8 @@ public sealed class LanguageService
         "WeightAndSizes", "ReusedMeasurementsDescription", "EstimatedResults", "ResultsTitle",
         "BodyFatPercentage", "BasalMetabolicRate", "TotalDailyEnergyExpenditure", "ResultsLoadError",
         "Language", "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",
-        "DeleteProfileTitle", "DeleteProfileMessage", "DeleteAction"
+        "DeleteProfileTitle", "DeleteProfileMessage", "DeleteAction",
+        "GenerateSampleData", "SampleDataGenerated", "SampleDataRequiresMeasurement", "SampleDataError"
     ];
 
     private readonly ILanguagePreferenceStore _preferences;

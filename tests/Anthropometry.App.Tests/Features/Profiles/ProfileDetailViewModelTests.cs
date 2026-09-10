@@ -1,8 +1,12 @@
 using Anthropometry.App.Features.Profiles;
+using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Calculations.BodyFat;
+using Anthropometry.Domain.Calculations.Bmr;
+using Anthropometry.Domain.Calculations.Tdee;
 using Anthropometry.Domain.Measurements;
 using Xunit;
 
@@ -71,8 +75,27 @@ public sealed class ProfileDetailViewModelTests
                 profile.CreatedAtUtc,
                 profile.UpdatedAtUtc),
             new GetMeasurementHistory(repository),
+            CreateGenerator(),
             new NavigationSpy(),
             TestData.LanguageService());
+
+    private static GenerateSampleMeasurementHistory CreateGenerator()
+    {
+        var measurements = new FakeMeasurementRepository();
+        var results = new FakeCalculationResultRepository();
+        var catalog = new FormulaCatalog(
+            new UsNavyMaleBodyFatFormula(),
+            new MifflinStJeorMaleBmrFormula(),
+            new TdeeFormula());
+        var clock = new FakeClock();
+        return new GenerateSampleMeasurementHistory(
+            new FakeProfileRepository(),
+            measurements,
+            new CalculateBodyFat(measurements, results, catalog, clock),
+            new CalculateBasalMetabolicRate(measurements, results, catalog, clock),
+            new CalculateTotalDailyEnergyExpenditure(measurements, results, catalog, clock),
+            clock);
+    }
 
     private static Measurement CreateMeasurement(Anthropometry.Domain.Profiles.ProfileId profileId, MeasurementType type, DateTimeOffset measuredAtUtc)
         => Measurement.Create(
