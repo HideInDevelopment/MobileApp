@@ -35,11 +35,9 @@ public sealed class MeasurementHistoryViewModelTests
         Assert.Equal("08/09/2026", viewModel.Measurements[0].DateText);
         Assert.Equal("Weight only", viewModel.Measurements[0].MeasurementTypeText);
         Assert.True(viewModel.Measurements[0].ShowWarningIcon);
-        Assert.False(viewModel.Measurements[0].ShowStandardLayout);
         Assert.Equal("07/09/2026", viewModel.Measurements[1].DateText);
         Assert.Equal("Weight and sizes", viewModel.Measurements[1].MeasurementTypeText);
         Assert.False(viewModel.Measurements[1].ShowWarningIcon);
-        Assert.True(viewModel.Measurements[1].ShowStandardLayout);
     }
 
     [Fact]

@@ -15,48 +15,27 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Border Padding="12" Margin="0,6" StrokeThickness="1">
-                        <Border.Shadow>
-                            <Shadow Brush="#F2C94C" Offset="0,2" Radius="8" Opacity="0" />
-                        </Border.Shadow>
                         <Border.Triggers>
                             <DataTrigger TargetType="Border" Binding="{Binding ShowWarningIcon}" Value="True">
-                                <Setter Property="Shadow">
-                                    <Setter.Value>
-                                        <Shadow Brush="#F2C94C" Offset="0,2" Radius="8" Opacity="0.75" />
-                                    </Setter.Value>
-                                </Setter>
+                                <Setter Property="BackgroundColor" Value="#FFF2CC" />
                             </DataTrigger>
                         </Border.Triggers>
-                        <Grid>
-                            <Grid ColumnDefinitions="*,Auto">
-                                <Grid.Triggers>
-                                    <DataTrigger TargetType="Grid" Binding="{Binding ShowWarningIcon}" Value="True">
-                                        <Setter Property="IsVisible" Value="False" />
-                                    </DataTrigger>
-                                </Grid.Triggers>
-                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center" HorizontalOptions="Start">
-                                    <Label Text="{Binding DateText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
-                                    <Label Text="{Binding Measurement.WeightKg, StringFormat='Weight: {0} kg'}" HorizontalTextAlignment="Start" />
-                                    <Label Text="{Binding Measurement.HeightCm, StringFormat='Height: {0} cm'}" HorizontalTextAlignment="Start" />
-                                    <Label Text="{Binding MeasurementTypeText}" HorizontalTextAlignment="Start" />
-                                </VerticalStackLayout>
-                                <Button Grid.Column="1" Text="View results" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
-                            </Grid>
-                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" IsVisible="{Binding ShowWarningIcon}">
-                                <Label Grid.Column="0"
-                                       Text="⚠"
-                                       TextColor="Orange"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       SemanticProperties.Description="These results reuse the previous neck and abdomen measurements." />
-                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
-                                    <Label Text="{Binding DateText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
-                                    <Label Text="{Binding Measurement.WeightKg, StringFormat='Weight: {0} kg'}" HorizontalTextAlignment="Start" />
-                                    <Label Text="{Binding Measurement.HeightCm, StringFormat='Height: {0} cm'}" HorizontalTextAlignment="Start" />
-                                    <Label Text="{Binding MeasurementTypeText}" HorizontalTextAlignment="Start" />
-                                </VerticalStackLayout>
-                                <Button Grid.Column="2" Text="View results" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
-                            </Grid>
+                        <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
+                            <Label Grid.Column="0"
+                                   Text="⚠"
+                                   FontSize="36"
+                                   TextColor="Orange"
+                                   IsVisible="{Binding ShowWarningIcon}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   SemanticProperties.Description="These results reuse the previous neck and abdomen measurements." />
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
+                                <Label Text="{Binding DateText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Text="{Binding Measurement.WeightKg, StringFormat='Weight: {0} kg'}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Text="{Binding Measurement.HeightCm, StringFormat='Height: {0} cm'}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Text="{Binding MeasurementTypeText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2" Text="View results" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
                         </Grid>
                     </Border>
                 </DataTemplate>
