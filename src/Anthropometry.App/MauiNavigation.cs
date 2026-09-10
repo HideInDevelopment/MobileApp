@@ -76,7 +76,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     public Task ShowResultsAsync(MeasurementDto measurement)
         => PushAsync(new CalculationResultPage(new CalculationResultViewModel(
             _services.GetRequiredService<GetCalculationResults>(),
-            measurement.Id)));
+            measurement.Id,
+            measurement.Type)));
 
     public Task CloseMeasurementAsync() => PopAsync();
 

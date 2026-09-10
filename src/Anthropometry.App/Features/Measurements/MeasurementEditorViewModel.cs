@@ -137,13 +137,6 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                 return;
             }
 
-            if (!IsExtended)
-            {
-                IsCompleted = true;
-                await _navigation.CloseMeasurementAsync();
-                return;
-            }
-
             var bodyFat = await _calculateBodyFat.ExecuteAsync(new CalculateBodyFatCommand(_profile.Id, recorded.Value.Id), CancellationToken.None);
             var bmr = await _calculateBmr.ExecuteAsync(new CalculateBmrCommand(_profile.Id, recorded.Value.Id), CancellationToken.None);
             var tdee = await _calculateTdee.ExecuteAsync(new CalculateTdeeCommand(_profile.Id, recorded.Value.Id), CancellationToken.None);

@@ -36,7 +36,12 @@ public sealed class CalculateTotalDailyEnergyExpenditure
                 return Result.Failure<CalculationResultDto>(ApplicationErrors.MeasurementNotFound);
             }
 
-            if (measurement.Type != MeasurementType.WeightAndSizes)
+            var sizeSource = await MeasurementCalculationContext.GetSizeSourceAsync(
+                _measurements,
+                command.ProfileId,
+                measurement,
+                cancellationToken);
+            if (sizeSource is null)
             {
                 return Result.Failure<CalculationResultDto>(ApplicationErrors.CalculationUnavailableForMeasurementType);
             }

@@ -4,7 +4,13 @@
              x:Class="Anthropometry.App.Features.Results.CalculationResultPage"
              Title="Results">
     <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
-        <Label Grid.Row="0" Text="Estimated results" FontSize="28" FontAttributes="Bold" />
+        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+            <Label Text="Estimated results" FontSize="28" FontAttributes="Bold" />
+            <Label Text="⚠"
+                   IsVisible="{Binding ShowWarningIcon}"
+                   TextColor="Orange"
+                   SemanticProperties.Description="These results reuse the previous neck and abdomen measurements." />
+        </HorizontalStackLayout>
         <CollectionView Grid.Row="1" ItemsSource="{Binding Results}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>

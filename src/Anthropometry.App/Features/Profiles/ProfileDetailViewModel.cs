@@ -12,7 +12,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
     private readonly GetMeasurementHistory _getHistory;
     private bool _isLoading;
     private string? _errorMessage;
-    private bool _showWarningIcon;
+    private bool _canAddWeight;
 
     public ProfileDetailViewModel(ProfileDto profile, GetMeasurementHistory getHistory, IProfileNavigation navigation)
     {
@@ -20,7 +20,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
         _getHistory = getHistory;
         _navigation = navigation;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
-        AddWeightCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightOnly));
+        AddWeightCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightOnly), () => CanAddWeight);
         AddMeasurementsCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightAndSizes));
         HistoryCommand = new AsyncRelayCommand(() => _navigation.ShowHistoryAsync(Profile));
         EditCommand = new AsyncRelayCommand(() => _navigation.RenameProfileAsync(Profile));
@@ -40,10 +40,16 @@ public sealed class ProfileDetailViewModel : ObservableObject
         private set => SetProperty(ref _errorMessage, value);
     }
 
-    public bool ShowWarningIcon
+    public bool CanAddWeight
     {
-        get => _showWarningIcon;
-        private set => SetProperty(ref _showWarningIcon, value);
+        get => _canAddWeight;
+        private set
+        {
+            if (SetProperty(ref _canAddWeight, value))
+            {
+                AddWeightCommand.NotifyCanExecuteChanged();
+            }
+        }
     }
 
     public IAsyncRelayCommand LoadCommand { get; }
@@ -60,13 +66,13 @@ public sealed class ProfileDetailViewModel : ObservableObject
     {
         IsLoading = true;
         ErrorMessage = null;
-        ShowWarningIcon = false;
+        CanAddWeight = false;
         try
         {
             var result = await _getHistory.ExecuteAsync(Profile.Id, CancellationToken.None);
             if (result.IsSuccess)
             {
-                ShowWarningIcon = result.Value.Count > 0 && result.Value[0].Type == MeasurementType.WeightOnly;
+                CanAddWeight = result.Value.Any(measurement => measurement.Type == MeasurementType.WeightAndSizes);
             }
             else
             {

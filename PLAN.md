@@ -682,7 +682,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 **Status:** Implemented on `master` in the approved inline execution.
 
-**Review boundary:** Profiles persist the settings needed for future measurements, users can choose between weight-only and extended entries, and the UI communicates when the latest profile data has not refreshed size-based results.
+**Review boundary:** Profiles persist the settings needed for future measurements, users can choose between weight-only and extended entries, and weight-only history entries can show recalculated results using the latest earlier size-based measurement.
 
 **Acceptance criteria:**
 
@@ -690,12 +690,12 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] New profiles are limited to four by the Application use case.
 - [x] Zero profiles show only the centered create action; existing profiles show top `Add profile`.
 - [x] At four profiles, `Add profile` remains visible and is disabled.
-- [x] `Add weight` stores only the new weight and does not create or alter calculation results.
+- [x] `Add weight` is disabled until a size-based measurement exists; it stores only the new weight and recalculates results from the latest earlier neck and abdomen sizes.
 - [x] `Add measurements` stores weight plus neck and abdomen and runs the existing three calculations.
 - [x] Both measurement save flows return to the profile screen; extended results remain available from History.
 - [x] Measurement records retain the profile-setting snapshot used at capture time.
-- [x] The profile detail screen shows a warning icon when the newest measurement is weight-only.
-- [x] History uses friendly measurement labels and `dd/MM/yyyy` dates, and only extended entries expose `View results`.
+- [x] The profile detail screen does not show a warning icon; weight-only results show the warning on the results page.
+- [x] History uses friendly measurement labels and `dd/MM/yyyy` dates, and both measurement types expose `View results`.
 - [x] Visible profile actions and labels use friendly copy; `Settings` and `Help` are visible toolbar placeholders with no behavior.
 
 **Implementation records:**

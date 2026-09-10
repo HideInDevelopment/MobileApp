@@ -11,10 +11,10 @@ The MVP currently asks for all measurement inputs on every measurement entry, st
 ## Goals
 
 - Keep profile settings for height, age, and activity level in local SQLite storage.
-- Let users record a new weight without entering sizes or changing historical results.
+- Let users record a new weight without entering sizes while preserving historical results.
 - Keep an extended entry for weight, neck, and abdomen sizes, using the saved profile settings.
 - Preserve historical measurements and calculation results exactly as recorded.
-- Show a warning icon when the latest measurement is weight-only and therefore does not have refreshed size-based results.
+- Show a warning icon with weight-only results because they reuse the latest earlier size measurements.
 - Enforce a maximum of four profiles in the application layer and reflect the limit in the UI with a disabled `Add profile` button.
 - Normalize all user-facing copy and display dates as `dd/MM/yyyy`.
 - Add non-functional `Settings` and `Help` toolbar items.
@@ -42,7 +42,7 @@ Profile settings are the source for new measurement entries. Measurement records
 
 Add an explicit domain measurement type with friendly presentation names:
 
-- `Weight only`: stores the new weight and timestamp. It copies the current profile settings into the measurement snapshot when available, stores no neck or abdomen sizes, and does not create calculation results.
+- `Weight only`: stores the new weight and timestamp. It copies the current profile settings into the measurement snapshot when available, stores no neck or abdomen sizes, and creates results using the latest earlier extended measurement's neck and abdomen values.
 - `Weight and sizes`: stores weight, neck, and abdomen together with the profile setting snapshot. It creates new body-fat, BMR, and TDEE results using the existing formula versions.
 
 An extended entry must contain both neck and abdomen. A partial size entry is rejected with an actionable validation message. Existing measurements are treated as extended measurements because they already contain the size fields.
@@ -51,9 +51,9 @@ The UI presents only the fields relevant to the selected method. Height, age, an
 
 ### Results and warning state
 
-Saving either measurement type returns to the profile without opening a results page. Weight-only saves do not create or change calculation results; extended saves persist the new calculation results, which remain available from History. The profile detail screen shows a warning icon when the latest measurement is weight-only. The icon is not shown when the latest measurement is extended or when no measurement exists.
+Saving either measurement type returns to the profile without opening a results page. Add weight is disabled until an earlier extended measurement exists. Weight-only saves persist new results for the new weight using the earlier neck and abdomen values; extended saves persist results from their entered sizes. Both remain available from History. The profile detail screen does not show a warning icon; the results page shows it for weight-only entries.
 
-The existing results page remains unchanged for extended measurements, including two-decimal values, friendly titles, and units only.
+The results page keeps two-decimal values, friendly titles, and units only. Weight-only results additionally show a warning icon.
 
 ### Profile list behavior
 
@@ -93,7 +93,7 @@ No domain or application code will reference MAUI, Android, XAML, or SQLite.
 ## Verification plan
 
 - Domain tests cover profile settings validation, measurement types, required/absent sizes, units, and historical snapshots.
-- Application tests cover the four-profile limit, profile updates, weight-only persistence, extended persistence, and the fact that weight-only entries create no results.
+- Application tests cover the four-profile limit, profile updates, weight-only persistence, extended persistence, and recalculation from the latest earlier extended measurement.
 - Infrastructure tests cover the migration, nullable size columns, existing-row compatibility, and round-trip mappings.
 - ViewModel tests cover the empty-state/top-action transitions, disabled state at four profiles, both measurement entry modes, warning state, friendly copy, and date formatting.
 - Run the full Release restore, build, and test commands, followed by an Android-specific build because the MAUI UI and Android target change.

@@ -21,6 +21,7 @@ public sealed class MeasurementEditorViewModelTests
         var profiles = new FakeProfileRepository();
         profiles.Items.Add(profile);
         var measurements = new FakeMeasurementRepository();
+        measurements.Items.Add(TestData.Measurement(profile.Id));
         var results = new FakeCalculationResultRepository();
         var navigation = new NavigationSpy();
         var viewModel = CreateViewModel(profile, MeasurementType.WeightOnly, profiles, measurements, results, navigation);
@@ -30,11 +31,12 @@ public sealed class MeasurementEditorViewModelTests
         Assert.True(viewModel.CanSave);
         await viewModel.SaveCommand.ExecuteAsync(null);
 
-        var saved = Assert.Single(measurements.Items);
+        Assert.Equal(2, measurements.Items.Count);
+        var saved = measurements.Items[1];
         Assert.Equal(MeasurementType.WeightOnly, saved.Type);
         Assert.Null(saved.NeckCm);
         Assert.Null(saved.AbdomenCm);
-        Assert.Empty(results.Items);
+        Assert.Equal(3, results.Items.Count);
         Assert.Equal(1, navigation.CloseCalls);
         Assert.Null(navigation.SavedMeasurement);
     }
@@ -84,24 +86,50 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
-    public async Task Weight_only_save_does_not_navigate_to_results()
+    public async Task Weight_only_save_recalculates_results_from_previous_sizes_and_returns_to_profile()
     {
         var profile = TestData.Profile();
         var profiles = new FakeProfileRepository();
         profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var previous = TestData.Measurement(profile.Id);
+        measurements.Items.Add(previous);
+        var results = new FakeCalculationResultRepository();
+        results.Items.Add(CalculationResult.Create(
+            previous.Id,
+            CalculationType.BodyFatPercentage,
+            new CalculationResultValue(18m, "%", "old-body-fat", "1.0"),
+            DateTimeOffset.UtcNow.AddMinutes(-1)).Value);
+        results.Items.Add(CalculationResult.Create(
+            previous.Id,
+            CalculationType.BasalMetabolicRate,
+            new CalculationResultValue(1755m, "kcal/day", "old-bmr", "1.0"),
+            DateTimeOffset.UtcNow.AddMinutes(-1)).Value);
+        results.Items.Add(CalculationResult.Create(
+            previous.Id,
+            CalculationType.TotalDailyEnergyExpenditure,
+            new CalculationResultValue(2720m, "kcal/day", "old-tdee", "1.0"),
+            DateTimeOffset.UtcNow.AddMinutes(-1)).Value);
         var navigation = new NavigationSpy();
         var viewModel = CreateViewModel(
             profile,
             MeasurementType.WeightOnly,
             profiles,
-            new FakeMeasurementRepository(),
-            new FakeCalculationResultRepository(),
+            measurements,
+            results,
             navigation);
 
         viewModel.WeightText = "79";
 
         await viewModel.SaveCommand.ExecuteAsync(null);
 
+        Assert.True(viewModel.IsCompleted);
+        Assert.Equal(2, measurements.Items.Count);
+        Assert.Equal(6, results.Items.Count);
+        Assert.Equal(3, results.Items.Count(result => result.MeasurementId == previous.Id));
+        Assert.Equal(3, results.Items.Count(result => result.MeasurementId == measurements.Items[1].Id));
+        Assert.Equal(1745m, results.Items.Single(result => result.MeasurementId == measurements.Items[1].Id && result.CalculationType == CalculationType.BasalMetabolicRate).Value);
+        Assert.Equal(1745m * 1.55m, results.Items.Single(result => result.MeasurementId == measurements.Items[1].Id && result.CalculationType == CalculationType.TotalDailyEnergyExpenditure).Value);
         Assert.Null(navigation.SavedMeasurement);
         Assert.Equal(1, navigation.CloseCalls);
     }

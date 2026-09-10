@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add persistent profile settings, weight-only and size-based measurement flows, a four-profile limit, normalized UI copy, warning state, date formatting, and placeholder Settings/Help actions without changing historical results.
+**Goal:** Add persistent profile settings, weight-only and size-based measurement flows, a four-profile limit, normalized UI copy, date formatting, and placeholder Settings/Help actions while preserving historical results and supporting recalculated weight-only history entries.
 
-**Architecture:** Extend the existing Domain and Application models, keep profile settings and measurement snapshots behind application-owned ports, and add one explicit SQLite migration. Presentation will call use cases only; weight-only entries will persist a measurement but will not invoke calculation use cases, while extended entries will keep the existing calculation pipeline.
+**Architecture:** Extend the existing Domain and Application models, keep profile settings and measurement snapshots behind application-owned ports, and add one explicit SQLite migration. Presentation will call use cases only; weight-only entries will persist a measurement and invoke the existing calculation use cases using the latest earlier extended sizes, while extended entries will keep the existing calculation pipeline.
 
 **Tech Stack:** C#, .NET 10, .NET MAUI/XAML, CommunityToolkit.Mvvm, sqlite-net-pcl, xUnit, and the existing solution projects.
 
@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - New profiles must store valid height, age, and activity level; legacy profiles may remain incomplete until edited, but the app must never invent personal values.
-- A `WeightOnly` measurement stores the new weight and creates no calculation results.
+- A `WeightOnly` measurement stores the new weight and, after an earlier extended measurement exists, creates results using that measurement's neck and abdomen values.
 - A `WeightAndSizes` measurement requires both neck and abdomen, uses the saved profile settings, and creates the existing versioned results.
 - Historical measurements and calculation results are immutable; editing profile settings must not recalculate them.
 - The maximum number of profiles is four, enforced in `CreateProfile` and represented by a visible but disabled `Add profile` button at the limit.
@@ -276,7 +276,7 @@ Expected: fresh databases start at version 2, version-1 databases upgrade withou
 
 ---
 
-### Task 4: Record profile-backed measurements and block calculation for weight-only entries
+### Task 4: Record profile-backed measurements and reuse prior sizes for weight-only entries
 
 **Files:**
 - Modify: `src/Anthropometry.Application/Common/ApplicationErrors.cs`
@@ -302,11 +302,11 @@ public sealed record RecordMeasurementCommand(
 
 `RecordMeasurement` loads the profile, requires `Profile.Settings` to be complete, creates the `MeasurementInput` from the saved height/age/activity plus command weight/sizes, validates it through Domain, and persists it. The UI cannot supply a different height, age, or activity for a measurement. Add `ApplicationErrors.ProfileSettingsRequired` and `ApplicationErrors.CalculationUnavailableForMeasurementType`.
 
-All three calculation use cases must return `CalculationUnavailableForMeasurementType` when the target measurement is `WeightOnly`. `CalculateBodyFat` must also return a controlled domain failure when either size is missing instead of dereferencing nullable values.
+All three calculation use cases must return `CalculationUnavailableForMeasurementType` when the target measurement is `WeightOnly` and no earlier extended measurement can supply sizes. When one exists, the use cases calculate using the target measurement's weight/profile snapshot and the earlier measurement's neck and abdomen values. `CalculateBodyFat` must also return a controlled domain failure when no usable size source exists instead of dereferencing nullable values.
 
 - [ ] **Step 1: Write failing use-case tests**
 
-Add `RecordMeasurement_weight_only_uses_profile_settings_and_persists_no_sizes`, `RecordMeasurement_extended_uses_profile_settings`, `RecordMeasurement_rejects_incomplete_profile_settings`, `CalculateBodyFat_rejects_weight_only_measurement`, `CalculateBmr_rejects_weight_only_measurement`, and `CalculateTdee_rejects_weight_only_measurement`. For the weight-only test, assert the saved measurement has profile height `180m`, age `35`, moderate activity, null neck/abdomen, and type `WeightOnly`.
+Add `RecordMeasurement_weight_only_uses_profile_settings_and_persists_no_sizes`, `RecordMeasurement_extended_uses_profile_settings`, `RecordMeasurement_rejects_incomplete_profile_settings`, and calculation tests for both rejected weight-only entries without prior sizes and successful weight-only entries using the latest earlier extended measurement. For the weight-only test, assert the saved measurement has profile height `180m`, age `35`, moderate activity, null neck/abdomen, and type `WeightOnly`.
 
 - [ ] **Step 2: Run the focused application tests and verify the failure**
 
@@ -318,11 +318,11 @@ Expected: compilation or assertion failures because the command no longer carrie
 
 - [ ] **Step 3: Implement profile-backed recording and calculation guards**
 
-Keep the existing repository and formula interfaces. Do not create a measurement service or coordinator. The existing three calculation use cases remain the only calculation entry points and simply reject `WeightOnly` before loading formula inputs.
+Keep the existing repository and formula interfaces. Do not create a measurement service or coordinator. The existing three calculation use cases remain the only calculation entry points and resolve an earlier extended measurement when the target is `WeightOnly`.
 
-- [ ] **Step 4: Assert that weight-only recording creates no results**
+- [ ] **Step 4: Assert that weight-only recording recalculates from the latest earlier sizes**
 
-Use the fake repositories to record a weight-only measurement and do not call calculation use cases. Assert `FakeCalculationResultRepository.Items` remains empty; separately seed an older extended result set, record a new weight-only measurement, and assert the older result rows are still present and attached to the older measurement ID.
+Use the fake repositories to record a weight-only measurement after an older extended measurement. Assert that three new result rows are attached to the new measurement and the older result rows remain present and attached to the older measurement ID.
 
 - [ ] **Step 5: Run the full Application tests and commit**
 
@@ -439,7 +439,7 @@ Task ShowResultsAsync(MeasurementDto measurement);
 
 - [ ] **Step 1: Write failing ViewModel tests for both methods**
 
-Add `WeightOnly_save_requires_only_weight`, `WeightOnly_save_persists_and_closes_without_results`, `WeightAndSizes_save_requires_both_sizes`, `WeightAndSizes_save_calculates_three_results`, and `WeightOnly_save_does_not_navigate_to_results`. Assert that the recorded command has `MeasurementType.WeightOnly`, null sizes for the standard flow, and both size values for the extended flow.
+Add `WeightOnly_save_requires_only_weight`, `WeightOnly_save_recalculates_from_previous_sizes`, `WeightAndSizes_save_requires_both_sizes`, `WeightAndSizes_save_calculates_three_results`, and `WeightOnly_save_does_not_navigate_to_results`. Assert that the recorded command has `MeasurementType.WeightOnly`, null sizes for the standard flow, and both size values for the extended flow.
 
 - [ ] **Step 2: Run the focused measurement App tests and verify the failure**
 
@@ -451,7 +451,7 @@ Expected: compilation failures because the editor constructor and navigation con
 
 - [ ] **Step 3: Implement the two editor modes**
 
-For weight-only success, call `RecordMeasurement`, set `IsCompleted`, and call `CloseMeasurementAsync`; do not call any calculation use case. For weight-and-sizes success, call the existing three calculation use cases, set `IsCompleted`, and call `CloseMeasurementAsync`; results remain available from History. Keep the current recoverable persistence and calculation error translation, but make validation mention the relevant fields instead of “all fields”.
+For weight-only success, call `RecordMeasurement`, run the existing three calculation use cases against the new weight and the latest earlier sizes, set `IsCompleted`, and call `CloseMeasurementAsync`. For weight-and-sizes success, call the same three calculation use cases, set `IsCompleted`, and call `CloseMeasurementAsync`; results remain available from History. Keep the current recoverable persistence and calculation error translation, but make validation mention the relevant fields instead of “all fields”.
 
 - [ ] **Step 4: Add profile actions and navigation construction**
 
@@ -495,15 +495,15 @@ public sealed record MeasurementHistoryItem(
     string DateText,
     string MeasurementTypeText)
 {
-    public bool CanViewResults => Measurement.Type == MeasurementType.WeightAndSizes;
+    public bool CanViewResults => Measurement.Type is MeasurementType.WeightOnly or MeasurementType.WeightAndSizes;
 }
 ```
 
-`MeasurementHistoryViewModel.Measurements` becomes a read-only collection of `MeasurementHistoryItem`. `ProfileDetailViewModel` consumes `GetMeasurementHistory`, exposes `LoadCommand`, and exposes `ShowWarningIcon`, which is true when the newest measurement has type `WeightOnly`.
+`MeasurementHistoryViewModel.Measurements` becomes a read-only collection of `MeasurementHistoryItem`; both supported measurement types can open their results. `ProfileDetailViewModel` consumes `GetMeasurementHistory`, exposes `LoadCommand`, and exposes `CanAddWeight`, which is true after any extended measurement exists.
 
 - [ ] **Step 1: Write failing warning and formatting tests**
 
-Create `ProfileDetailViewModelTests` with `Latest_weight_only_measurement_shows_warning`, `Latest_extended_measurement_hides_warning`, and `No_measurement_hides_warning`. Add history assertions that `DateText` equals `08/09/2026` for a UTC timestamp on that date, `MeasurementTypeText` is friendly, and `CanViewResults` is false for weight-only rows.
+Create `ProfileDetailViewModelTests` covering disabled `Add weight` with no extended history and enabled `Add weight` after an extended measurement. Add history assertions that `DateText` equals `08/09/2026` for a UTC timestamp on that date, `MeasurementTypeText` is friendly, and both measurement types can view results.
 
 - [ ] **Step 2: Run the focused App tests and verify the failure**
 
@@ -513,13 +513,13 @@ dotnet test tests/Anthropometry.App.Tests --configuration Release --filter "Full
 
 Expected: compilation failures because the profile detail query, history item, and formatted date do not exist.
 
-- [ ] **Step 3: Implement the profile warning state**
+- [ ] **Step 3: Implement the weight-entry prerequisite and results warning state**
 
-Load history on an explicit `LoadCommand` or the existing page lifecycle hook, keep loading/error state recoverable, and inspect only the newest item. Render a non-interactive warning icon on the profile detail page with an accessibility description; do not add the future advice text yet.
+Load history on an explicit `LoadCommand` or the existing page lifecycle hook, keep loading/error state recoverable, and enable `Add weight` only when an extended measurement exists. Render the warning icon on the results page for weight-only entries with an accessibility description; do not add the future advice text yet.
 
 - [ ] **Step 4: Implement history presentation items**
 
-Format dates using `DateTimeOffset.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture)`. Use friendly labels `Weight only` and `Weight and sizes`. Show `View results` only when `CanViewResults` is true, and keep weight and available sizes readable with units.
+Format dates using `DateTimeOffset.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture)`. Use friendly labels `Weight only` and `Weight and sizes`. Show `View results` for both supported measurement types, and keep weight and available sizes readable with units.
 
 - [ ] **Step 5: Normalize remaining visible copy**
 
@@ -544,7 +544,7 @@ git commit -m "feat: show measurement freshness and friendly history"
 
 - [ ] **Step 1: Update architecture decisions**
 
-Document that profiles persist height, age, and activity; measurements have `WeightOnly` and `WeightAndSizes` types; size fields may be absent only for weight-only measurements; each measurement keeps a profile-setting snapshot; and calculation results are created only for extended measurements. Keep all dates stored as UTC and all personal data local.
+Document that profiles persist height, age, and activity; measurements have `WeightOnly` and `WeightAndSizes` types; size fields may be absent only for weight-only measurements; each measurement keeps a profile-setting snapshot; weight-only results reuse the latest earlier extended sizes; and all dates stay stored as UTC and all personal data local.
 
 - [ ] **Step 2: Update `PLAN.md` acceptance tracking**
 
@@ -552,7 +552,7 @@ Add a clearly labeled post-MVP feature slice with checked acceptance criteria on
 
 - [ ] **Step 3: Write the Android acceptance checklist**
 
-In `docs/testing/profile-measurement-acceptance.md`, list these manual checks: first launch with zero profiles shows only the centered create action; creating profiles 1–3 keeps enabled `Add profile`; profile 4 leaves `Add profile` visible but disabled; profile editing saves height/age/activity; `Add weight` saves one weight and returns without new results; `Add measurements` calculates the three results; a later weight-only entry leaves prior results unchanged and shows the warning icon; history dates display `dd/MM/yyyy`; Settings and Help appear in the top bar and do nothing; reopening the app preserves local data.
+In `docs/testing/profile-measurement-acceptance.md`, list these manual checks: first launch with zero profiles shows only the centered create action; creating profiles 1–3 keeps enabled `Add profile`; profile 4 leaves `Add profile` visible but disabled; profile editing saves height/age/activity; `Add weight` is disabled until an extended measurement exists; `Add measurements` calculates the three results; a later weight-only entry returns to the profile, keeps the profile warning-free, and exposes recalculated results with a warning icon in History; history dates display `dd/MM/yyyy`; Settings and Help appear in the top bar and do nothing; reopening the app preserves local data.
 
 - [ ] **Step 4: Run the complete verification commands**
 
@@ -589,7 +589,7 @@ git commit -m "docs: record profile measurement ux acceptance"
 - Domain validation, profile settings, measurement modes, and immutable snapshots are covered by Task 1.
 - The four-profile rule is covered in Application and Presentation by Tasks 2 and 5.
 - The migration preserves legacy profiles, measurements, and calculation results in Task 3.
-- Weight-only entries create no results and never mutate old results in Task 4 and Task 6.
+- Weight-only entries create new results from the latest earlier sizes and never mutate old results in Task 4 and Task 6.
 - The warning icon, friendly labels, and `dd/MM/yyyy` formatting are covered by Task 7.
 - Settings and Help placeholders and the zero-profile/top-button behavior are covered by Task 5.
 - Android build, full tests, privacy review, architecture documentation, and acceptance criteria are covered by Task 8.

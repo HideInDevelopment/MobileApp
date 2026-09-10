@@ -14,19 +14,23 @@ public sealed class CalculationResultViewModel : ObservableObject
 {
     private readonly GetCalculationResults _getResults;
     private readonly MeasurementId _measurementId;
+    private readonly MeasurementType _measurementType;
     private readonly ObservableCollection<CalculationResultDisplayItem> _results = [];
     private bool _isLoading;
     private string? _errorMessage;
 
-    public CalculationResultViewModel(GetCalculationResults getResults, MeasurementId measurementId)
+    public CalculationResultViewModel(GetCalculationResults getResults, MeasurementId measurementId, MeasurementType measurementType)
     {
         _getResults = getResults;
         _measurementId = measurementId;
+        _measurementType = measurementType;
         Results = new ReadOnlyObservableCollection<CalculationResultDisplayItem>(_results);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
     }
 
     public ReadOnlyObservableCollection<CalculationResultDisplayItem> Results { get; }
+
+    public bool ShowWarningIcon => _measurementType == MeasurementType.WeightOnly;
 
     public bool IsLoading
     {

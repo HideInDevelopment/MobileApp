@@ -179,7 +179,7 @@ Minimum data:
 - `AgeYears`, captured in the measurement so the age used by historical calculations is preserved.
 - `ActivityLevel`, captured in the measurement so later profile edits do not change historical context.
 
-`WeightOnly` records a new weight and timestamp without creating calculation results. `WeightAndSizes` records both sizes and creates the body-fat, BMR, and TDEE results through the existing versioned calculation pipeline. The measurement must preserve the entered values, not only derived results. This allows recalculation, auditing, and adding new formulas later.
+`WeightOnly` records a new weight and timestamp without storing new size values. When an earlier `WeightAndSizes` measurement exists, the application recalculates body-fat, BMR, and TDEE for the new weight using that earlier measurement's neck and abdomen values; the results remain attached to the new measurement. `WeightAndSizes` records both sizes and creates the same three results through the existing versioned calculation pipeline. The measurement must preserve the entered values, not only derived results. This allows recalculation, auditing, and adding new formulas later.
 
 ### 5.3 CalculationResult
 
@@ -420,7 +420,7 @@ Minimum states for each flow:
 - recoverable error;
 - operation completed.
 
-The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen shows a warning icon when its newest measurement is weight-only; the icon is hidden after a size-based measurement or when there is no history. History uses `dd/MM/yyyy` dates and offers results only for size-based measurements. `Settings` and `Help` are visible toolbar placeholders with no behavior in this slice.
+The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only results show a warning icon because they reuse the previous neck and abdomen values. `Settings` and `Help` are visible toolbar placeholders with no behavior in this slice.
 
 The visual style will be minimal and functional:
 

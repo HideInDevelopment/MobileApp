@@ -8,5 +8,5 @@ public sealed record MeasurementHistoryItem(
     string DateText,
     string MeasurementTypeText)
 {
-    public bool CanViewResults => Measurement.Type == MeasurementType.WeightAndSizes;
+    public bool CanViewResults => Measurement.Type is MeasurementType.WeightOnly or MeasurementType.WeightAndSizes;
 }

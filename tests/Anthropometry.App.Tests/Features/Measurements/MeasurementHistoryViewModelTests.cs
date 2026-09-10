@@ -39,7 +39,7 @@ public sealed class MeasurementHistoryViewModelTests
     }
 
     [Fact]
-    public async Task Weight_only_history_item_cannot_view_results()
+    public async Task Weight_only_history_item_opens_results()
     {
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
@@ -49,8 +49,8 @@ public sealed class MeasurementHistoryViewModelTests
         await viewModel.LoadCommand.ExecuteAsync(null);
         await viewModel.SelectCommand.ExecuteAsync(viewModel.Measurements[0]);
 
-        Assert.False(viewModel.Measurements[0].CanViewResults);
-        Assert.Null(navigation.SelectedMeasurementId);
+        Assert.True(viewModel.Measurements[0].CanViewResults);
+        Assert.Equal(viewModel.Measurements[0].Measurement.Id, navigation.SelectedMeasurementId);
     }
 
     [Fact]

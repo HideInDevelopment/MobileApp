@@ -2,6 +2,7 @@ using Anthropometry.App.Features.Results;
 using Anthropometry.Application.Calculations;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Measurements;
 
 namespace Anthropometry.App.Tests.Features.Results;
 
@@ -16,7 +17,7 @@ public sealed class CalculationResultViewModelTests
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.BodyFatPercentage, 18.456m, "%", "us-navy-male-body-fat"));
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.BasalMetabolicRate, 1755m, "kcal/day", "mifflin-st-jeor-male-bmr"));
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.TotalDailyEnergyExpenditure, 2720.256m, "kcal/day", "tdee-activity-multiplier"));
-        var viewModel = new CalculationResultViewModel(new GetCalculationResults(repository), measurement.Id);
+        var viewModel = new CalculationResultViewModel(new GetCalculationResults(repository), measurement.Id, MeasurementType.WeightAndSizes);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -41,18 +42,30 @@ public sealed class CalculationResultViewModelTests
                 Assert.Equal("kcal/day", result.Unit);
             });
         Assert.False(viewModel.IsLoading);
+        Assert.False(viewModel.ShowWarningIcon);
     }
 
     [Fact]
     public async Task Load_shows_recoverable_error_when_results_cannot_be_read()
     {
         var measurementId = Anthropometry.Domain.Measurements.MeasurementId.New();
-        var viewModel = new CalculationResultViewModel(new GetCalculationResults(new ThrowingCalculationResultRepository()), measurementId);
+        var viewModel = new CalculationResultViewModel(new GetCalculationResults(new ThrowingCalculationResultRepository()), measurementId, MeasurementType.WeightAndSizes);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
         Assert.Equal("We couldn't load results. Try again.", viewModel.ErrorMessage);
         Assert.Empty(viewModel.Results);
+    }
+
+    [Fact]
+    public void Weight_only_results_show_warning()
+    {
+        var viewModel = new CalculationResultViewModel(
+            new GetCalculationResults(new FakeCalculationResultRepository()),
+            Anthropometry.Domain.Measurements.MeasurementId.New(),
+            MeasurementType.WeightOnly);
+
+        Assert.True(viewModel.ShowWarningIcon);
     }
 
     private static CalculationResult CreateResult(Anthropometry.Domain.Measurements.MeasurementId measurementId, CalculationType type, decimal value, string unit, string formulaId)

@@ -11,7 +11,7 @@ namespace Anthropometry.App.Tests.Features.Profiles;
 public sealed class ProfileDetailViewModelTests
 {
     [Fact]
-    public async Task Latest_weight_only_measurement_shows_warning()
+    public async Task Weight_only_measurement_does_not_show_profile_warning_and_keeps_add_weight_enabled()
     {
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
@@ -21,11 +21,11 @@ public sealed class ProfileDetailViewModelTests
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
-        Assert.True(viewModel.ShowWarningIcon);
+        Assert.True(viewModel.CanAddWeight);
     }
 
     [Fact]
-    public async Task Latest_extended_measurement_hides_warning()
+    public async Task Extended_measurement_enables_add_weight()
     {
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
@@ -35,18 +35,31 @@ public sealed class ProfileDetailViewModelTests
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
-        Assert.False(viewModel.ShowWarningIcon);
+        Assert.True(viewModel.CanAddWeight);
     }
 
     [Fact]
-    public async Task No_measurements_hides_warning()
+    public async Task No_measurements_disable_add_weight()
     {
         var viewModel = CreateViewModel(TestData.Profile(), new FakeMeasurementRepository());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
-        Assert.False(viewModel.ShowWarningIcon);
+        Assert.False(viewModel.CanAddWeight);
         Assert.Null(viewModel.ErrorMessage);
+    }
+
+    [Fact]
+    public async Task Weight_only_measurement_without_previous_extended_measurement_keeps_add_weight_disabled()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, DateTimeOffset.UtcNow));
+        var viewModel = CreateViewModel(profile, repository);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.False(viewModel.CanAddWeight);
     }
 
     private static ProfileDetailViewModel CreateViewModel(Anthropometry.Domain.Profiles.Profile profile, FakeMeasurementRepository repository)

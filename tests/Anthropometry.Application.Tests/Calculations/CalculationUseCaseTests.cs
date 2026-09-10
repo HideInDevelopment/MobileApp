@@ -89,4 +89,34 @@ public sealed class CalculationUseCaseTests
         Assert.Equal("calculation.measurementType.unavailable", result.Error!.Code);
         Assert.Empty(results.Items);
     }
+
+    [Theory]
+    [InlineData("body-fat")]
+    [InlineData("bmr")]
+    [InlineData("tdee")]
+    public async Task Calculations_use_previous_sizes_for_weight_only_measurements(string calculation)
+    {
+        var profile = TestData.Profile();
+        var previous = TestData.Measurement(profile.Id);
+        var measurement = Measurement.Create(
+            profile.Id,
+            new MeasurementInput(MeasurementType.WeightOnly, 79m, 180m, null, null, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow),
+            DateTimeOffset.UtcNow).Value;
+        var measurements = new FakeMeasurementRepository();
+        measurements.Items.Add(previous);
+        measurements.Items.Add(measurement);
+        var results = new FakeCalculationResultRepository();
+        var catalog = new FormulaCatalog(new UsNavyMaleBodyFatFormula(), new MifflinStJeorMaleBmrFormula(), new TdeeFormula());
+
+        var result = calculation switch
+        {
+            "body-fat" => await new CalculateBodyFat(measurements, results, catalog, new FakeClock()).ExecuteAsync(new CalculateBodyFatCommand(profile.Id, measurement.Id), CancellationToken.None),
+            "bmr" => await new CalculateBasalMetabolicRate(measurements, results, catalog, new FakeClock()).ExecuteAsync(new CalculateBmrCommand(profile.Id, measurement.Id), CancellationToken.None),
+            _ => await new CalculateTotalDailyEnergyExpenditure(measurements, results, catalog, new FakeClock()).ExecuteAsync(new CalculateTdeeCommand(profile.Id, measurement.Id), CancellationToken.None)
+        };
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(measurement.Id, result.Value.MeasurementId);
+        Assert.Single(results.Items);
+    }
 }
