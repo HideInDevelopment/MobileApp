@@ -33,6 +33,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         Measurements = new ReadOnlyObservableCollection<MeasurementHistoryItem>(_measurements);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SelectCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(SelectAsync);
+        ChartsCommand = new AsyncRelayCommand(() => _navigation.ShowChartOptionsAsync(_profileId));
     }
 
     public ReadOnlyObservableCollection<MeasurementHistoryItem> Measurements { get; }
@@ -60,6 +61,8 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     public IAsyncRelayCommand LoadCommand { get; }
 
     public IAsyncRelayCommand<MeasurementHistoryItem?> SelectCommand { get; }
+
+    public IAsyncRelayCommand ChartsCommand { get; }
 
     private async Task LoadAsync()
     {

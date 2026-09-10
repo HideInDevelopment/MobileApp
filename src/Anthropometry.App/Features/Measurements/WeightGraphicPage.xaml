@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Anthropometry.App.Features.Measurements.WeightGraphicPage"
+             Title="{DynamicResource WeightGraphicTitle}">
+    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
+        <Label Grid.Row="0"
+               Text="{DynamicResource WeightGraphicTitle}"
+               FontSize="28"
+               FontAttributes="Bold" />
+
+        <Grid Grid.Row="1">
+            <ScrollView Orientation="Horizontal"
+                        IsVisible="{Binding HasPoints}"
+                        HorizontalScrollBarVisibility="Always">
+                <GraphicsView x:Name="WeightChart"
+                              WidthRequest="{Binding ChartWidth}"
+                              HeightRequest="360"
+                              HorizontalOptions="Start" />
+            </ScrollView>
+
+            <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                                 Spacing="12"
+                                 VerticalOptions="Center">
+                <Label Text="{DynamicResource WeightGraphicNoMeasurements}"
+                       FontSize="20"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>

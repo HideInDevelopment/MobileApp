@@ -84,6 +84,24 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             this,
             _languageService)));
 
+    public async Task ShowChartOptionsAsync(ProfileId profileId)
+    {
+        var weightGraphicLabel = _languageService.Get("WeightGraphic");
+        var selection = await Shell.Current.DisplayActionSheetAsync(
+            _languageService.Get("Charts"),
+            _languageService.Get("Cancel"),
+            null,
+            weightGraphicLabel);
+
+        if (string.Equals(selection, weightGraphicLabel, StringComparison.Ordinal))
+        {
+            await PushAsync(new WeightGraphicPage(new WeightGraphicViewModel(
+                _services.GetRequiredService<GetMeasurementHistory>(),
+                profileId,
+                _languageService)));
+        }
+    }
+
     public Task ShowSettingsAsync()
         => PushAsync(new SettingsPage(new SettingsViewModel(
             _services.GetRequiredService<LanguageService>())));

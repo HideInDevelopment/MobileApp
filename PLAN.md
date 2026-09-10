@@ -763,6 +763,28 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
+### Post-MVP feature slice: Weight graphic
+
+**Status:** Implemented on `master` as an offline Presentation feature.
+
+**Review boundary:** History provides a ruler toolbar action that opens a `Weight graphic` option. The resulting page reuses the existing measurement-history use case and renders every persisted weight as a chronological point connected by a line, without adding a chart package or database changes.
+
+**Acceptance criteria:**
+
+- [x] History exposes an accessible ruler icon and a localized `Weight graphic` menu option.
+- [x] The weight graphic page loads all measurements through `GetMeasurementHistory`.
+- [x] Measurements are ordered oldest to newest on the X axis, with weight values on the Y axis.
+- [x] Every measurement is represented by a point and points are joined by a line.
+- [x] The chart is horizontally scrollable for larger histories and shows localized axis labels.
+- [x] Empty and recoverable-error states are available and localized in English, Spanish, and German.
+
+**Verification:**
+
+- [x] App tests cover chronological point mapping, compact date labels, empty state, load failure translation, and the History chart command.
+- [x] Android Debug build completed with 0 warnings and 0 errors.
+
+---
+
 ### Slice 8: Release verification and handoff
 
 **Review boundary:** The MVP is reproducibly buildable, testable, privacy-reviewed, and ready for a manual Android acceptance pass.

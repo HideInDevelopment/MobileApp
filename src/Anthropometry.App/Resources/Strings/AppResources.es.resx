@@ -82,4 +82,10 @@
   <data name="SampleDataGenerated" xml:space="preserve"><value>Datos de prueba generados.</value></data>
   <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Añade una medición con cuello y abdomen antes de generar datos de prueba.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>No se pudieron generar los datos de prueba. Inténtalo de nuevo.</value></data>
+  <data name="Charts" xml:space="preserve"><value>Gráficos</value></data>
+  <data name="WeightGraphic" xml:space="preserve"><value>Gráfico de peso</value></data>
+  <data name="WeightGraphicTitle" xml:space="preserve"><value>Gráfico de peso</value></data>
+  <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>Aún no hay medidas de peso.</value></data>
+  <data name="WeightGraphicLoadError" xml:space="preserve"><value>No se pudo cargar el gráfico de peso. Inténtalo de nuevo.</value></data>
+  <data name="Date" xml:space="preserve"><value>Fecha</value></data>
 </root>

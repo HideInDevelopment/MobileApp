@@ -82,4 +82,10 @@
   <data name="SampleDataGenerated" xml:space="preserve"><value>Sample data generated.</value></data>
   <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Add a measurement with neck and abdomen sizes before generating sample data.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>We couldn't generate sample data. Try again.</value></data>
+  <data name="Charts" xml:space="preserve"><value>Charts</value></data>
+  <data name="WeightGraphic" xml:space="preserve"><value>Weight graphic</value></data>
+  <data name="WeightGraphicTitle" xml:space="preserve"><value>Weight graphic</value></data>
+  <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>No weight measurements yet.</value></data>
+  <data name="WeightGraphicLoadError" xml:space="preserve"><value>We couldn't load the weight graphic. Try again.</value></data>
+  <data name="Date" xml:space="preserve"><value>Date</value></data>
 </root>

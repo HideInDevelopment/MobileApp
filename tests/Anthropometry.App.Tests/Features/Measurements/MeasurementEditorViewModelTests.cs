@@ -190,6 +190,8 @@ public sealed class MeasurementEditorViewModelTests
             return Task.CompletedTask;
         }
 
+        public Task ShowChartOptionsAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;
+
         public Task CancelAsync() => Task.CompletedTask;
     }
 }

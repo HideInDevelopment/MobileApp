@@ -82,4 +82,10 @@
   <data name="SampleDataGenerated" xml:space="preserve"><value>Beispieldaten wurden generiert.</value></data>
   <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Füge zuerst eine Messung mit Nacken- und Bauchumfang hinzu.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>Beispieldaten konnten nicht generiert werden. Versuche es erneut.</value></data>
+  <data name="Charts" xml:space="preserve"><value>Diagramme</value></data>
+  <data name="WeightGraphic" xml:space="preserve"><value>Gewichtsdiagramm</value></data>
+  <data name="WeightGraphicTitle" xml:space="preserve"><value>Gewichtsdiagramm</value></data>
+  <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>Noch keine Gewichtsmessungen.</value></data>
+  <data name="WeightGraphicLoadError" xml:space="preserve"><value>Das Gewichtsdiagramm konnte nicht geladen werden. Bitte versuche es erneut.</value></data>
+  <data name="Date" xml:space="preserve"><value>Datum</value></data>
 </root>

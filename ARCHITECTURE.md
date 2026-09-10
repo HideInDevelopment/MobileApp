@@ -420,7 +420,7 @@ Minimum states for each flow:
 - recoverable error;
 - operation completed.
 
-The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow background because their results reuse the previous neck and abdomen values. Profile detail also exposes a temporary `Generate sample data` action that creates a deterministic 30-day alternating history from the latest size-based measurement, including persisted calculation results. The toolbar uses icon-only Settings and Help actions; Settings opens a Presentation-only settings screen where English, Spanish, and German can be selected. The selected language is persisted in local MAUI Preferences and restored before the first feature page is created.
+The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow background because their results reuse the previous neck and abdomen values. History also exposes a ruler toolbar action with a `Weight graphic` option; the graphic plots every persisted weight measurement chronologically as points joined by a line. Profile detail also exposes a temporary `Generate sample data` action that creates a deterministic 30-day alternating history from the latest size-based measurement, including persisted calculation results. The toolbar uses icon-only Settings and Help actions; Settings opens a Presentation-only settings screen where English, Spanish, and German can be selected. The selected language is persisted in local MAUI Preferences and restored before the first feature page is created.
 
 The visual style will be minimal and functional:
 
@@ -526,7 +526,7 @@ The design leaves room for these future additions, but they are not part of the 
 - more anthropometric equations;
 - profiles with formula-specific sex or parameters;
 - imperial units;
-- progress charts;
+- additional progress charts beyond the initial weight graphic;
 - CSV or PDF export;
 - local backup;
 - optional synchronization;

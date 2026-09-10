@@ -3,6 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Measurements.MeasurementHistoryPage"
              Title="{DynamicResource MeasurementHistory}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{DynamicResource Charts}"
+                     IconImageSource="ruler.svg"
+                     Command="{Binding ChartsCommand}"
+                     Order="Primary"
+                     SemanticProperties.Description="{DynamicResource Charts}" />
+    </ContentPage.ToolbarItems>
     <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
         <Label Grid.Row="0" Text="{DynamicResource MeasurementHistory}" FontSize="28" FontAttributes="Bold" />
         <CollectionView Grid.Row="1" ItemsSource="{Binding Measurements}">

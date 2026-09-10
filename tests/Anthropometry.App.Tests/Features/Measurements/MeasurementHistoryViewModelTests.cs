@@ -104,6 +104,17 @@ public sealed class MeasurementHistoryViewModelTests
         Assert.Equal(viewModel.Measurements[0].Measurement.Id, navigation.SelectedMeasurementId);
     }
 
+    [Fact]
+    public async Task Charts_command_opens_chart_options_for_the_current_profile()
+    {
+        var profile = TestData.Profile();
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out var navigation, profile.Id);
+
+        await viewModel.ChartsCommand.ExecuteAsync(null);
+
+        Assert.Equal(profile.Id, navigation.ChartOptionsProfileId);
+    }
+
     private static MeasurementHistoryViewModel CreateViewModel(
         FakeMeasurementRepository repository,
         out NavigationSpy navigation,
@@ -130,6 +141,8 @@ public sealed class MeasurementHistoryViewModelTests
     {
         public Anthropometry.Domain.Measurements.MeasurementId? SelectedMeasurementId { get; private set; }
 
+        public Anthropometry.Domain.Profiles.ProfileId? ChartOptionsProfileId { get; private set; }
+
         public Task ShowResultsAsync(Anthropometry.Application.Common.MeasurementDto measurement)
         {
             SelectedMeasurementId = measurement.Id;
@@ -137,6 +150,12 @@ public sealed class MeasurementHistoryViewModelTests
         }
 
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task ShowChartOptionsAsync(Anthropometry.Domain.Profiles.ProfileId profileId)
+        {
+            ChartOptionsProfileId = profileId;
+            return Task.CompletedTask;
+        }
 
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 
