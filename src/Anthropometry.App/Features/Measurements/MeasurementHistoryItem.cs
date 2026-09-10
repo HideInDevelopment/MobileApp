@@ -13,4 +13,6 @@ public sealed record MeasurementHistoryItem(
     public bool CanViewResults => Measurement.Type is MeasurementType.WeightOnly or MeasurementType.WeightAndSizes;
 
     public bool ShowWarningIcon => Measurement.Type == MeasurementType.WeightOnly;
+
+    public string RowBackgroundColor => ShowWarningIcon ? "#FFF2CC" : "Transparent";
 }

@@ -41,6 +41,21 @@ public sealed class MeasurementHistoryViewModelTests
     }
 
     [Fact]
+    public async Task Load_exposes_a_background_color_for_each_history_row()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, new DateTimeOffset(2026, 9, 7, 18, 30, 0, TimeSpan.Zero)));
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, new DateTimeOffset(2026, 9, 8, 8, 15, 0, TimeSpan.Zero)));
+        var viewModel = CreateViewModel(repository, out _, profile.Id);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal("#FFF2CC", viewModel.Measurements[0].RowBackgroundColor);
+        Assert.Equal("Transparent", viewModel.Measurements[1].RowBackgroundColor);
+    }
+
+    [Fact]
     public async Task Load_uses_the_selected_language_for_history_labels()
     {
         var profile = TestData.Profile();
