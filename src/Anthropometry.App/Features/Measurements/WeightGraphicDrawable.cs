@@ -153,7 +153,7 @@ public sealed class WeightGraphicDrawable : IDrawable
         return nearestIndex >= 0 ? _points[nearestIndex] : null;
     }
 
-    private PointF GetPointPosition(int index, float chartWidth, float chartHeight)
+    public PointF GetPointPosition(int index, float chartWidth, float chartHeight)
     {
         var plotBottom = chartHeight - PlotBottomPadding;
         var plotWidth = MathF.Max(1, chartWidth - PlotLeft - PlotRight);

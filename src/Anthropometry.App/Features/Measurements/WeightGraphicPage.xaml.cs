@@ -1,8 +1,11 @@
+using Microsoft.Maui.Graphics;
+
 namespace Anthropometry.App.Features.Measurements;
 
 public partial class WeightGraphicPage : ContentPage
 {
     private readonly WeightGraphicViewModel _viewModel;
+    private WeightGraphicPoint? _selectedPoint;
 
     public WeightGraphicPage(WeightGraphicViewModel viewModel)
     {
@@ -21,6 +24,8 @@ public partial class WeightGraphicPage : ContentPage
             _viewModel.WeightAxisLabel,
             (float)_viewModel.ChartMinimumWeight,
             (float)_viewModel.ChartMaximumWeight);
+        _selectedPoint = null;
+        PositionLegendBubble();
         WeightChart.Invalidate();
     }
 
@@ -31,9 +36,47 @@ public partial class WeightGraphicPage : ContentPage
             return;
         }
 
-        _viewModel.SelectPoint(drawable.FindNearestPoint(
+        _selectedPoint = drawable.FindNearestPoint(
             e.Touches[0],
             (float)WeightChart.Width,
-            (float)WeightChart.Height));
+            (float)WeightChart.Height);
+        _viewModel.SelectPoint(_selectedPoint);
+        PositionLegendBubble();
+    }
+
+    private void OnLegendBubbleSizeChanged(object? sender, EventArgs e)
+    {
+        PositionLegendBubble();
+    }
+
+    private void PositionLegendBubble()
+    {
+        if (_selectedPoint is null || WeightChart.Drawable is not WeightGraphicDrawable drawable)
+        {
+            return;
+        }
+
+        var pointIndex = _viewModel.Points.IndexOf(_selectedPoint);
+        if (pointIndex < 0 || LegendBubble.Width <= 0 || LegendBubble.Height <= 0)
+        {
+            return;
+        }
+
+        var point = drawable.GetPointPosition(
+            pointIndex,
+            (float)WeightChart.Width,
+            (float)WeightChart.Height);
+        var x = point.X - (float)LegendBubble.Width / 2;
+        var y = point.Y - (float)LegendBubble.Height - 12;
+        if (y < 0)
+        {
+            y = point.Y + 12;
+        }
+
+        var maxX = MathF.Max(0, (float)ChartContainer.Width - (float)LegendBubble.Width);
+        var maxY = MathF.Max(0, (float)ChartContainer.Height - (float)LegendBubble.Height);
+        AbsoluteLayout.SetLayoutBounds(
+            LegendBubble,
+            new Rect(Math.Clamp(x, 0, maxX), Math.Clamp(y, 0, maxY), -1, -1));
     }
 }

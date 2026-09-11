@@ -13,33 +13,45 @@
             <ScrollView Orientation="Horizontal"
                         IsVisible="{Binding HasPoints}"
                         HorizontalScrollBarVisibility="Always">
-                <GraphicsView x:Name="WeightChart"
-                              WidthRequest="{Binding ChartWidth}"
-                              HeightRequest="360"
-                              HorizontalOptions="Start"
-                              StartInteraction="OnChartStartInteraction" />
-            </ScrollView>
+                <AbsoluteLayout x:Name="ChartContainer"
+                                WidthRequest="{Binding ChartWidth}"
+                                HeightRequest="360"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start">
+                    <GraphicsView x:Name="WeightChart"
+                                  WidthRequest="{Binding ChartWidth}"
+                                  HeightRequest="360"
+                                  HorizontalOptions="Start"
+                                  StartInteraction="OnChartStartInteraction"
+                                  AbsoluteLayout.LayoutBounds="0,0,1,1"
+                                  AbsoluteLayout.LayoutFlags="All" />
 
-            <Border IsVisible="{Binding IsLegendVisible}"
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
-                    Stroke="{StaticResource Primary}"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 12"
-                    Padding="12,8"
-                    Margin="8,8,8,0"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Start"
-                    ZIndex="1">
-                <Border.Shadow>
-                    <Shadow Brush="Black"
-                            Opacity="0.25"
-                            Radius="10"
-                            Offset="0,4" />
-                </Border.Shadow>
-                <Label Text="{Binding LegendText}"
-                       FontAttributes="Bold"
-                       HorizontalTextAlignment="Center" />
-            </Border>
+                    <Border x:Name="LegendBubble"
+                            IsVisible="{Binding IsLegendVisible}"
+                            BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
+                            Stroke="{StaticResource Primary}"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12,8"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            InputTransparent="True"
+                            AbsoluteLayout.LayoutBounds="0,0,-1,-1"
+                            AbsoluteLayout.LayoutFlags="None"
+                            SizeChanged="OnLegendBubbleSizeChanged"
+                            ZIndex="1">
+                        <Border.Shadow>
+                            <Shadow Brush="Black"
+                                    Opacity="0.25"
+                                    Radius="10"
+                                    Offset="0,4" />
+                        </Border.Shadow>
+                        <Label Text="{Binding LegendText}"
+                               FontAttributes="Bold"
+                               HorizontalTextAlignment="Center" />
+                    </Border>
+                </AbsoluteLayout>
+            </ScrollView>
 
             <VerticalStackLayout IsVisible="{Binding IsEmpty}"
                                  Spacing="12"
