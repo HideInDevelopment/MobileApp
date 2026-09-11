@@ -61,7 +61,39 @@ public sealed class WeightGraphicViewModelTests
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
-        Assert.Equal(552d, viewModel.ChartWidth);
+        Assert.Equal(472d, viewModel.ChartWidth);
+    }
+
+    [Fact]
+    public async Task Selecting_a_point_shows_its_date_and_weight_legend()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, 80.5m, new DateTimeOffset(2026, 9, 6, 8, 0, 0, TimeSpan.Zero)));
+        var viewModel = CreateViewModel(repository, profile.Id);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        viewModel.SelectPoint(viewModel.Points[0]);
+
+        Assert.True(viewModel.IsLegendVisible);
+        Assert.Contains("06/09", viewModel.LegendText);
+        Assert.Contains("80.5", viewModel.LegendText);
+    }
+
+    [Fact]
+    public async Task Selecting_no_point_hides_the_legend()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, 80m, new DateTimeOffset(2026, 9, 6, 8, 0, 0, TimeSpan.Zero)));
+        var viewModel = CreateViewModel(repository, profile.Id);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        viewModel.SelectPoint(viewModel.Points[0]);
+        viewModel.SelectPoint(null);
+
+        Assert.False(viewModel.IsLegendVisible);
+        Assert.Equal(string.Empty, viewModel.LegendText);
     }
 
     [Fact]

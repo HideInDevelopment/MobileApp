@@ -15,7 +15,7 @@ public sealed record WeightGraphicPoint(
 
 public sealed class WeightGraphicViewModel : ObservableObject
 {
-    private const double ChartPointSpacing = 48d;
+    private const double ChartPointSpacing = 40d;
 
     private readonly GetMeasurementHistory _getHistory;
     private readonly ProfileId _profileId;
@@ -23,6 +23,7 @@ public sealed class WeightGraphicViewModel : ObservableObject
     private readonly ObservableCollection<WeightGraphicPoint> _points = [];
     private bool _isLoading;
     private string? _errorMessage;
+    private WeightGraphicPoint? _selectedPoint;
 
     public WeightGraphicViewModel(
         GetMeasurementHistory getHistory,
@@ -43,6 +44,20 @@ public sealed class WeightGraphicViewModel : ObservableObject
     public string DateAxisLabel => _languageService.Get("Date");
 
     public double ChartWidth => Math.Max(360d, Points.Count * ChartPointSpacing + 72d);
+
+    public bool IsLegendVisible => _selectedPoint is not null;
+
+    public string LegendText => _selectedPoint is null
+        ? string.Empty
+        : string.Format(
+            CultureInfo.CurrentCulture,
+            "{0}: {1}{2}{3}: {4} {5}",
+            DateAxisLabel,
+            _selectedPoint.MeasuredAtUtc.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture),
+            Environment.NewLine,
+            WeightAxisLabel,
+            _selectedPoint.WeightKg.ToString("0.##", CultureInfo.CurrentCulture),
+            _languageService.Get("Kg"));
 
     public decimal ChartMinimumWeight => Points.Count == 0 ? 0m : Points.Min(point => point.WeightKg) - 10m;
 
@@ -78,10 +93,23 @@ public sealed class WeightGraphicViewModel : ObservableObject
 
     public IAsyncRelayCommand LoadCommand { get; }
 
+    public void SelectPoint(WeightGraphicPoint? point)
+    {
+        if (EqualityComparer<WeightGraphicPoint?>.Default.Equals(_selectedPoint, point))
+        {
+            return;
+        }
+
+        _selectedPoint = point;
+        OnPropertyChanged(nameof(IsLegendVisible));
+        OnPropertyChanged(nameof(LegendText));
+    }
+
     private async Task LoadAsync()
     {
         IsLoading = true;
         ErrorMessage = null;
+        SelectPoint(null);
         _points.Clear();
 
         try

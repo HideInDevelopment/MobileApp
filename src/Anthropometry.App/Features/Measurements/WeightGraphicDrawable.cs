@@ -6,6 +6,12 @@ namespace Anthropometry.App.Features.Measurements;
 public sealed class WeightGraphicDrawable : IDrawable
 {
     private const int TickCount = 4;
+    private const float PlotLeft = 58;
+    private const float PlotRight = 18;
+    private const float PlotTop = 28;
+    private const float PlotBottomPadding = 64;
+    private const float DateLabelWidth = 40;
+    private const float PointHitRadius = 24;
     private readonly IReadOnlyList<WeightGraphicPoint> _points;
     private readonly string _dateAxisLabel;
     private readonly string _weightAxisLabel;
@@ -33,13 +39,9 @@ public sealed class WeightGraphicDrawable : IDrawable
             return;
         }
 
-        const float left = 58;
-        const float right = 18;
-        const float top = 28;
-        const float bottom = 64;
-        var plotBottom = dirtyRect.Height - bottom;
-        var plotWidth = MathF.Max(1, dirtyRect.Width - left - right);
-        var plotHeight = MathF.Max(1, plotBottom - top);
+        var plotBottom = dirtyRect.Height - PlotBottomPadding;
+        var plotWidth = MathF.Max(1, dirtyRect.Width - PlotLeft - PlotRight);
+        var plotHeight = MathF.Max(1, plotBottom - PlotTop);
         var minWeight = _minimumWeight;
         var weightRange = _maximumWeight - minWeight;
 
@@ -53,13 +55,13 @@ public sealed class WeightGraphicDrawable : IDrawable
         {
             var ratio = (float)tick / TickCount;
             var y = plotBottom - plotHeight * ratio;
-            canvas.DrawLine(left, y, dirtyRect.Width - right, y);
+            canvas.DrawLine(PlotLeft, y, dirtyRect.Width - PlotRight, y);
             var value = minWeight + weightRange * ratio;
             canvas.DrawString(
                 value.ToString("0.#", CultureInfo.CurrentCulture),
                 0,
                 y - 12,
-                left - 8,
+                PlotLeft - 8,
                 24,
                 HorizontalAlignment.Right,
                 VerticalAlignment.Center);
@@ -67,16 +69,15 @@ public sealed class WeightGraphicDrawable : IDrawable
 
         canvas.StrokeColor = Color.FromArgb("#6B7280");
         canvas.StrokeSize = 1.5f;
-        canvas.DrawLine(left, top, left, plotBottom);
-        canvas.DrawLine(left, plotBottom, dirtyRect.Width - right, plotBottom);
+        canvas.DrawLine(PlotLeft, PlotTop, PlotLeft, plotBottom);
+        canvas.DrawLine(PlotLeft, plotBottom, dirtyRect.Width - PlotRight, plotBottom);
 
         var path = new PathF();
         for (var index = 0; index < _points.Count; index++)
         {
-            var x = _points.Count == 1
-                ? left + plotWidth / 2
-                : left + plotWidth * index / (_points.Count - 1);
-            var y = plotBottom - ((float)_points[index].WeightKg - minWeight) / weightRange * plotHeight;
+            var point = GetPointPosition(index, dirtyRect.Width, dirtyRect.Height);
+            var x = point.X;
+            var y = point.Y;
             if (index == 0)
             {
                 path.MoveTo(x, y);
@@ -93,16 +94,15 @@ public sealed class WeightGraphicDrawable : IDrawable
         canvas.FillColor = Color.FromArgb("#512BD4");
         for (var index = 0; index < _points.Count; index++)
         {
-            var x = _points.Count == 1
-                ? left + plotWidth / 2
-                : left + plotWidth * index / (_points.Count - 1);
-            var y = plotBottom - ((float)_points[index].WeightKg - minWeight) / weightRange * plotHeight;
+            var point = GetPointPosition(index, dirtyRect.Width, dirtyRect.Height);
+            var x = point.X;
+            var y = point.Y;
             canvas.FillCircle(x, y, 5);
             canvas.DrawString(
                 _points[index].DateText,
-                x - 32,
+                x - DateLabelWidth / 2,
                 plotBottom + 8,
-                64,
+                DateLabelWidth,
                 20,
                 HorizontalAlignment.Center,
                 VerticalAlignment.Center);
@@ -113,18 +113,55 @@ public sealed class WeightGraphicDrawable : IDrawable
             _weightAxisLabel,
             0,
             0,
-            left,
+            PlotLeft,
             22,
             HorizontalAlignment.Center,
             VerticalAlignment.Center);
         canvas.DrawString(
             _dateAxisLabel,
-            left,
+            PlotLeft,
             dirtyRect.Height - 28,
             plotWidth,
             22,
             HorizontalAlignment.Center,
             VerticalAlignment.Center);
         canvas.RestoreState();
+    }
+
+    public WeightGraphicPoint? FindNearestPoint(PointF touch, float chartWidth, float chartHeight)
+    {
+        if (_points.Count == 0 || chartWidth <= 0 || chartHeight <= 0)
+        {
+            return null;
+        }
+
+        var nearestIndex = -1;
+        var nearestDistanceSquared = PointHitRadius * PointHitRadius;
+        for (var index = 0; index < _points.Count; index++)
+        {
+            var point = GetPointPosition(index, chartWidth, chartHeight);
+            var deltaX = touch.X - point.X;
+            var deltaY = touch.Y - point.Y;
+            var distanceSquared = deltaX * deltaX + deltaY * deltaY;
+            if (distanceSquared <= nearestDistanceSquared)
+            {
+                nearestDistanceSquared = distanceSquared;
+                nearestIndex = index;
+            }
+        }
+
+        return nearestIndex >= 0 ? _points[nearestIndex] : null;
+    }
+
+    private PointF GetPointPosition(int index, float chartWidth, float chartHeight)
+    {
+        var plotBottom = chartHeight - PlotBottomPadding;
+        var plotWidth = MathF.Max(1, chartWidth - PlotLeft - PlotRight);
+        var plotHeight = MathF.Max(1, plotBottom - PlotTop);
+        var x = _points.Count == 1
+            ? PlotLeft + plotWidth / 2
+            : PlotLeft + plotWidth * index / (_points.Count - 1);
+        var y = plotBottom - ((float)_points[index].WeightKg - _minimumWeight) / (_maximumWeight - _minimumWeight) * plotHeight;
+        return new PointF(x, y);
     }
 }

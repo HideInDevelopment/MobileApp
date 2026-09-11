@@ -776,6 +776,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] Measurements are ordered oldest to newest on the X axis, with weight values on the Y axis.
 - [x] Every measurement is represented by a point and points are joined by a line.
 - [x] The chart uses compact point spacing, remains horizontally scrollable for larger histories, pads the Y axis by 10 kg below the minimum and above the maximum, and shows localized axis labels.
+- [x] Tapping near a point shows its localized date and weight legend; tapping elsewhere in the chart clears the legend.
 - [x] Empty and recoverable-error states are available and localized in English, Spanish, and German.
 
 **Verification:**

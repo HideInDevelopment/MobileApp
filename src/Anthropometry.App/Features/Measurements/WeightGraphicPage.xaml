@@ -16,8 +16,23 @@
                 <GraphicsView x:Name="WeightChart"
                               WidthRequest="{Binding ChartWidth}"
                               HeightRequest="360"
-                              HorizontalOptions="Start" />
+                              HorizontalOptions="Start"
+                              StartInteraction="OnChartStartInteraction" />
             </ScrollView>
+
+            <Border IsVisible="{Binding IsLegendVisible}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
+                    Stroke="{StaticResource Primary}"
+                    StrokeThickness="1"
+                    Padding="12,8"
+                    Margin="8"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    ZIndex="1">
+                <Label Text="{Binding LegendText}"
+                       FontAttributes="Bold"
+                       HorizontalTextAlignment="Center" />
+            </Border>
 
             <VerticalStackLayout IsVisible="{Binding IsEmpty}"
                                  Spacing="12"
