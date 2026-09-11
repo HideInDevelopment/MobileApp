@@ -33,6 +33,38 @@ public sealed class WeightGraphicViewModelTests
     }
 
     [Fact]
+    public async Task Load_adds_ten_kg_to_both_sides_of_the_weight_range()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, 82m, new DateTimeOffset(2026, 9, 8, 8, 0, 0, TimeSpan.Zero)));
+        repository.Items.Add(CreateMeasurement(profile.Id, 80m, new DateTimeOffset(2026, 9, 6, 8, 0, 0, TimeSpan.Zero)));
+        var viewModel = CreateViewModel(repository, profile.Id);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal(70m, viewModel.ChartMinimumWeight);
+        Assert.Equal(92m, viewModel.ChartMaximumWeight);
+    }
+
+    [Fact]
+    public async Task Chart_width_uses_compact_spacing_between_points()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        foreach (var day in Enumerable.Range(0, 10))
+        {
+            var measuredAtUtc = new DateTimeOffset(2026, 9, 1, 8, 0, 0, TimeSpan.Zero).AddDays(day);
+            repository.Items.Add(CreateMeasurement(profile.Id, 80m + day, measuredAtUtc));
+        }
+        var viewModel = CreateViewModel(repository, profile.Id);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal(552d, viewModel.ChartWidth);
+    }
+
+    [Fact]
     public async Task Load_shows_empty_state_when_no_measurements_exist()
     {
         var viewModel = CreateViewModel(new FakeMeasurementRepository(), TestData.Profile().Id);

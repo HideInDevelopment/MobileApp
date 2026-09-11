@@ -15,6 +15,8 @@ public sealed record WeightGraphicPoint(
 
 public sealed class WeightGraphicViewModel : ObservableObject
 {
+    private const double ChartPointSpacing = 48d;
+
     private readonly GetMeasurementHistory _getHistory;
     private readonly ProfileId _profileId;
     private readonly LanguageService _languageService;
@@ -40,7 +42,11 @@ public sealed class WeightGraphicViewModel : ObservableObject
 
     public string DateAxisLabel => _languageService.Get("Date");
 
-    public double ChartWidth => Math.Max(360d, Points.Count * 64d + 72d);
+    public double ChartWidth => Math.Max(360d, Points.Count * ChartPointSpacing + 72d);
+
+    public decimal ChartMinimumWeight => Points.Count == 0 ? 0m : Points.Min(point => point.WeightKg) - 10m;
+
+    public decimal ChartMaximumWeight => Points.Count == 0 ? 0m : Points.Max(point => point.WeightKg) + 10m;
 
     public bool HasPoints => Points.Count > 0;
 
@@ -101,6 +107,8 @@ public sealed class WeightGraphicViewModel : ObservableObject
             IsLoading = false;
             OnPropertyChanged(nameof(HasPoints));
             OnPropertyChanged(nameof(ChartWidth));
+            OnPropertyChanged(nameof(ChartMinimumWeight));
+            OnPropertyChanged(nameof(ChartMaximumWeight));
             OnPropertyChanged(nameof(IsEmpty));
         }
     }

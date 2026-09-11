@@ -9,15 +9,21 @@ public sealed class WeightGraphicDrawable : IDrawable
     private readonly IReadOnlyList<WeightGraphicPoint> _points;
     private readonly string _dateAxisLabel;
     private readonly string _weightAxisLabel;
+    private readonly float _minimumWeight;
+    private readonly float _maximumWeight;
 
     public WeightGraphicDrawable(
         IReadOnlyList<WeightGraphicPoint> points,
         string dateAxisLabel,
-        string weightAxisLabel)
+        string weightAxisLabel,
+        float minimumWeight,
+        float maximumWeight)
     {
         _points = points;
         _dateAxisLabel = dateAxisLabel;
         _weightAxisLabel = weightAxisLabel;
+        _minimumWeight = minimumWeight;
+        _maximumWeight = maximumWeight;
     }
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -34,15 +40,8 @@ public sealed class WeightGraphicDrawable : IDrawable
         var plotBottom = dirtyRect.Height - bottom;
         var plotWidth = MathF.Max(1, dirtyRect.Width - left - right);
         var plotHeight = MathF.Max(1, plotBottom - top);
-        var minWeight = (float)_points.Min(point => point.WeightKg);
-        var maxWeight = (float)_points.Max(point => point.WeightKg);
-        var weightRange = maxWeight - minWeight;
-        if (weightRange < 1)
-        {
-            weightRange = 1;
-            minWeight -= 0.5f;
-            maxWeight += 0.5f;
-        }
+        var minWeight = _minimumWeight;
+        var weightRange = _maximumWeight - minWeight;
 
         canvas.SaveState();
         canvas.FontColor = Color.FromArgb("#4B5563");

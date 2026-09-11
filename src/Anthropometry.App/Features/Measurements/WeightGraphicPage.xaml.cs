@@ -18,7 +18,9 @@ public partial class WeightGraphicPage : ContentPage
         WeightChart.Drawable = new WeightGraphicDrawable(
             _viewModel.Points,
             _viewModel.DateAxisLabel,
-            _viewModel.WeightAxisLabel);
+            _viewModel.WeightAxisLabel,
+            (float)_viewModel.ChartMinimumWeight,
+            (float)_viewModel.ChartMaximumWeight);
         WeightChart.Invalidate();
     }
 }
