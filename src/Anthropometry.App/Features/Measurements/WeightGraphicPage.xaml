@@ -24,11 +24,18 @@
                     BackgroundColor="{AppThemeBinding Light=White, Dark=Black}"
                     Stroke="{StaticResource Primary}"
                     StrokeThickness="1"
+                    StrokeShape="RoundRectangle 12"
                     Padding="12,8"
-                    Margin="8"
+                    Margin="8,8,8,0"
                     HorizontalOptions="Center"
                     VerticalOptions="Start"
                     ZIndex="1">
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Opacity="0.25"
+                            Radius="10"
+                            Offset="0,4" />
+                </Border.Shadow>
                 <Label Text="{Binding LegendText}"
                        FontAttributes="Bold"
                        HorizontalTextAlignment="Center" />
