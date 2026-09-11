@@ -13,9 +13,9 @@
             </Grid>
             <Grid IsVisible="{Binding IsExtended}" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Neck}" VerticalOptions="Center" />
-                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Numeric" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Text" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
                 <Label Grid.Row="1" Text="{DynamicResource Abdomen}" VerticalOptions="Center" />
-                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Numeric" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Text" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
             </Grid>
             <Label Text="{Binding ValidationMessage}" TextColor="Red" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />

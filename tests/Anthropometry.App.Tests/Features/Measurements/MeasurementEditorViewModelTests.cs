@@ -88,6 +88,27 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
+    public async Task Weight_and_sizes_save_preserves_decimal_sizes()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var results = new FakeCalculationResultRepository();
+        var viewModel = CreateViewModel(profile, MeasurementType.WeightAndSizes, profiles, measurements, results);
+
+        viewModel.WeightText = "80";
+        viewModel.NeckText = "40.5";
+        viewModel.AbdomenText = "90.25";
+
+        Assert.True(viewModel.CanSave);
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(40.5m, measurements.Items[0].NeckCm);
+        Assert.Equal(90.25m, measurements.Items[0].AbdomenCm);
+    }
+
+    [Fact]
     public async Task Weight_only_save_recalculates_results_from_previous_sizes_and_returns_to_profile()
     {
         var profile = TestData.Profile();
