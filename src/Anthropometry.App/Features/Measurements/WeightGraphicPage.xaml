@@ -3,13 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Measurements.WeightGraphicPage"
              Title="{DynamicResource WeightGraphicTitle}">
-    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
-        <Label Grid.Row="0"
-               Text="{DynamicResource WeightGraphicTitle}"
-               FontSize="28"
-               FontAttributes="Bold" />
-
-        <Grid Grid.Row="1">
+    <Grid Padding="20" RowDefinitions="*" RowSpacing="16">
+        <Grid Grid.Row="0">
             <ScrollView Orientation="Horizontal"
                         IsVisible="{Binding HasPoints}"
                         HorizontalScrollBarVisibility="Always">

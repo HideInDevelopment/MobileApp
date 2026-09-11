@@ -729,6 +729,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] App startup restores the persisted language before the first feature page is created; English is the fallback when no valid preference exists.
 - [x] Existing user-facing labels, buttons, validation messages, activity levels, history labels, and result titles use localized resources.
 - [x] Localization remains in Presentation; Domain and Application stay independent of MAUI and resource storage.
+- [x] Views do not repeat their navigation title in page content; distinct headings such as `Estimated results` remain.
 
 **Implementation records:**
 

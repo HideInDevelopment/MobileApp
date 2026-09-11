@@ -10,9 +10,8 @@
                      Order="Primary"
                      SemanticProperties.Description="{DynamicResource Charts}" />
     </ContentPage.ToolbarItems>
-    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
-        <Label Grid.Row="0" Text="{DynamicResource MeasurementHistory}" FontSize="28" FontAttributes="Bold" />
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Measurements}">
+    <Grid Padding="20" RowDefinitions="*" RowSpacing="16">
+        <CollectionView Grid.Row="0" ItemsSource="{Binding Measurements}">
             <CollectionView.EmptyView>
                 <VerticalStackLayout Spacing="12" VerticalOptions="Center">
                     <Label Text="{DynamicResource NoMeasurements}" FontSize="20" HorizontalOptions="Center" />
@@ -43,7 +42,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsLoading}" />
-        <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
+        <ActivityIndicator Grid.Row="0" IsRunning="{Binding IsLoading}" />
+        <Label Grid.Row="0" Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
     </Grid>
 </ContentPage>

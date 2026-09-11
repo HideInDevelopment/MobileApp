@@ -5,7 +5,6 @@
              Title="{DynamicResource SettingsTitle}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
-            <Label Text="{DynamicResource SettingsTitle}" FontSize="28" FontAttributes="Bold" />
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <Label Grid.Column="0" Text="{DynamicResource Language}" VerticalOptions="Center" />
                 <Picker Grid.Column="1"

@@ -5,7 +5,6 @@
              Title="{Binding Profile.Name}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
-            <Label Text="{Binding Profile.Name}" FontSize="28" FontAttributes="Bold" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
             <Label Text="{Binding StatusMessage}" TextColor="Green" IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
             <ActivityIndicator IsRunning="{Binding IsLoading}" />
