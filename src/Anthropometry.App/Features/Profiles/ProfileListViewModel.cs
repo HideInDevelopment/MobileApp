@@ -1,4 +1,3 @@
-using System.Windows.Input;
 using System.Collections.ObjectModel;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
@@ -32,7 +31,7 @@ public sealed class ProfileListViewModel : ObservableObject
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         CreateCommand = new AsyncRelayCommand(_navigation.CreateProfileAsync, () => CanAddProfile);
         SettingsCommand = new AsyncRelayCommand(_navigation.ShowSettingsAsync);
-        HelpCommand = new RelayCommand(() => { });
+        HelpCommand = new AsyncRelayCommand(_navigation.ShowHelpAsync);
         SelectCommand = new AsyncRelayCommand<ProfileDto?>(SelectAsync);
         DeleteCommand = new AsyncRelayCommand<ProfileDto?>(DeleteAsync);
     }
@@ -69,7 +68,7 @@ public sealed class ProfileListViewModel : ObservableObject
 
     public IAsyncRelayCommand SettingsCommand { get; }
 
-    public ICommand HelpCommand { get; }
+    public IAsyncRelayCommand HelpCommand { get; }
 
     public IAsyncRelayCommand<ProfileDto?> SelectCommand { get; }
 

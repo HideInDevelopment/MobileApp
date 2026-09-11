@@ -22,4 +22,6 @@ public interface IProfileNavigation
     Task ShowHistoryAsync(ProfileDto profile);
 
     Task ShowSettingsAsync();
+
+    Task ShowHelpAsync();
 }

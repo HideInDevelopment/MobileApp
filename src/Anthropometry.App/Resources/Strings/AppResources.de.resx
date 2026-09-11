@@ -88,4 +88,19 @@
   <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>Noch keine Gewichtsmessungen.</value></data>
   <data name="WeightGraphicLoadError" xml:space="preserve"><value>Das Gewichtsdiagramm konnte nicht geladen werden. Bitte versuche es erneut.</value></data>
   <data name="Date" xml:space="preserve"><value>Datum</value></data>
+  <data name="HelpAboutTitle" xml:space="preserve"><value>Über diese Schätzungen</value></data>
+  <data name="HelpDisclaimer" xml:space="preserve"><value>Dieses Werkzeug liefert persönliche Gesundheitsschätzungen ausschließlich zur Verlaufskontrolle. Es ist keine medizinische Beratung und ersetzt weder eine Diagnose noch die Beratung durch qualifiziertes medizinisches Fachpersonal.</value></data>
+  <data name="HelpMeasurementConsistency" xml:space="preserve"><value>Für besser vergleichbare Ergebnisse solltest du die Messungen unter ähnlichen Bedingungen und immer an denselben Stellen durchführen.</value></data>
+  <data name="HelpEquationsTitle" xml:space="preserve"><value>Verwendete Gleichungen</value></data>
+  <data name="HelpBodyFatTitle" xml:space="preserve"><value>Körperfettanteil — US Navy (männlich), Version 1.0</value></data>
+  <data name="HelpBodyFatDescription" xml:space="preserve"><value>Verwendet Bauchumfang, Halsumfang und Körpergröße. In Zentimetern eingegebene Werte werden vor der Berechnung in Zoll umgerechnet. Diese Gleichung ist für Männer bestimmt.</value></data>
+  <data name="HelpBodyFatFormula" xml:space="preserve"><value>86.010 × log₁₀(Bauch − Hals) − 70.041 × log₁₀(Größe) + 36.76</value></data>
+  <data name="HelpBmrTitle" xml:space="preserve"><value>Grundumsatz — Mifflin–St Jeor (männlich), Version 1.0</value></data>
+  <data name="HelpBmrDescription" xml:space="preserve"><value>Schätzt anhand von Gewicht, Körpergröße und Alter, wie viele Kalorien der Körper in Ruhe verbraucht. Diese Gleichung ist für Männer bestimmt.</value></data>
+  <data name="HelpBmrFormula" xml:space="preserve"><value>10 × Gewicht + 6.25 × Größe − 5 × Alter + 5</value></data>
+  <data name="HelpTdeeTitle" xml:space="preserve"><value>Gesamter täglicher Energieverbrauch</value></data>
+  <data name="HelpTdeeDescription" xml:space="preserve"><value>Wird berechnet, indem der Grundumsatz mit dem im Profil ausgewählten Aktivitätsfaktor multipliziert wird.</value></data>
+  <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = Grundumsatz × Aktivitätsfaktor</value></data>
+  <data name="HelpActivityFactors" xml:space="preserve"><value>Aktivitätsfaktoren: Sitzend 1.2 · Leicht aktiv 1.375 · Moderat aktiv 1.55 · Sehr aktiv 1.725 · Extrem aktiv 1.9</value></data>
+  <data name="HelpUnits" xml:space="preserve"><value>Einheiten: Gewicht in kg, Körpergröße und Maße in cm, Alter in Jahren und Energie in kcal/Tag.</value></data>
 </root>

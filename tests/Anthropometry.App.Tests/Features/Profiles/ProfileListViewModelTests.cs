@@ -115,6 +115,22 @@ public sealed class ProfileListViewModelTests
         Assert.Equal(1, navigation.SettingsCalls);
     }
 
+    [Fact]
+    public async Task Help_command_opens_help()
+    {
+        var navigation = new NavigationSpy();
+        var viewModel = new ProfileListViewModel(
+            new GetProfiles(new FakeProfileRepository()),
+            new DeleteProfile(new FakeProfileRepository()),
+            navigation,
+            TestData.LanguageService());
+
+        viewModel.HelpCommand.Execute(null);
+
+        await navigation.HelpTask;
+        Assert.Equal(1, navigation.HelpCalls);
+    }
+
     private sealed class NavigationSpy : IProfileNavigation
     {
         public bool ConfirmDeleteResult { get; init; }
@@ -125,6 +141,10 @@ public sealed class ProfileListViewModelTests
 
         public Task SettingsTask { get; private set; } = Task.CompletedTask;
 
+        public int HelpCalls { get; private set; }
+
+        public Task HelpTask { get; private set; } = Task.CompletedTask;
+
         public Task CreateProfileAsync() => Task.CompletedTask;
 
         public Task ShowSettingsAsync()
@@ -132,6 +152,13 @@ public sealed class ProfileListViewModelTests
             SettingsCalls++;
             SettingsTask = Task.CompletedTask;
             return SettingsTask;
+        }
+
+        public Task ShowHelpAsync()
+        {
+            HelpCalls++;
+            HelpTask = Task.CompletedTask;
+            return HelpTask;
         }
 
         public Task RenameProfileAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;

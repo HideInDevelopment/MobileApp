@@ -38,7 +38,11 @@ public sealed class LanguageService
         "Language", "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",
         "DeleteProfileTitle", "DeleteProfileMessage", "DeleteAction",
         "GenerateSampleData", "SampleDataGenerated", "SampleDataRequiresMeasurement", "SampleDataError",
-        "Charts", "WeightGraphic", "WeightGraphicTitle", "WeightGraphicNoMeasurements", "WeightGraphicLoadError", "Date"
+        "Charts", "WeightGraphic", "WeightGraphicTitle", "WeightGraphicNoMeasurements", "WeightGraphicLoadError", "Date",
+        "HelpAboutTitle", "HelpDisclaimer", "HelpMeasurementConsistency", "HelpEquationsTitle",
+        "HelpBodyFatTitle", "HelpBodyFatDescription", "HelpBodyFatFormula", "HelpBmrTitle",
+        "HelpBmrDescription", "HelpBmrFormula", "HelpTdeeTitle", "HelpTdeeDescription", "HelpTdeeFormula",
+        "HelpActivityFactors", "HelpUnits"
     ];
 
     private readonly ILanguagePreferenceStore _preferences;

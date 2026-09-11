@@ -718,11 +718,12 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 **Status:** Implemented on `master` in the approved inline execution.
 
-**Review boundary:** The app provides a Presentation-only Settings screen, icon-only toolbar actions, and persisted English, Spanish, and German translations without adding a database migration or external dependency.
+**Review boundary:** The app provides Presentation-only Settings and Help screens, icon-only toolbar actions, and persisted English, Spanish, and German translations without adding a database migration or external dependency.
 
 **Acceptance criteria:**
 
 - [x] Settings opens from the gear toolbar icon and Help remains available from the question-mark toolbar icon.
+- [x] Help opens a localized page with the health disclaimer and the body-fat, BMR, and TDEE equations used by the app.
 - [x] The Settings screen offers exactly English, Spanish, and German.
 - [x] Selecting a language applies translated visible copy immediately and persists the language code locally.
 - [x] App startup restores the persisted language before the first feature page is created; English is the fallback when no valid preference exists.
@@ -739,6 +740,12 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] `dotnet test Anthropometry.sln -f net10.0 --configuration Release -m:1` — 107 tests passed.
 - [x] `dotnet build src/Anthropometry.App/Anthropometry.App.csproj -f net10.0-android -c Debug -m:1` — 0 warnings and 0 errors.
 - [x] Emulator smoke check with an isolated package — Settings opened, Spanish applied immediately, and Spanish was restored after a cold restart.
+
+**Help-page verification on 2026-09-11:**
+
+- [x] `dotnet test --configuration Release` — 125 tests passed across Domain, Application, Infrastructure, and App projects.
+- [x] `dotnet build src/Anthropometry.App/Anthropometry.App.csproj --configuration Release --framework net10.0-android` — 0 warnings and 0 errors.
+- [x] Emulator smoke check — Help opened from the question-mark icon and displayed the localized disclaimer, body-fat, BMR, and TDEE equations.
 
 ---
 

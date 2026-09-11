@@ -78,5 +78,7 @@ public sealed class ResponsiveLayoutTests
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
         public Task ShowSettingsAsync() => Task.CompletedTask;
+
+        public Task ShowHelpAsync() => Task.CompletedTask;
     }
 }

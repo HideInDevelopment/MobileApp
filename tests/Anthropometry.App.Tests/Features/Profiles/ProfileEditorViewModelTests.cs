@@ -148,6 +148,8 @@ public sealed class ProfileEditorViewModelTests
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
         public Task ShowSettingsAsync() => Task.CompletedTask;
+
+        public Task ShowHelpAsync() => Task.CompletedTask;
     }
 
 }

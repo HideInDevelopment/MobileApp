@@ -88,4 +88,19 @@
   <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>Aún no hay medidas de peso.</value></data>
   <data name="WeightGraphicLoadError" xml:space="preserve"><value>No se pudo cargar el gráfico de peso. Inténtalo de nuevo.</value></data>
   <data name="Date" xml:space="preserve"><value>Fecha</value></data>
+  <data name="HelpAboutTitle" xml:space="preserve"><value>Sobre estas estimaciones</value></data>
+  <data name="HelpDisclaimer" xml:space="preserve"><value>Esta herramienta ofrece estimaciones de salud personal solo para el seguimiento. No constituye consejo médico ni sustituye el diagnóstico o las indicaciones de un profesional sanitario cualificado.</value></data>
+  <data name="HelpMeasurementConsistency" xml:space="preserve"><value>Para obtener resultados más comparables, toma las medidas en condiciones similares y en las mismas zonas cada vez.</value></data>
+  <data name="HelpEquationsTitle" xml:space="preserve"><value>Ecuaciones utilizadas</value></data>
+  <data name="HelpBodyFatTitle" xml:space="preserve"><value>Porcentaje de grasa corporal — US Navy (hombres), versión 1.0</value></data>
+  <data name="HelpBodyFatDescription" xml:space="preserve"><value>Utiliza abdomen, cuello y altura. Los valores introducidos en centímetros se convierten a pulgadas antes del cálculo. Esta ecuación está pensada para hombres.</value></data>
+  <data name="HelpBodyFatFormula" xml:space="preserve"><value>86.010 × log₁₀(abdomen − cuello) − 70.041 × log₁₀(altura) + 36.76</value></data>
+  <data name="HelpBmrTitle" xml:space="preserve"><value>Metabolismo basal — Mifflin–St Jeor (hombres), versión 1.0</value></data>
+  <data name="HelpBmrDescription" xml:space="preserve"><value>Estima las calorías que tu cuerpo utiliza en reposo a partir del peso, la altura y la edad. Esta ecuación está pensada para hombres.</value></data>
+  <data name="HelpBmrFormula" xml:space="preserve"><value>10 × peso + 6.25 × altura − 5 × edad + 5</value></data>
+  <data name="HelpTdeeTitle" xml:space="preserve"><value>Gasto energético diario total</value></data>
+  <data name="HelpTdeeDescription" xml:space="preserve"><value>Se calcula multiplicando el metabolismo basal por el factor de actividad seleccionado en el perfil.</value></data>
+  <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × factor de actividad</value></data>
+  <data name="HelpActivityFactors" xml:space="preserve"><value>Factores de actividad: Sedentario 1.2 · Ligeramente activo 1.375 · Moderadamente activo 1.55 · Muy activo 1.725 · Extremadamente activo 1.9</value></data>
+  <data name="HelpUnits" xml:space="preserve"><value>Unidades: peso en kg, altura y medidas en cm, edad en años y energía en kcal/día.</value></data>
 </root>

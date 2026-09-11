@@ -137,5 +137,7 @@ public sealed class ProfileDetailViewModelTests
         public Task ShowHistoryAsync(ProfileDto profile) => Task.CompletedTask;
 
         public Task ShowSettingsAsync() => Task.CompletedTask;
+
+        public Task ShowHelpAsync() => Task.CompletedTask;
     }
 }

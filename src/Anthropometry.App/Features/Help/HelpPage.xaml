@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Anthropometry.App.Features.Help.HelpPage"
+             Title="{DynamicResource HelpTitle}">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+            <Label Text="{DynamicResource HelpTitle}" FontSize="28" FontAttributes="Bold" />
+
+            <Label Text="{DynamicResource HelpAboutTitle}" FontSize="22" FontAttributes="Bold" />
+            <Label Text="{DynamicResource HelpDisclaimer}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource HelpMeasurementConsistency}" LineBreakMode="WordWrap" />
+
+            <Label Text="{DynamicResource HelpEquationsTitle}" FontSize="22" FontAttributes="Bold" />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{DynamicResource HelpBodyFatTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpBodyFatDescription}" LineBreakMode="WordWrap" />
+                <Border Padding="12" StrokeThickness="1">
+                    <Label Text="{DynamicResource HelpBodyFatFormula}" LineBreakMode="WordWrap" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{DynamicResource HelpBmrTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpBmrDescription}" LineBreakMode="WordWrap" />
+                <Border Padding="12" StrokeThickness="1">
+                    <Label Text="{DynamicResource HelpBmrFormula}" LineBreakMode="WordWrap" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{DynamicResource HelpTdeeTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpTdeeDescription}" LineBreakMode="WordWrap" />
+                <Border Padding="12" StrokeThickness="1">
+                    <Label Text="{DynamicResource HelpTdeeFormula}" LineBreakMode="WordWrap" />
+                </Border>
+                <Label Text="{DynamicResource HelpActivityFactors}" LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+
+            <Label Text="{DynamicResource HelpUnits}" LineBreakMode="WordWrap" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

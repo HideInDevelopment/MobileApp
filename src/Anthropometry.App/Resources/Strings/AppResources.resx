@@ -88,4 +88,19 @@
   <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>No weight measurements yet.</value></data>
   <data name="WeightGraphicLoadError" xml:space="preserve"><value>We couldn't load the weight graphic. Try again.</value></data>
   <data name="Date" xml:space="preserve"><value>Date</value></data>
+  <data name="HelpAboutTitle" xml:space="preserve"><value>About these estimates</value></data>
+  <data name="HelpDisclaimer" xml:space="preserve"><value>This tool provides personal health estimates for tracking purposes only. It is not medical advice and does not replace a diagnosis or guidance from a qualified healthcare professional.</value></data>
+  <data name="HelpMeasurementConsistency" xml:space="preserve"><value>For more consistent results, take measurements under similar conditions and use the same measurement locations each time.</value></data>
+  <data name="HelpEquationsTitle" xml:space="preserve"><value>Equations used</value></data>
+  <data name="HelpBodyFatTitle" xml:space="preserve"><value>Body-fat percentage — US Navy (male), version 1.0</value></data>
+  <data name="HelpBodyFatDescription" xml:space="preserve"><value>Uses abdomen, neck, and height. Values entered in centimetres are converted to inches before calculation. This equation is intended for men.</value></data>
+  <data name="HelpBodyFatFormula" xml:space="preserve"><value>86.010 × log₁₀(abdomen − neck) − 70.041 × log₁₀(height) + 36.76</value></data>
+  <data name="HelpBmrTitle" xml:space="preserve"><value>Basal metabolic rate — Mifflin–St Jeor (male), version 1.0</value></data>
+  <data name="HelpBmrDescription" xml:space="preserve"><value>Estimates the calories your body uses at rest from weight, height, and age. This equation is intended for men.</value></data>
+  <data name="HelpBmrFormula" xml:space="preserve"><value>10 × weight + 6.25 × height − 5 × age + 5</value></data>
+  <data name="HelpTdeeTitle" xml:space="preserve"><value>Total daily energy expenditure</value></data>
+  <data name="HelpTdeeDescription" xml:space="preserve"><value>Calculated by multiplying BMR by the activity factor selected in the profile.</value></data>
+  <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × activity factor</value></data>
+  <data name="HelpActivityFactors" xml:space="preserve"><value>Activity factors: Sedentary 1.2 · Lightly active 1.375 · Moderately active 1.55 · Highly active 1.725 · Very highly active 1.9</value></data>
+  <data name="HelpUnits" xml:space="preserve"><value>Units: weight in kg, height and sizes in cm, age in years, and energy in kcal/day.</value></data>
 </root>

@@ -1,4 +1,5 @@
 using System.Globalization;
+using Anthropometry.App.Features.Help;
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Features.Results;
@@ -105,6 +106,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     public Task ShowSettingsAsync()
         => PushAsync(new SettingsPage(new SettingsViewModel(
             _services.GetRequiredService<LanguageService>())));
+
+    public Task ShowHelpAsync() => PushAsync(new HelpPage());
 
     public Task ShowResultsAsync(MeasurementDto measurement)
         => PushAsync(new CalculationResultPage(new CalculationResultViewModel(
