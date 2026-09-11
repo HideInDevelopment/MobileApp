@@ -5,8 +5,6 @@
              Title="{DynamicResource HelpTitle}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
-            <Label Text="{DynamicResource HelpTitle}" FontSize="28" FontAttributes="Bold" />
-
             <Label Text="{DynamicResource HelpAboutTitle}" FontSize="22" FontAttributes="Bold" />
             <Label Text="{DynamicResource HelpDisclaimer}" LineBreakMode="WordWrap" />
             <Label Text="{DynamicResource HelpMeasurementConsistency}" LineBreakMode="WordWrap" />
