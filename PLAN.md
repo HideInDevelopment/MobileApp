@@ -688,7 +688,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 - [x] Profiles persist height, age, and activity level locally, and profile edits update these settings.
 - [x] New profiles are limited to four by the Application use case.
-- [x] Zero profiles show only the centered create action; existing profiles show top `Add profile`.
+- [x] Zero profiles show only the centered create action; existing profiles show full-width bottom `Add profile`.
 - [x] At four profiles, `Add profile` remains visible and is disabled.
 - [x] `Add weight` is disabled until a size-based measurement exists; it stores only the new weight and recalculates results from the latest earlier neck and abdomen sizes.
 - [x] `Add measurements` stores weight plus neck and abdomen and runs the existing three calculations.

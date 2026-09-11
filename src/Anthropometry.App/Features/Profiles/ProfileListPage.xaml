@@ -15,24 +15,19 @@
                      Command="{Binding HelpCommand}"
                      SemanticProperties.Description="{DynamicResource HelpLabel}" />
     </ContentPage.ToolbarItems>
-    <Grid Padding="20" RowDefinitions="Auto,Auto,*" RowSpacing="16">
-        <HorizontalStackLayout Grid.Row="0" Spacing="12">
-            <Label Text="{DynamicResource ProfilesTitle}" FontSize="28" FontAttributes="Bold" VerticalOptions="Center" />
-            <Button Text="{DynamicResource AddProfile}" Command="{Binding CreateCommand}" IsVisible="{Binding HasProfiles}" IsEnabled="{Binding CanAddProfile}" MinimumHeightRequest="48" />
-        </HorizontalStackLayout>
-
-        <VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsLoading}" Spacing="8">
+    <Grid Padding="20" RowDefinitions="Auto,*,Auto" RowSpacing="16">
+        <VerticalStackLayout Grid.Row="0" IsVisible="{Binding IsLoading}" Spacing="8">
             <ActivityIndicator IsRunning="{Binding IsLoading}" />
             <Label Text="{DynamicResource LoadingProfiles}" HorizontalOptions="Center" />
         </VerticalStackLayout>
 
-        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding IsEmpty}" Spacing="12" VerticalOptions="Center">
+        <VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsEmpty}" Spacing="12" VerticalOptions="Center">
             <Label Text="{DynamicResource NoProfileYet}" FontSize="20" HorizontalOptions="Center" />
             <Label Text="{DynamicResource CreateOneToGetStarted}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
             <Button Text="{DynamicResource CreateProfile}" Command="{Binding CreateCommand}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
 
-        <Grid Grid.Row="2" IsVisible="{Binding IsEmpty, Converter={StaticResource InverseBoolConverter}}">
+        <Grid Grid.Row="1" IsVisible="{Binding IsEmpty, Converter={StaticResource InverseBoolConverter}}">
             <CollectionView ItemsSource="{Binding Profiles}" SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -46,6 +41,14 @@
             </CollectionView>
         </Grid>
 
-        <Label Grid.Row="2" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" VerticalOptions="End" />
+        <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" VerticalOptions="End" />
+
+        <Button Grid.Row="2"
+                Text="{DynamicResource AddProfile}"
+                Command="{Binding CreateCommand}"
+                IsVisible="{Binding HasProfiles}"
+                IsEnabled="{Binding CanAddProfile}"
+                HorizontalOptions="Fill"
+                MinimumHeightRequest="48" />
     </Grid>
 </ContentPage>
