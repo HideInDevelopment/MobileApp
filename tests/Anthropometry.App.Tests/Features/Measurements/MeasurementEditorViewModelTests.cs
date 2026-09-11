@@ -109,6 +109,35 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
+    public async Task Weight_and_sizes_save_accepts_comma_decimal_sizes()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var results = new FakeCalculationResultRepository();
+        var languageService = TestData.LanguageService();
+        languageService.SetLanguage("en");
+        var viewModel = CreateViewModel(
+            profile,
+            MeasurementType.WeightAndSizes,
+            profiles,
+            measurements,
+            results,
+            languageService: languageService);
+
+        viewModel.WeightText = "80";
+        viewModel.NeckText = "40,5";
+        viewModel.AbdomenText = "90,25";
+
+        Assert.True(viewModel.CanSave);
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(40.5m, measurements.Items[0].NeckCm);
+        Assert.Equal(90.25m, measurements.Items[0].AbdomenCm);
+    }
+
+    [Fact]
     public async Task Weight_only_save_recalculates_results_from_previous_sizes_and_returns_to_profile()
     {
         var profile = TestData.Profile();
@@ -164,7 +193,8 @@ public sealed class MeasurementEditorViewModelTests
         FakeProfileRepository profiles,
         FakeMeasurementRepository measurements,
         FakeCalculationResultRepository results,
-        NavigationSpy? navigation = null)
+        NavigationSpy? navigation = null,
+        Anthropometry.App.Localization.LanguageService? languageService = null)
     {
         var catalog = new FormulaCatalog(new UsNavyMaleBodyFatFormula(), new MifflinStJeorMaleBmrFormula(), new TdeeFormula());
         var clock = new FakeClock();
@@ -182,7 +212,7 @@ public sealed class MeasurementEditorViewModelTests
             profileDto,
             measurementType,
             navigation ?? new NavigationSpy(),
-            TestData.LanguageService());
+            languageService ?? TestData.LanguageService());
     }
 
     private sealed class NavigationSpy : IMeasurementNavigation

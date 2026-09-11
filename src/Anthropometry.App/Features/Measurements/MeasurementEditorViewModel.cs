@@ -192,8 +192,14 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     }
 
     private static bool TryParseDecimal(string value, out decimal result)
-        => decimal.TryParse(value, NumberStyles.Number, CultureInfo.CurrentCulture, out result)
-            || decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out result);
+    {
+        var normalized = value.Trim().Replace(',', '.');
+        return decimal.TryParse(
+            normalized,
+            NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint,
+            CultureInfo.InvariantCulture,
+            out result);
+    }
 
     private void SetInput(ref string field, string value)
     {
