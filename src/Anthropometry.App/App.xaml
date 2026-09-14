@@ -8,6 +8,7 @@
         <ResourceDictionary>
             <common:InverseBoolConverter x:Key="InverseBoolConverter" />
             <common:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
+            <common:GenderIconConverter x:Key="GenderIconConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

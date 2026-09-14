@@ -14,7 +14,8 @@ public sealed record ProfileDto(
     string Name,
     ProfileSettingsDto? Settings,
     DateTimeOffset CreatedAtUtc,
-    DateTimeOffset UpdatedAtUtc);
+    DateTimeOffset UpdatedAtUtc,
+    ProfileGender Gender = ProfileGender.Male);
 
 public sealed record MeasurementDto(
     MeasurementId Id,
@@ -48,7 +49,8 @@ internal static class ApplicationModels
                 ? null
                 : new ProfileSettingsDto(profile.Settings.HeightCm, profile.Settings.AgeYears, profile.Settings.ActivityLevel),
             profile.CreatedAtUtc,
-            profile.UpdatedAtUtc);
+            profile.UpdatedAtUtc,
+            profile.Gender);
 
     public static MeasurementDto ToDto(Measurement measurement)
         => new(measurement.Id, measurement.ProfileId, measurement.Type, measurement.MeasuredAtUtc, measurement.WeightKg, measurement.HeightCm, measurement.NeckCm, measurement.AbdomenCm, measurement.AgeYears, measurement.ActivityLevel);

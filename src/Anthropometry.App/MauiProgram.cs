@@ -33,6 +33,7 @@ public static class MauiProgram
         builder.Services.AddSingleton(new SqliteConnectionFactory(databasePath));
         builder.Services.AddSingleton<IMigration, Migration0001>();
         builder.Services.AddSingleton<IMigration, Migration0002>();
+        builder.Services.AddSingleton<IMigration, Migration0003>();
         builder.Services.AddSingleton<MigrationRunner>();
         builder.Services.AddSingleton<IProfileRepository, SqliteProfileRepository>();
         builder.Services.AddSingleton<IMeasurementRepository, SqliteMeasurementRepository>();

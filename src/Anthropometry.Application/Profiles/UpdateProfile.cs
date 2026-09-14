@@ -21,7 +21,8 @@ public sealed class UpdateProfile
         ProfileId id,
         string name,
         ProfileSettingsInput settingsInput,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        ProfileGender? gender = null)
     {
         try
         {
@@ -37,7 +38,9 @@ public sealed class UpdateProfile
                 return Result.Failure<ProfileDto>(settings.Error!);
             }
 
-            var updated = profile.Update(name, settings.Value, _clock.UtcNow);
+            var updated = gender.HasValue
+                ? profile.Update(name, settings.Value, _clock.UtcNow, gender.Value)
+                : profile.Update(name, settings.Value, _clock.UtcNow);
             if (!updated.IsSuccess)
             {
                 return Result.Failure<ProfileDto>(updated.Error!);

@@ -34,7 +34,7 @@ public sealed class CreateProfile
                 return Result.Failure<ProfileDto>(settings.Error!);
             }
 
-            var created = Profile.Create(command.Name, settings.Value, _clock.UtcNow);
+            var created = Profile.Create(command.Name, settings.Value, _clock.UtcNow, command.Gender);
             if (!created.IsSuccess)
             {
                 return Result.Failure<ProfileDto>(created.Error!);
@@ -56,4 +56,7 @@ public sealed class CreateProfile
 
 public sealed record ProfileSettingsInput(decimal HeightCm, int AgeYears, ActivityLevel ActivityLevel);
 
-public sealed record CreateProfileCommand(string Name, ProfileSettingsInput Settings);
+public sealed record CreateProfileCommand(
+    string Name,
+    ProfileSettingsInput Settings,
+    ProfileGender Gender = ProfileGender.Male);

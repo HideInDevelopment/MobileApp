@@ -42,6 +42,8 @@ public sealed class ProfileDetailViewModel : ObservableObject
 
     public ProfileDto Profile { get; }
 
+    public string Title => $"{GenderPresentation.GetIcon(Profile.Gender)} {Profile.Name}";
+
     public bool IsLoading
     {
         get => _isLoading;

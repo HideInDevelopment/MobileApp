@@ -157,11 +157,12 @@ Minimum properties:
 
 - `ProfileId`, stable identifier.
 - `Name`, non-empty with a defined maximum length.
+- `Gender`, a required `Male` or `Female` value used to identify the profile; current formulas remain male-only until gender-specific formula strategies are added.
 - `Settings`, containing the current height in centimeters, age in years, and named activity level.
 - `CreatedAtUtc`.
 - `UpdatedAtUtc`.
 
-New and edited profiles require valid settings. `Settings` may be absent only on a legacy profile that predates the settings migration and must be completed before recording a new measurement. The profile will not store passwords or authentication data. It may be deleted together with its measurements and results through an explicit operation.
+New and edited profiles require a valid gender and valid settings. Existing profiles are migrated with `Male` as the compatibility default until the user edits them. `Settings` may be absent only on a legacy profile that predates the settings migration and must be completed before recording a new measurement. The profile will not store passwords or authentication data. It may be deleted together with its measurements and results through an explicit operation.
 
 ### 5.2 Measurement
 

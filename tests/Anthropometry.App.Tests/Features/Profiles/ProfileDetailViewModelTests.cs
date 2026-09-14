@@ -8,6 +8,7 @@ using Anthropometry.Domain.Calculations.BodyFat;
 using Anthropometry.Domain.Calculations.Bmr;
 using Anthropometry.Domain.Calculations.Tdee;
 using Anthropometry.Domain.Measurements;
+using Anthropometry.Domain.Profiles;
 using Xunit;
 
 namespace Anthropometry.App.Tests.Features.Profiles;
@@ -77,6 +78,28 @@ public sealed class ProfileDetailViewModelTests
         await viewModel.LoadCommand.ExecuteAsync(null);
 
         Assert.False(viewModel.CanAddWeight);
+    }
+
+    [Fact]
+    public void Title_includes_gender_icon_before_profile_name()
+    {
+        var profile = TestData.Profile();
+        var profileDto = new ProfileDto(
+            profile.Id,
+            "Anna",
+            new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate),
+            profile.CreatedAtUtc,
+            profile.UpdatedAtUtc,
+            ProfileGender.Female);
+
+        var viewModel = new ProfileDetailViewModel(
+            profileDto,
+            new GetMeasurementHistory(new FakeMeasurementRepository()),
+            CreateGenerator(),
+            new NavigationSpy(),
+            TestData.LanguageService());
+
+        Assert.Equal("♀ Anna", viewModel.Title);
     }
 
     private static ProfileDetailViewModel CreateViewModel(Anthropometry.Domain.Profiles.Profile profile, FakeMeasurementRepository repository)

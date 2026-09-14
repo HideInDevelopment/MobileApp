@@ -44,6 +44,26 @@ public sealed class ProfileUseCaseTests
     }
 
     [Fact]
+    public async Task Update_profile_updates_gender()
+    {
+        var repository = new FakeProfileRepository();
+        var clock = new FakeClock();
+        var profile = TestData.Profile();
+        repository.Items.Add(profile);
+
+        var result = await new UpdateProfile(repository, clock).ExecuteAsync(
+            profile.Id,
+            "Anna",
+            new ProfileSettingsInput(180m, 35, ActivityLevel.Moderate),
+            CancellationToken.None,
+            ProfileGender.Female);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(ProfileGender.Female, repository.Items[0].Gender);
+        Assert.Equal(ProfileGender.Female, result.Value.Gender);
+    }
+
+    [Fact]
     public async Task Delete_missing_profile_returns_controlled_not_found_error()
     {
         var repository = new FakeProfileRepository();
@@ -105,13 +125,13 @@ public sealed class ProfileUseCaseTests
         var repository = new FakeProfileRepository();
 
         var result = await new CreateProfile(repository, new FakeClock()).ExecuteAsync(
-            new CreateProfileCommand("Manuel", new ProfileSettingsInput(180m, 35, ActivityLevel.Moderate)),
+            new CreateProfileCommand("Anna", new ProfileSettingsInput(180m, 35, ActivityLevel.Moderate), ProfileGender.Female),
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        Assert.Equal(180m, result.Value.Settings!.HeightCm);
-        Assert.Equal(35, result.Value.Settings.AgeYears);
-        Assert.Equal(ActivityLevel.Moderate, result.Value.Settings.ActivityLevel);
+        Assert.Equal("Anna", result.Value.Name);
+        Assert.Equal(ProfileGender.Female, result.Value.Gender);
+        Assert.Equal(ProfileGender.Female, repository.Items[0].Gender);
     }
 
     [Fact]

@@ -2,6 +2,7 @@ using Anthropometry.Infrastructure.Persistence.Migrations;
 using Anthropometry.Infrastructure.Persistence.Sqlite;
 using Anthropometry.Infrastructure.Repositories;
 using Anthropometry.Infrastructure.Tests.Support;
+using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Infrastructure.Tests.Repositories;
 
@@ -28,6 +29,26 @@ public sealed class SqliteProfileRepositoryTests
         Assert.Equal("Manuel", loaded!.Name);
         Assert.Equal("Updated", (await repository.GetByIdAsync(profile.Id, CancellationToken.None))!.Name);
         Assert.Equal(181m, (await repository.GetByIdAsync(profile.Id, CancellationToken.None))!.Settings!.HeightCm);
+    }
+
+    [Fact]
+    public async Task Add_and_get_preserves_female_gender()
+    {
+        using var database = new TemporaryDatabase();
+        var factory = new SqliteConnectionFactory(database.Path);
+        await new MigrationRunner(factory).InitializeAsync(CancellationToken.None);
+        var repository = new SqliteProfileRepository(factory);
+        var profile = Profile.Create(
+            "Anna",
+            ProfileSettings.Create(180m, 35, Anthropometry.Domain.Calculations.ActivityLevel.Moderate).Value,
+            DateTimeOffset.UtcNow,
+            ProfileGender.Female).Value;
+
+        await repository.AddAsync(profile, CancellationToken.None);
+
+        var loaded = await repository.GetByIdAsync(profile.Id, CancellationToken.None);
+
+        Assert.Equal(ProfileGender.Female, loaded!.Gender);
     }
 
     [Fact]

@@ -2,7 +2,14 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Profiles.ProfileRowView">
-    <VerticalStackLayout MinimumHeightRequest="48" VerticalOptions="Center">
-        <Label Text="{Binding Name}" FontSize="18" VerticalOptions="Center" />
-    </VerticalStackLayout>
+    <Grid MinimumHeightRequest="48" ColumnDefinitions="Auto,*" ColumnSpacing="10" VerticalOptions="Center">
+        <Label Grid.Column="0"
+               Text="{Binding Gender, Converter={StaticResource GenderIconConverter}}"
+               FontSize="28"
+               WidthRequest="40"
+               HorizontalTextAlignment="Center"
+               VerticalOptions="Center"
+               SemanticProperties.Description="{DynamicResource Gender}" />
+        <Label Grid.Column="1" Text="{Binding Name}" FontSize="18" VerticalOptions="Center" />
+    </Grid>
 </ContentView>

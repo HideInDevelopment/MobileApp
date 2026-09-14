@@ -3,6 +3,7 @@ using Anthropometry.Application.Profiles;
 using Anthropometry.Application.Common;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.App.Tests.Features.Profiles;
 
@@ -121,6 +122,29 @@ public sealed class ProfileEditorViewModelTests
         Assert.True(viewModel.IsCompleted);
         Assert.Equal("Updated", repository.Items[0].Name);
         Assert.Equal(181m, repository.Items[0].Settings!.HeightCm);
+    }
+
+    [Fact]
+    public async Task Save_persists_selected_female_gender()
+    {
+        var repository = new FakeProfileRepository();
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(repository, new FakeClock()),
+            new UpdateProfile(repository, new FakeClock()),
+            null,
+            new NavigationSpy(),
+            TestData.LanguageService())
+        {
+            Name = "Anna",
+            HeightText = "180",
+            AgeText = "35",
+            SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.Moderate, "Moderately active"),
+            SelectedGender = new GenderOption(ProfileGender.Female, "Female")
+        };
+
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(ProfileGender.Female, Assert.Single(repository.Items).Gender);
     }
 
     private sealed class NavigationSpy : IProfileNavigation

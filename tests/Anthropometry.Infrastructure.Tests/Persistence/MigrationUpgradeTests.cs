@@ -50,11 +50,12 @@ public sealed class MigrationUpgradeTests
         Assert.Equal(180m, profile.Settings!.HeightCm);
         Assert.Equal(35, profile.Settings.AgeYears);
         Assert.Equal(ActivityLevel.Moderate, profile.Settings.ActivityLevel);
+        Assert.Equal(ProfileGender.Male, profile.Gender);
         Assert.Equal(MeasurementType.WeightAndSizes, loadedMeasurement.Type);
         Assert.Equal(40m, loadedMeasurement.NeckCm);
         Assert.Equal(90m, loadedMeasurement.AbdomenCm);
         Assert.Single(loadedResults);
         Assert.Equal("mifflin-st-jeor-male-bmr", loadedResults[0].FormulaId);
-        Assert.Equal("2", version);
+        Assert.Equal("3", version);
     }
 }

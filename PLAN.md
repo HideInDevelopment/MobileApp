@@ -794,6 +794,28 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
+### Post-MVP feature slice: Profile gender
+
+**Status:** Implemented on `master` as a local profile-data and Presentation feature; gender-specific equations remain a later slice.
+
+**Review boundary:** Profile creation and editing allow a required Male/Female selection, the value is validated and persisted in SQLite through schema migration 3, existing profiles default to Male, and the profile list/detail title show the corresponding gender symbol. The current male-only calculations are unchanged.
+
+**Acceptance criteria:**
+
+- [x] The Domain profile model accepts only `Male` or `Female` and preserves the selected value through create, update, and rehydration.
+- [x] The Application profile use cases carry gender through commands and `ProfileDto` without changing formula behavior.
+- [x] SQLite schema version 3 stores profile gender and migrates existing rows to `Male`.
+- [x] The profile editor shows localized Male/Female options and persists the selected value.
+- [x] Profile rows show a gender icon before the name, and the profile detail navigation title includes the same icon.
+- [x] Gender labels and validation copy are available in English, Spanish, and German.
+
+**Verification:**
+
+- [x] Domain, Application, Infrastructure, and App tests cover gender validation, persistence, migration defaults, editor state, icon mapping, and markup.
+- [x] The Android Release build completed with 0 warnings and 0 errors.
+
+---
+
 ### Slice 8: Release verification and handoff
 
 **Review boundary:** The MVP is reproducibly buildable, testable, privacy-reviewed, and ready for a manual Android acceptance pass.

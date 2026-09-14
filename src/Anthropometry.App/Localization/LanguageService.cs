@@ -25,7 +25,7 @@ public sealed class LanguageService
         "DatabaseUnavailableTitle", "DatabaseUnavailableMessage",
         "SettingsLabel", "HelpLabel", "AddProfile", "LoadingProfiles", "NoProfileYet",
         "CreateOneToGetStarted", "CreateProfile", "OpenProfile", "DeleteProfile",
-        "ProfileName", "Height", "Age", "ActivityLevel", "Years", "Save", "Cancel",
+        "ProfileName", "Height", "Age", "Gender", "Male", "Female", "GenderRequired", "ActivityLevel", "Years", "Save", "Cancel",
         "CreateProfileTitle", "EditProfileTitle", "ProfileNameRequired", "ValidProfileSettings",
         "ProfileLimitReached", "SaveProfileError", "LoadProfilesError", "DeleteProfileError",
         "ProfileDetailsError", "AddWeight", "AddMeasurements", "EditProfile", "History",

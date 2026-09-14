@@ -3,6 +3,7 @@ using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Profiles;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -19,6 +20,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     private string _heightText;
     private string _ageText;
     private ActivityLevelOption? _selectedActivityLevel;
+    private GenderOption? _selectedGender;
     private string? _validationMessage;
     private string? _errorMessage;
     private bool _isBusy;
@@ -47,9 +49,15 @@ public sealed class ProfileEditorViewModel : ObservableObject
             new(ActivityLevel.High, _languageService.Get("HighlyActive")),
             new(ActivityLevel.VeryHigh, _languageService.Get("VeryHighlyActive"))
         ];
+        GenderOptions =
+        [
+            new(ProfileGender.Male, _languageService.Get("Male")),
+            new(ProfileGender.Female, _languageService.Get("Female"))
+        ];
         _selectedActivityLevel = existingProfile?.Settings is { } settings
             ? ActivityLevels.SingleOrDefault(option => option.Value == settings.ActivityLevel)
             : null;
+        _selectedGender = GenderOptions.Single(option => option.Value == (existingProfile?.Gender ?? ProfileGender.Male));
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
     }
@@ -78,6 +86,14 @@ public sealed class ProfileEditorViewModel : ObservableObject
     {
         get => _selectedActivityLevel;
         set => SetProperty(ref _selectedActivityLevel, value);
+    }
+
+    public IReadOnlyList<GenderOption> GenderOptions { get; }
+
+    public GenderOption? SelectedGender
+    {
+        get => _selectedGender;
+        set => SetProperty(ref _selectedGender, value);
     }
 
     public string Title => _existingProfile is null
@@ -128,12 +144,18 @@ public sealed class ProfileEditorViewModel : ObservableObject
             return;
         }
 
+        if (SelectedGender is null)
+        {
+            ValidationMessage = _languageService.Get("GenderRequired");
+            return;
+        }
+
         IsBusy = true;
         try
         {
             var result = _existingProfile is null
-                ? await _createProfile.ExecuteAsync(new CreateProfileCommand(Name, settings), CancellationToken.None)
-                : await _updateProfile.ExecuteAsync(_existingProfile.Id, Name, settings, CancellationToken.None);
+                ? await _createProfile.ExecuteAsync(new CreateProfileCommand(Name, settings, SelectedGender.Value), CancellationToken.None)
+                : await _updateProfile.ExecuteAsync(_existingProfile.Id, Name, settings, CancellationToken.None, SelectedGender.Value);
             if (!result.IsSuccess)
             {
                 ErrorMessage = result.Error!.Code == "profile.limit.reached"

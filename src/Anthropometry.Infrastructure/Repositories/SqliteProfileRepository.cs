@@ -20,7 +20,7 @@ public sealed class SqliteProfileRepository : IProfileRepository
         {
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
-            return connection.Query<ProfileRow>("SELECT Id, Name, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc FROM Profiles ORDER BY Name")
+            return connection.Query<ProfileRow>("SELECT Id, Name, Gender, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc FROM Profiles ORDER BY Name")
                 .Select(Map)
                 .ToArray();
         }, cancellationToken);
@@ -30,7 +30,7 @@ public sealed class SqliteProfileRepository : IProfileRepository
         {
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
-            var row = connection.FindWithQuery<ProfileRow>("SELECT Id, Name, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc FROM Profiles WHERE Id = ?", id.ToString());
+            var row = connection.FindWithQuery<ProfileRow>("SELECT Id, Name, Gender, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc FROM Profiles WHERE Id = ?", id.ToString());
             return row is null ? null : Map(row);
         }, cancellationToken);
 
@@ -40,9 +40,10 @@ public sealed class SqliteProfileRepository : IProfileRepository
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
             connection.Execute(
-                "INSERT INTO Profiles (Id, Name, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO Profiles (Id, Name, Gender, HeightCm, AgeYears, ActivityLevel, CreatedAtUtc, UpdatedAtUtc) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 profile.Id.ToString(),
                 profile.Name,
+                (int)profile.Gender,
                 profile.Settings?.HeightCm,
                 profile.Settings?.AgeYears,
                 profile.Settings is null ? null : (int)profile.Settings.ActivityLevel,
@@ -56,8 +57,9 @@ public sealed class SqliteProfileRepository : IProfileRepository
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
             var changes = connection.Execute(
-                "UPDATE Profiles SET Name = ?, HeightCm = ?, AgeYears = ?, ActivityLevel = ?, UpdatedAtUtc = ? WHERE Id = ?",
+                "UPDATE Profiles SET Name = ?, Gender = ?, HeightCm = ?, AgeYears = ?, ActivityLevel = ?, UpdatedAtUtc = ? WHERE Id = ?",
                 profile.Name,
+                (int)profile.Gender,
                 profile.Settings?.HeightCm,
                 profile.Settings?.AgeYears,
                 profile.Settings is null ? null : (int)profile.Settings.ActivityLevel,
@@ -91,7 +93,8 @@ public sealed class SqliteProfileRepository : IProfileRepository
             row.Name,
             MapSettings(row),
             SqliteValueConverter.ToUtcDateTimeOffset(row.CreatedAtUtc),
-            SqliteValueConverter.ToUtcDateTimeOffset(row.UpdatedAtUtc));
+            SqliteValueConverter.ToUtcDateTimeOffset(row.UpdatedAtUtc),
+            (ProfileGender)row.Gender);
         return result.IsSuccess ? result.Value : throw new InvalidDataException(result.Error!.Code);
     }
 
@@ -115,6 +118,7 @@ public sealed class SqliteProfileRepository : IProfileRepository
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
+        public int Gender { get; set; }
         public decimal? HeightCm { get; set; }
         public int? AgeYears { get; set; }
         public int? ActivityLevel { get; set; }

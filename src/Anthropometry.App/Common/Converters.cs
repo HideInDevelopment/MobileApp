@@ -1,3 +1,6 @@
+using Anthropometry.App.Features.Profiles;
+using Anthropometry.Domain.Profiles;
+
 namespace Anthropometry.App.Common;
 
 public sealed class InverseBoolConverter : IValueConverter
@@ -13,6 +16,15 @@ public sealed class StringNotEmptyConverter : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
         => value is string text && !string.IsNullOrWhiteSpace(text);
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
+public sealed class GenderIconConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
+        => value is ProfileGender gender ? GenderPresentation.GetIcon(gender) : string.Empty;
 
     public object ConvertBack(object? value, Type targetType, object? parameter, System.Globalization.CultureInfo culture)
         => throw new NotSupportedException();

@@ -9,12 +9,14 @@ public sealed class Profile
     private Profile(
         ProfileId id,
         string name,
+        ProfileGender gender,
         ProfileSettings? settings,
         DateTimeOffset createdAtUtc,
         DateTimeOffset updatedAtUtc)
     {
         Id = id;
         Name = name;
+        Gender = gender;
         Settings = settings;
         CreatedAtUtc = createdAtUtc;
         UpdatedAtUtc = updatedAtUtc;
@@ -24,13 +26,19 @@ public sealed class Profile
 
     public string Name { get; private set; }
 
+    public ProfileGender Gender { get; private set; }
+
     public ProfileSettings? Settings { get; private set; }
 
     public DateTimeOffset CreatedAtUtc { get; }
 
     public DateTimeOffset UpdatedAtUtc { get; private set; }
 
-    public static Result<Profile> Create(string? name, ProfileSettings? settings, DateTimeOffset createdAtUtc)
+    public static Result<Profile> Create(
+        string? name,
+        ProfileSettings? settings,
+        DateTimeOffset createdAtUtc,
+        ProfileGender gender = ProfileGender.Male)
     {
         var nameError = Guard.Required(name, "profile.name.required", "Errors.ProfileNameRequired", MaxNameLength);
         if (nameError is not null)
@@ -49,7 +57,13 @@ public sealed class Profile
             return Result.Failure<Profile>(new DomainError("profile.settings.required", "Errors.ProfileSettingsRequired"));
         }
 
-        return Result.Success(new Profile(ProfileId.New(), name!.Trim(), settings, createdAtUtc, createdAtUtc));
+        var genderError = ValidateGender(gender);
+        if (genderError is not null)
+        {
+            return Result.Failure<Profile>(genderError);
+        }
+
+        return Result.Success(new Profile(ProfileId.New(), name!.Trim(), gender, settings, createdAtUtc, createdAtUtc));
     }
 
     public static Result<Profile> Rehydrate(
@@ -57,7 +71,8 @@ public sealed class Profile
         string? name,
         ProfileSettings? settings,
         DateTimeOffset createdAtUtc,
-        DateTimeOffset updatedAtUtc)
+        DateTimeOffset updatedAtUtc,
+        ProfileGender gender = ProfileGender.Male)
     {
         if (id.Value == Guid.Empty)
         {
@@ -79,7 +94,7 @@ public sealed class Profile
                 return Result.Failure<Profile>(legacyTimestampError);
             }
 
-            created = Result.Success(new Profile(id, name!.Trim(), null, createdAtUtc, createdAtUtc));
+            created = Result.Success(new Profile(id, name!.Trim(), gender, null, createdAtUtc, createdAtUtc));
         }
 
         if (!created.IsSuccess)
@@ -87,13 +102,26 @@ public sealed class Profile
             return created;
         }
 
+        var genderError = ValidateGender(gender);
+        if (genderError is not null)
+        {
+            return Result.Failure<Profile>(genderError);
+        }
+
         var timestampError = Guard.Utc(updatedAtUtc, "profile.updatedAtUtc.invalid", "Errors.ProfileUpdatedAtUtcInvalid");
         return timestampError is null
-            ? Result.Success(new Profile(id, created.Value.Name, created.Value.Settings, createdAtUtc, updatedAtUtc))
+            ? Result.Success(new Profile(id, created.Value.Name, gender, created.Value.Settings, createdAtUtc, updatedAtUtc))
             : Result.Failure<Profile>(timestampError);
     }
 
     public Result Update(string? name, ProfileSettings? settings, DateTimeOffset updatedAtUtc)
+        => Update(name, settings, updatedAtUtc, Gender);
+
+    public Result Update(
+        string? name,
+        ProfileSettings? settings,
+        DateTimeOffset updatedAtUtc,
+        ProfileGender gender)
     {
         var nameError = Guard.Required(name, "profile.name.required", "Errors.ProfileNameRequired", MaxNameLength);
         if (nameError is not null)
@@ -112,9 +140,21 @@ public sealed class Profile
             return Result.Failure(new DomainError("profile.settings.required", "Errors.ProfileSettingsRequired"));
         }
 
+        var genderError = ValidateGender(gender);
+        if (genderError is not null)
+        {
+            return Result.Failure(genderError);
+        }
+
         Name = name!.Trim();
+        Gender = gender;
         Settings = settings;
         UpdatedAtUtc = updatedAtUtc;
         return Result.Success();
     }
+
+    private static DomainError? ValidateGender(ProfileGender gender)
+        => !Enum.IsDefined(gender) || gender == ProfileGender.Unknown
+            ? new DomainError("profile.gender.invalid", "Errors.ProfileGenderInvalid")
+            : null;
 }

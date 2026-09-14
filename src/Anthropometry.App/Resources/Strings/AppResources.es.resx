@@ -23,6 +23,10 @@
   <data name="ProfileName" xml:space="preserve"><value>Nombre del perfil</value></data>
   <data name="Height" xml:space="preserve"><value>Altura</value></data>
   <data name="Age" xml:space="preserve"><value>Edad</value></data>
+  <data name="Gender" xml:space="preserve"><value>Género</value></data>
+  <data name="Male" xml:space="preserve"><value>Hombre</value></data>
+  <data name="Female" xml:space="preserve"><value>Mujer</value></data>
+  <data name="GenderRequired" xml:space="preserve"><value>Selecciona un género.</value></data>
   <data name="ActivityLevel" xml:space="preserve"><value>Nivel de actividad</value></data>
   <data name="Years" xml:space="preserve"><value>años</value></data>
   <data name="Save" xml:space="preserve"><value>Guardar</value></data>
