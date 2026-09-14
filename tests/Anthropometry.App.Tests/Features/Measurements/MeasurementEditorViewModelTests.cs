@@ -138,6 +138,37 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
+    public async Task Female_weight_and_sizes_save_requires_and_persists_hip()
+    {
+        var profile = Profile.Create(
+            "Anna",
+            ProfileSettings.Create(180m, 35, ActivityLevel.Moderate).Value,
+            DateTimeOffset.UtcNow,
+            ProfileGender.Female).Value;
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var results = new FakeCalculationResultRepository();
+        var viewModel = CreateViewModel(profile, MeasurementType.WeightAndSizes, profiles, measurements, results);
+
+        viewModel.WeightText = "80";
+        viewModel.NeckText = "40";
+        viewModel.AbdomenText = "90";
+
+        Assert.False(viewModel.CanSave);
+
+        viewModel.HipText = "110.5";
+
+        Assert.True(viewModel.CanSave);
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(measurements.Items);
+        Assert.Equal(ProfileGender.Female, saved.Gender);
+        Assert.Equal(110.5m, saved.HipCm);
+        Assert.Equal(3, results.Items.Count);
+    }
+
+    [Fact]
     public async Task Weight_only_save_recalculates_results_from_previous_sizes_and_returns_to_profile()
     {
         var profile = TestData.Profile();
@@ -196,14 +227,20 @@ public sealed class MeasurementEditorViewModelTests
         NavigationSpy? navigation = null,
         Anthropometry.App.Localization.LanguageService? languageService = null)
     {
-        var catalog = new FormulaCatalog(new UsNavyMaleBodyFatFormula(), new MifflinStJeorMaleBmrFormula(), new TdeeFormula());
+        var catalog = new FormulaCatalog(
+            new UsNavyMaleBodyFatFormula(),
+            new MifflinStJeorMaleBmrFormula(),
+            new TdeeFormula(),
+            new UsNavyFemaleBodyFatFormula(),
+            new MifflinStJeorFemaleBmrFormula());
         var clock = new FakeClock();
         var profileDto = new ProfileDto(
             profile.Id,
             profile.Name,
             new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate),
             profile.CreatedAtUtc,
-            profile.UpdatedAtUtc);
+            profile.UpdatedAtUtc,
+            profile.Gender);
         return new MeasurementEditorViewModel(
             new RecordMeasurement(profiles, measurements, new FakeClock()),
             new CalculateBodyFat(measurements, results, catalog, clock),

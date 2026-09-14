@@ -9,24 +9,39 @@ namespace Anthropometry.Application.Calculations;
 public sealed class FormulaCatalog : IFormulaCatalog
 {
     public FormulaCatalog(
-        ICalculationFormula<BodyFatInput, CalculationResultValue> bodyFat,
-        ICalculationFormula<BmrInput, CalculationResultValue> bmr,
-        ICalculationFormula<TdeeInput, CalculationResultValue> tdee)
+        ICalculationFormula<BodyFatInput, CalculationResultValue> maleBodyFat,
+        ICalculationFormula<BmrInput, CalculationResultValue> maleBmr,
+        ICalculationFormula<TdeeInput, CalculationResultValue> tdee,
+        ICalculationFormula<FemaleBodyFatInput, CalculationResultValue> femaleBodyFat,
+        ICalculationFormula<BmrInput, CalculationResultValue> femaleBmr)
     {
-        var identities = new[] { bodyFat.FormulaId, bmr.FormulaId, tdee.FormulaId };
+        var identities = new[]
+        {
+            maleBodyFat.FormulaId,
+            femaleBodyFat.FormulaId,
+            maleBmr.FormulaId,
+            femaleBmr.FormulaId,
+            tdee.FormulaId
+        };
         if (identities.Any(string.IsNullOrWhiteSpace) || identities.Distinct(StringComparer.Ordinal).Count() != identities.Length)
         {
             throw new ArgumentException("Formula identities must be unique and non-empty.");
         }
 
-        BodyFat = bodyFat;
-        Bmr = bmr;
+        MaleBodyFat = maleBodyFat;
+        FemaleBodyFat = femaleBodyFat;
+        MaleBmr = maleBmr;
+        FemaleBmr = femaleBmr;
         Tdee = tdee;
     }
 
-    public ICalculationFormula<BodyFatInput, CalculationResultValue> BodyFat { get; }
+    public ICalculationFormula<BodyFatInput, CalculationResultValue> MaleBodyFat { get; }
 
-    public ICalculationFormula<BmrInput, CalculationResultValue> Bmr { get; }
+    public ICalculationFormula<FemaleBodyFatInput, CalculationResultValue> FemaleBodyFat { get; }
+
+    public ICalculationFormula<BmrInput, CalculationResultValue> MaleBmr { get; }
+
+    public ICalculationFormula<BmrInput, CalculationResultValue> FemaleBmr { get; }
 
     public ICalculationFormula<TdeeInput, CalculationResultValue> Tdee { get; }
 }

@@ -165,6 +165,48 @@ public sealed class MeasurementTests
     }
 
     [Fact]
+    public void Create_female_weight_and_sizes_requires_hip()
+    {
+        var input = new MeasurementInput(
+            MeasurementType.WeightAndSizes,
+            80m,
+            180m,
+            40m,
+            90m,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow,
+            Gender: ProfileGender.Female);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.hip.required", result.Error!.Code);
+    }
+
+    [Fact]
+    public void Create_preserves_female_gender_and_hip()
+    {
+        var input = new MeasurementInput(
+            MeasurementType.WeightAndSizes,
+            80m,
+            180m,
+            40m,
+            90m,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow,
+            110.5m,
+            ProfileGender.Female);
+
+        var result = Measurement.Create(ProfileId.New(), input, DateTimeOffset.UtcNow);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(ProfileGender.Female, result.Value.Gender);
+        Assert.Equal(110.5m, result.Value.HipCm);
+    }
+
+    [Fact]
     public void Create_rejects_unknown_measurement_type()
     {
         var input = new MeasurementInput(

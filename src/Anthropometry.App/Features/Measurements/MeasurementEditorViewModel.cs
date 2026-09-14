@@ -4,6 +4,7 @@ using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
+using Anthropometry.Domain.Profiles;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -22,6 +23,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private string _weightText = string.Empty;
     private string _neckText = string.Empty;
     private string _abdomenText = string.Empty;
+    private string _hipText = string.Empty;
     private bool _isBusy;
     private bool _isCompleted;
     private string? _validationMessage;
@@ -59,6 +61,10 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
     public bool IsExtended => _measurementType == MeasurementType.WeightAndSizes;
 
+    public bool IsFemale => _profile.Gender == ProfileGender.Female;
+
+    public string TrunkLabel => _languageService.Get(IsFemale ? "Waist" : "Abdomen");
+
     public string WeightText
     {
         get => _weightText;
@@ -75,6 +81,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     {
         get => _abdomenText;
         set => SetInput(ref _abdomenText, value);
+    }
+
+    public string HipText
+    {
+        get => _hipText;
+        set => SetInput(ref _hipText, value);
     }
 
     public bool IsBusy
@@ -100,7 +112,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         && TryParseDecimal(WeightText, out var weight) && weight is >= 1m and <= 500m
         && (!IsExtended ||
             (TryParseDecimal(NeckText, out var neck) && neck is >= 1m and <= 100m
-            && TryParseDecimal(AbdomenText, out var abdomen) && abdomen is >= 1m and <= 400m));
+            && TryParseDecimal(AbdomenText, out var abdomen) && abdomen is >= 1m and <= 400m
+            && (!IsFemale || TryParseDecimal(HipText, out var hip) && hip is >= 1m and <= 400m)));
 
     public string? ValidationMessage
     {
@@ -125,7 +138,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         if (!CanSave || !TryCreateCommand(out var command))
         {
             ValidationMessage = IsExtended
-                ? _languageService.Get("ValidMeasurementExtended")
+                ? _languageService.Get(IsFemale ? "ValidMeasurementExtendedFemale" : "ValidMeasurementExtended")
                 : _languageService.Get("ValidWeight");
             return;
         }
@@ -174,6 +187,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
         decimal? neck = null;
         decimal? abdomen = null;
+        decimal? hip = null;
         if (IsExtended)
         {
             if (!TryParseDecimal(NeckText, out var neckValue)
@@ -185,9 +199,19 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
             neck = neckValue;
             abdomen = abdomenValue;
+            if (IsFemale)
+            {
+                if (!TryParseDecimal(HipText, out var hipValue))
+                {
+                    command = null!;
+                    return false;
+                }
+
+                hip = hipValue;
+            }
         }
 
-        command = new RecordMeasurementCommand(_profile.Id, _measurementType, weight, neck, abdomen, DateTimeOffset.UtcNow);
+        command = new RecordMeasurementCommand(_profile.Id, _measurementType, weight, neck, abdomen, DateTimeOffset.UtcNow, hip);
         return true;
     }
 

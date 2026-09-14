@@ -8,7 +8,7 @@ namespace Anthropometry.Infrastructure.Tests.Persistence;
 public sealed class MigrationTests
 {
     [Fact]
-    public async Task Initialize_creates_schema_tables_and_records_version_three()
+    public async Task Initialize_creates_schema_tables_and_records_version_four()
     {
         using var database = new TemporaryDatabase();
         var factory = new SqliteConnectionFactory(database.Path);
@@ -26,7 +26,13 @@ public sealed class MigrationTests
         Assert.Contains(tables, table => table.Name == "Measurements");
         Assert.Contains(tables, table => table.Name == "CalculationResults");
         Assert.Contains(tables, table => table.Name == "SchemaMetadata");
-        Assert.Equal("3", version);
+        Assert.Equal("4", version);
+
+        var measurementColumns = connection.Query<ColumnRow>(
+            "PRAGMA table_info(Measurements)");
+
+        Assert.Contains(measurementColumns, column => column.Name == "HipCm");
+        Assert.Contains(measurementColumns, column => column.Name == "Gender");
     }
 
     [Fact]
@@ -46,6 +52,11 @@ public sealed class MigrationTests
     }
 
     private sealed class TableRow
+    {
+        public string Name { get; set; } = string.Empty;
+    }
+
+    private sealed class ColumnRow
     {
         public string Name { get; set; } = string.Empty;
     }

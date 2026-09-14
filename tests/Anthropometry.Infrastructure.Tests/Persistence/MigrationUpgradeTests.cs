@@ -56,6 +56,6 @@ public sealed class MigrationUpgradeTests
         Assert.Equal(90m, loadedMeasurement.AbdomenCm);
         Assert.Single(loadedResults);
         Assert.Equal("mifflin-st-jeor-male-bmr", loadedResults[0].FormulaId);
-        Assert.Equal("3", version);
+        Assert.Equal("4", version);
     }
 }

@@ -122,7 +122,9 @@ public sealed class ProfileDetailViewModelTests
         var catalog = new FormulaCatalog(
             new UsNavyMaleBodyFatFormula(),
             new MifflinStJeorMaleBmrFormula(),
-            new TdeeFormula());
+            new TdeeFormula(),
+            new UsNavyFemaleBodyFatFormula(),
+            new MifflinStJeorFemaleBmrFormula());
         var clock = new FakeClock();
         return new GenerateSampleMeasurementHistory(
             new FakeProfileRepository(),

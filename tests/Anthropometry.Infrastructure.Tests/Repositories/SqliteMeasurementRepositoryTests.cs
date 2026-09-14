@@ -4,6 +4,7 @@ using Anthropometry.Infrastructure.Repositories;
 using Anthropometry.Infrastructure.Tests.Support;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
+using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Infrastructure.Tests.Repositories;
 
@@ -67,5 +68,42 @@ public sealed class SqliteMeasurementRepositoryTests
         Assert.Null(loaded.NeckCm);
         Assert.Null(loaded.AbdomenCm);
         Assert.Equal(79m, loaded.WeightKg);
+    }
+
+    [Fact]
+    public async Task Add_and_get_female_measurement_round_trips_hip_and_gender()
+    {
+        using var database = new TemporaryDatabase();
+        var factory = new SqliteConnectionFactory(database.Path);
+        await new MigrationRunner(factory).InitializeAsync(CancellationToken.None);
+        var profiles = new SqliteProfileRepository(factory);
+        var repository = new SqliteMeasurementRepository(factory);
+        var profile = Anthropometry.Domain.Profiles.Profile.Create(
+            "Anna",
+            Anthropometry.Domain.Profiles.ProfileSettings.Create(180m, 35, ActivityLevel.Moderate).Value,
+            DateTimeOffset.UtcNow,
+            ProfileGender.Female).Value;
+        var measurement = Measurement.Create(
+            profile.Id,
+            new MeasurementInput(
+                MeasurementType.WeightAndSizes,
+                80m,
+                180m,
+                40m,
+                90m,
+                35,
+                ActivityLevel.Moderate,
+                DateTimeOffset.UtcNow,
+                110.5m,
+                ProfileGender.Female),
+            DateTimeOffset.UtcNow).Value;
+
+        await profiles.AddAsync(profile, CancellationToken.None);
+        await repository.AddAsync(measurement, CancellationToken.None);
+
+        var loaded = await repository.GetByIdAsync(measurement.Id, CancellationToken.None);
+
+        Assert.Equal(ProfileGender.Female, loaded!.Gender);
+        Assert.Equal(110.5m, loaded.HipCm);
     }
 }

@@ -45,7 +45,16 @@ public sealed class CalculateBodyFat
                 return Result.Failure<CalculationResultDto>(ApplicationErrors.CalculationUnavailableForMeasurementType);
             }
 
-            var calculated = _catalog.BodyFat.Calculate(new BodyFatInput(sizeSource.AbdomenCm!.Value, sizeSource.NeckCm!.Value, measurement.HeightCm));
+            var calculated = measurement.Gender == ProfileGender.Female
+                ? _catalog.FemaleBodyFat.Calculate(new FemaleBodyFatInput(
+                    sizeSource.AbdomenCm!.Value,
+                    sizeSource.HipCm!.Value,
+                    sizeSource.NeckCm!.Value,
+                    measurement.HeightCm))
+                : _catalog.MaleBodyFat.Calculate(new BodyFatInput(
+                    sizeSource.AbdomenCm!.Value,
+                    sizeSource.NeckCm!.Value,
+                    measurement.HeightCm));
             if (!calculated.IsSuccess)
             {
                 return Result.Failure<CalculationResultDto>(calculated.Error!);

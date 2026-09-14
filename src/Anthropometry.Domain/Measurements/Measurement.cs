@@ -18,6 +18,8 @@ public sealed class Measurement
         HeightCm = input.HeightCm;
         NeckCm = input.NeckCm;
         AbdomenCm = input.AbdomenCm;
+        HipCm = input.HipCm;
+        Gender = input.Gender;
         AgeYears = input.AgeYears;
         ActivityLevel = input.ActivityLevel;
         MeasuredAtUtc = input.MeasuredAtUtc;
@@ -38,6 +40,10 @@ public sealed class Measurement
     public decimal? NeckCm { get; }
 
     public decimal? AbdomenCm { get; }
+
+    public decimal? HipCm { get; }
+
+    public ProfileGender Gender { get; }
 
     public int AgeYears { get; }
 
@@ -84,6 +90,11 @@ public sealed class Measurement
             return new DomainError("measurement.type.invalid", "Errors.MeasurementTypeInvalid");
         }
 
+        if (!Enum.IsDefined(input.Gender) || input.Gender == ProfileGender.Unknown)
+        {
+            return new DomainError("measurement.gender.invalid", "Errors.ProfileGenderInvalid");
+        }
+
         if (input.WeightKg is < 1m or > 500m)
         {
             return new DomainError("measurement.weight.invalid", "Errors.MeasurementWeightInvalid");
@@ -94,7 +105,7 @@ public sealed class Measurement
             return new DomainError("measurement.height.invalid", "Errors.MeasurementHeightInvalid");
         }
 
-        if (input.Type == MeasurementType.WeightOnly && (input.NeckCm.HasValue || input.AbdomenCm.HasValue))
+        if (input.Type == MeasurementType.WeightOnly && (input.NeckCm.HasValue || input.AbdomenCm.HasValue || input.HipCm.HasValue))
         {
             return new DomainError("measurement.sizes.notAllowed", "Errors.MeasurementSizesNotAllowed");
         }
@@ -102,6 +113,13 @@ public sealed class Measurement
         if (input.Type == MeasurementType.WeightAndSizes && (!input.NeckCm.HasValue || !input.AbdomenCm.HasValue))
         {
             return new DomainError("measurement.sizes.required", "Errors.MeasurementSizesRequired");
+        }
+
+        if (input.Type == MeasurementType.WeightAndSizes
+            && input.Gender == ProfileGender.Female
+            && !input.HipCm.HasValue)
+        {
+            return new DomainError("measurement.hip.required", "Errors.MeasurementHipRequired");
         }
 
         if (input.NeckCm is < 1m or > 100m)
@@ -112,6 +130,11 @@ public sealed class Measurement
         if (input.AbdomenCm is < 1m or > 400m)
         {
             return new DomainError("measurement.abdomen.invalid", "Errors.MeasurementAbdomenInvalid");
+        }
+
+        if (input.HipCm is < 1m or > 400m)
+        {
+            return new DomainError("measurement.hip.invalid", "Errors.MeasurementHipInvalid");
         }
 
         if (input.AgeYears is < 1 or > 120)

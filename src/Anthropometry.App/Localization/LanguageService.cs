@@ -29,8 +29,9 @@ public sealed class LanguageService
         "CreateProfileTitle", "EditProfileTitle", "ProfileNameRequired", "ValidProfileSettings",
         "ProfileLimitReached", "SaveProfileError", "LoadProfilesError", "DeleteProfileError",
         "ProfileDetailsError", "AddWeight", "AddMeasurements", "EditProfile", "History",
-        "EstimateDisclaimer", "ResultsEstimateDisclaimer", "Weight", "Neck", "Abdomen",
+        "EstimateDisclaimer", "ResultsEstimateDisclaimer", "Weight", "Neck", "Abdomen", "Waist", "Hip",
         "Kg", "Cm", "SaveWeight", "CalculateResults", "ValidMeasurementExtended", "ValidWeight",
+        "ValidMeasurementExtendedFemale",
         "MeasurementValuesError", "CompleteProfileDetails", "SaveMeasurementError", "CalculationError",
         "MeasurementHistory", "NoMeasurements", "SavedMeasurementsLocal", "ViewResults", "WeightOnly", "LoadHistoryError",
         "WeightAndSizes", "ReusedMeasurementsDescription", "EstimatedResults", "ResultsTitle",
@@ -40,8 +41,10 @@ public sealed class LanguageService
         "GenerateSampleData", "SampleDataGenerated", "SampleDataRequiresMeasurement", "SampleDataError",
         "Charts", "WeightGraphic", "WeightGraphicTitle", "WeightGraphicNoMeasurements", "WeightGraphicLoadError", "Date",
         "HelpAboutTitle", "HelpDisclaimer", "HelpMeasurementConsistency", "HelpEquationsTitle",
-        "HelpBodyFatTitle", "HelpBodyFatDescription", "HelpBodyFatFormula", "HelpBmrTitle",
-        "HelpBmrDescription", "HelpBmrFormula", "HelpTdeeTitle", "HelpTdeeDescription", "HelpTdeeFormula",
+        "HelpBodyFatTitle", "HelpBodyFatDescription", "HelpBodyFatFormula", "HelpFemaleBodyFatTitle",
+        "HelpFemaleBodyFatDescription", "HelpFemaleBodyFatFormula", "HelpBmrTitle", "HelpBmrDescription",
+        "HelpBmrFormula", "HelpFemaleBmrTitle", "HelpFemaleBmrDescription", "HelpFemaleBmrFormula",
+        "HelpTdeeTitle", "HelpTdeeDescription", "HelpTdeeFormula",
         "HelpActivityFactors", "HelpUnits"
     ];
 

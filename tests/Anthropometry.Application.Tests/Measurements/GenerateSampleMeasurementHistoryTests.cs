@@ -1,10 +1,12 @@
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Measurements;
 using Anthropometry.Application.Tests.Support;
+using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Calculations.BodyFat;
 using Anthropometry.Domain.Calculations.Bmr;
 using Anthropometry.Domain.Calculations.Tdee;
 using Anthropometry.Domain.Measurements;
+using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Application.Tests.Measurements;
 
@@ -29,7 +31,9 @@ public sealed class GenerateSampleMeasurementHistoryTests
         var catalog = new FormulaCatalog(
             new UsNavyMaleBodyFatFormula(),
             new MifflinStJeorMaleBmrFormula(),
-            new TdeeFormula());
+            new TdeeFormula(),
+            new UsNavyFemaleBodyFatFormula(),
+            new MifflinStJeorFemaleBmrFormula());
         var generator = new GenerateSampleMeasurementHistory(
             profiles,
             measurements,
@@ -95,7 +99,9 @@ public sealed class GenerateSampleMeasurementHistoryTests
         var catalog = new FormulaCatalog(
             new UsNavyMaleBodyFatFormula(),
             new MifflinStJeorMaleBmrFormula(),
-            new TdeeFormula());
+            new TdeeFormula(),
+            new UsNavyFemaleBodyFatFormula(),
+            new MifflinStJeorFemaleBmrFormula());
         var generator = new GenerateSampleMeasurementHistory(
             profiles,
             measurements,
@@ -112,5 +118,63 @@ public sealed class GenerateSampleMeasurementHistoryTests
         Assert.Equal("sampleData.sizeMeasurement.required", result.Error!.Code);
         Assert.Empty(measurements.Items);
         Assert.Empty(results.Items);
+    }
+
+    [Fact]
+    public async Task Generates_female_samples_with_hip_variations_and_female_results()
+    {
+        var clock = new FakeClock
+        {
+            UtcNow = new DateTimeOffset(2026, 9, 10, 12, 0, 0, TimeSpan.Zero)
+        };
+        var profile = Profile.Create(
+            "Anna",
+            ProfileSettings.Create(180m, 35, ActivityLevel.Moderate).Value,
+            clock.UtcNow,
+            ProfileGender.Female).Value;
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        measurements.Items.Add(Anthropometry.Domain.Measurements.Measurement.Create(
+            profile.Id,
+            new MeasurementInput(
+                MeasurementType.WeightAndSizes,
+                80m,
+                180m,
+                40m,
+                90m,
+                35,
+                ActivityLevel.Moderate,
+                clock.UtcNow.AddHours(-1),
+                110m,
+                ProfileGender.Female),
+            clock.UtcNow).Value);
+        var results = new FakeCalculationResultRepository();
+        var catalog = new FormulaCatalog(
+            new UsNavyMaleBodyFatFormula(),
+            new MifflinStJeorMaleBmrFormula(),
+            new TdeeFormula(),
+            new UsNavyFemaleBodyFatFormula(),
+            new MifflinStJeorFemaleBmrFormula());
+        var generator = new GenerateSampleMeasurementHistory(
+            profiles,
+            measurements,
+            new CalculateBodyFat(measurements, results, catalog, clock),
+            new CalculateBasalMetabolicRate(measurements, results, catalog, clock),
+            new CalculateTotalDailyEnergyExpenditure(measurements, results, catalog, clock),
+            clock);
+
+        var result = await generator.ExecuteAsync(
+            new GenerateSampleMeasurementHistoryCommand(profile.Id),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        var generatedExtended = measurements.Items
+            .Where(measurement => measurement.Type == MeasurementType.WeightAndSizes && measurement.Gender == ProfileGender.Female)
+            .ToArray();
+        Assert.Equal(16, generatedExtended.Length);
+        Assert.All(generatedExtended, measurement => Assert.NotNull(measurement.HipCm));
+        Assert.All(results.Items, calculation =>
+            Assert.NotEqual("us-navy-male-body-fat", calculation.FormulaId));
     }
 }

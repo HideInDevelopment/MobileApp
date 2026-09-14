@@ -6,7 +6,7 @@ This mobile application will let users create multiple personal profiles, record
 
 The initial functional scope includes:
 
-- Body-fat percentage using a male anthropometric equation based on neck, abdomen, and height.
+- Body-fat percentage using gender-specific anthropometric equations: the male equation uses neck, abdomen, and height; the female equation uses neck, waist, hip, and height.
 - Basal metabolic rate (BMR).
 - Total daily energy expenditure (TDEE) based on BMR and an activity level.
 - Measurement and result history per profile.
@@ -157,7 +157,7 @@ Minimum properties:
 
 - `ProfileId`, stable identifier.
 - `Name`, non-empty with a defined maximum length.
-- `Gender`, a required `Male` or `Female` value used to identify the profile; current formulas remain male-only until gender-specific formula strategies are added.
+- `Gender`, a required `Male` or `Female` value used to select the profile's formula strategies.
 - `Settings`, containing the current height in centimeters, age in years, and named activity level.
 - `CreatedAtUtc`.
 - `UpdatedAtUtc`.
@@ -176,11 +176,13 @@ Minimum data:
 - `MeasurementType`, either `WeightOnly` or `WeightAndSizes`.
 - `WeightKg`.
 - `HeightCm`, copied from the profile settings at capture time.
-- `NeckCm` and `AbdomenCm`, required for `WeightAndSizes` and absent for `WeightOnly`.
+- `NeckCm` and `AbdomenCm`, required for `WeightAndSizes` and absent for `WeightOnly`. For a female measurement, `AbdomenCm` stores the waist value used by the female equation.
+- `HipCm`, required for a female `WeightAndSizes` record and absent for `WeightOnly`.
+- `Gender`, copied from the profile at capture time so later calculations use the gender selected for that measurement.
 - `AgeYears`, captured in the measurement so the age used by historical calculations is preserved.
 - `ActivityLevel`, captured in the measurement so later profile edits do not change historical context.
 
-`WeightOnly` records a new weight and timestamp without storing new size values. When an earlier `WeightAndSizes` measurement exists, the application recalculates body-fat, BMR, and TDEE for the new weight using that earlier measurement's neck and abdomen values; the results remain attached to the new measurement. `WeightAndSizes` records both sizes and creates the same three results through the existing versioned calculation pipeline. The measurement must preserve the entered values, not only derived results. This allows recalculation, auditing, and adding new formulas later.
+`WeightOnly` records a new weight and timestamp without storing new size values. When an earlier `WeightAndSizes` measurement exists, the application recalculates body-fat, BMR, and TDEE for the new weight using that earlier measurement's required size values; the results remain attached to the new measurement. `WeightAndSizes` records the required gender-specific sizes and creates the same three results through the existing versioned calculation pipeline. The measurement must preserve the entered values, not only derived results. This allows recalculation, auditing, and adding new formulas later.
 
 ### 5.3 CalculationResult
 
@@ -232,7 +234,7 @@ The exact contract may be refined during implementation, but it must preserve th
 
 ### 6.1 Body-fat percentage
 
-The first implementation will use the US Navy formula for men, based on abdomen, neck, and height. Values entered in centimeters will be converted to inches before applying the formula because its constants are defined for inches:
+The male implementation uses the US Navy formula based on abdomen, neck, and height. Values entered in centimeters will be converted to inches before applying the formula because its constants are defined for inches:
 
 ```text
 bodyFatPercentage =
@@ -241,21 +243,38 @@ bodyFatPercentage =
   + 36.76
 ```
 
-The UI will state that this formula is for men and that the abdomen must be measured at the product-defined location. The formula will reject non-positive inputs and any case where `abdomenInches - neckInches` is not greater than zero.
+The UI states that this formula is for men and that the abdomen must be measured at the product-defined location. The formula rejects non-positive inputs and any case where `abdomenInches - neckInches` is not greater than zero.
+
+The female implementation uses the classic US Navy/Hodgdon-Beckett equation and requires waist, hip, neck, and height. Metric values are converted to inches at the formula boundary:
+
+```text
+bodyFatPercentage =
+    163.205 × log10((waistCm + hipCm - neckCm) / 2.54)
+  - 97.684 × log10(heightCm / 2.54)
+  - 78.387
+```
+
+The female formula rejects non-positive inputs and any case where `waistCm + hipCm - neckCm` is not greater than zero. It is a separate formula identity and version; it does not replace historical male results.
 
 ### 6.2 Basal metabolic rate
 
-The MVP will use the male Mifflin-St Jeor equation:
+The male implementation uses the Mifflin-St Jeor equation:
 
 ```text
 BMR = 10 × weightKg + 6.25 × heightCm - 5 × ageYears + 5
 ```
 
-The formula will be identified and versioned as a male formula. Female variants or other equations will be new strategies with their own contracts, tests, and eligibility rules.
+The female implementation uses the corresponding Mifflin-St Jeor variant:
+
+```text
+BMR = 10 × weightKg + 6.25 × heightCm - 5 × ageYears - 161
+```
+
+Both variants are identified and versioned separately. The female identity is `mifflin-st-jeor-female-bmr`, version `1.0`; it does not alter historical male results.
 
 ### 6.3 Total daily energy expenditure
 
-TDEE will be calculated explicitly as:
+TDEE will be calculated explicitly for both genders as:
 
 ```text
 TDEE = BMR × activity factor
@@ -271,7 +290,7 @@ The MVP will offer these levels and factors:
 | High | 1.725 |
 | Very high | 1.9 |
 
-The activity factor will not be stored as an anonymous UI number. It will be represented by an enum or value object with a label, description, and factor defined by the formula/version.
+The activity factor will not be stored as an anonymous UI number. It will be represented by an enum or value object with a label, description, and factor defined by the formula/version. There is no separate female TDEE equation in this slice; the female BMR is multiplied by the selected activity factor.
 
 ### 6.4 Versioning and precision
 
@@ -362,6 +381,8 @@ Measurements
   HeightCm
   NeckCm (nullable for WeightOnly)
   AbdomenCm (nullable for WeightOnly)
+  HipCm (nullable for WeightOnly and male measurements)
+  Gender
   AgeYears
   ActivityLevel
 
@@ -384,7 +405,7 @@ Tables must have indexes for `ProfileId`, `MeasurementId`, and measurement dates
 
 ### 8.3 Migrations
 
-Every schema change has a version and a migration test from the previous version. The current schema is version 2: it adds persisted profile settings, adds `MeasurementType`, and makes neck and abdomen nullable for weight-only records. Existing measurements are migrated as `WeightAndSizes`, and profile settings are backfilled from each profile's latest measurement when possible. Updating the application must not lose user data.
+Every schema change has a version and a migration test from the previous version. The current schema is version 4: version 2 adds persisted profile settings, adds `MeasurementType`, and makes neck and abdomen nullable for weight-only records; version 3 adds profile gender; version 4 adds measurement hip values and a gender snapshot, defaulting legacy measurements to `Male`. Existing measurements remain readable, and profile settings are backfilled from each profile's latest measurement when possible. Updating the application must not lose user data.
 
 The database will initialize asynchronously before the first screen depends on it. An initialization failure must prevent operation with incomplete data and show a recoverable error screen.
 

@@ -12,7 +12,8 @@ public sealed record RecordMeasurementCommand(
     decimal WeightKg,
     decimal? NeckCm,
     decimal? AbdomenCm,
-    DateTimeOffset MeasuredAtUtc);
+    DateTimeOffset MeasuredAtUtc,
+    decimal? HipCm = null);
 
 public sealed class RecordMeasurement
 {
@@ -50,7 +51,9 @@ public sealed class RecordMeasurement
                 command.AbdomenCm,
                 profile.Settings.AgeYears,
                 profile.Settings.ActivityLevel,
-                command.MeasuredAtUtc);
+                command.MeasuredAtUtc,
+                command.HipCm,
+                profile.Gender);
             var measurement = Measurement.Create(command.ProfileId, input, _clock.UtcNow);
             if (!measurement.IsSuccess)
             {

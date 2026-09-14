@@ -56,8 +56,10 @@ public sealed class GenerateSampleMeasurementHistory
             var history = await _measurements.GetByProfileAsync(command.ProfileId, cancellationToken);
             var sizeSource = history
                 .Where(measurement => measurement.Type == MeasurementType.WeightAndSizes
+                    && measurement.Gender == profile.Gender
                     && measurement.NeckCm.HasValue
-                    && measurement.AbdomenCm.HasValue)
+                    && measurement.AbdomenCm.HasValue
+                    && (profile.Gender != ProfileGender.Female || measurement.HipCm.HasValue))
                 .OrderByDescending(measurement => measurement.MeasuredAtUtc)
                 .FirstOrDefault();
 
@@ -100,7 +102,11 @@ public sealed class GenerateSampleMeasurementHistory
                         : null,
                     sizeSource.AgeYears,
                     sizeSource.ActivityLevel,
-                    measuredAtUtc);
+                    measuredAtUtc,
+                    type == MeasurementType.WeightAndSizes && profile.Gender == ProfileGender.Female
+                        ? Math.Clamp(sizeSource.HipCm!.Value + HipVariation(dayIndex), 1m, 400m)
+                        : null,
+                    profile.Gender);
                 var created = Measurement.Create(command.ProfileId, input, _clock.UtcNow);
                 if (!created.IsSuccess)
                 {
@@ -158,4 +164,8 @@ public sealed class GenerateSampleMeasurementHistory
 
     private static decimal AbdomenVariation(int dayIndex)
         => ((dayIndex * 11 + 3) % 21) - 10;
+
+    private static decimal HipVariation(int dayIndex)
+        => ((dayIndex * 13 + 5) % 21) - 10;
+
 }

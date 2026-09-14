@@ -21,7 +21,7 @@ public sealed class SqliteMeasurementRepository : IMeasurementRepository
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
             connection.Execute(
-                "INSERT INTO Measurements (Id, ProfileId, MeasuredAtUtc, MeasurementType, WeightKg, HeightCm, NeckCm, AbdomenCm, AgeYears, ActivityLevel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO Measurements (Id, ProfileId, MeasuredAtUtc, MeasurementType, WeightKg, HeightCm, NeckCm, AbdomenCm, HipCm, Gender, AgeYears, ActivityLevel) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 measurement.Id.ToString(),
                 measurement.ProfileId.ToString(),
                 SqliteValueConverter.ToUtcString(measurement.MeasuredAtUtc),
@@ -30,6 +30,8 @@ public sealed class SqliteMeasurementRepository : IMeasurementRepository
                 measurement.HeightCm,
                 measurement.NeckCm,
                 measurement.AbdomenCm,
+                measurement.HipCm,
+                (int)measurement.Gender,
                 measurement.AgeYears,
                 (int)measurement.ActivityLevel);
         }, cancellationToken);
@@ -39,7 +41,7 @@ public sealed class SqliteMeasurementRepository : IMeasurementRepository
         {
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
-            var row = connection.FindWithQuery<MeasurementRow>("SELECT Id, ProfileId, MeasuredAtUtc, MeasurementType, WeightKg, HeightCm, NeckCm, AbdomenCm, AgeYears, ActivityLevel FROM Measurements WHERE Id = ?", id.ToString());
+            var row = connection.FindWithQuery<MeasurementRow>("SELECT Id, ProfileId, MeasuredAtUtc, MeasurementType, WeightKg, HeightCm, NeckCm, AbdomenCm, HipCm, Gender, AgeYears, ActivityLevel FROM Measurements WHERE Id = ?", id.ToString());
             return row is null ? null : Map(row);
         }, cancellationToken);
 
@@ -49,7 +51,7 @@ public sealed class SqliteMeasurementRepository : IMeasurementRepository
             cancellationToken.ThrowIfCancellationRequested();
             using var connection = _connectionFactory.Create();
             return connection.Query<MeasurementRow>(
-                    "SELECT Id, ProfileId, MeasuredAtUtc, MeasurementType, WeightKg, HeightCm, NeckCm, AbdomenCm, AgeYears, ActivityLevel FROM Measurements WHERE ProfileId = ? ORDER BY MeasuredAtUtc DESC",
+                    "SELECT Id, ProfileId, MeasuredAtUtc, MeasurementType, WeightKg, HeightCm, NeckCm, AbdomenCm, HipCm, Gender, AgeYears, ActivityLevel FROM Measurements WHERE ProfileId = ? ORDER BY MeasuredAtUtc DESC",
                     profileId.ToString())
                 .Select(Map)
                 .ToArray();
@@ -65,7 +67,9 @@ public sealed class SqliteMeasurementRepository : IMeasurementRepository
             row.AbdomenCm,
             row.AgeYears,
             (ActivityLevel)row.ActivityLevel,
-            SqliteValueConverter.ToUtcDateTimeOffset(row.MeasuredAtUtc));
+            SqliteValueConverter.ToUtcDateTimeOffset(row.MeasuredAtUtc),
+            row.HipCm,
+            (ProfileGender)row.Gender);
         var result = Measurement.Rehydrate(
             new MeasurementId(Guid.Parse(row.Id)),
             new ProfileId(Guid.Parse(row.ProfileId)),
@@ -83,6 +87,8 @@ public sealed class SqliteMeasurementRepository : IMeasurementRepository
         public decimal HeightCm { get; set; }
         public decimal? NeckCm { get; set; }
         public decimal? AbdomenCm { get; set; }
+        public decimal? HipCm { get; set; }
+        public int Gender { get; set; } = (int)ProfileGender.Male;
         public int AgeYears { get; set; }
         public int ActivityLevel { get; set; }
     }

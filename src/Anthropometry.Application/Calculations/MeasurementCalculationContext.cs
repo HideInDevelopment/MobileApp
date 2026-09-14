@@ -12,9 +12,7 @@ internal static class MeasurementCalculationContext
         Measurement measurement,
         CancellationToken cancellationToken)
     {
-        if (measurement.Type == MeasurementType.WeightAndSizes
-            && measurement.NeckCm.HasValue
-            && measurement.AbdomenCm.HasValue)
+        if (HasRequiredSizes(measurement))
         {
             return measurement;
         }
@@ -28,9 +26,15 @@ internal static class MeasurementCalculationContext
         return history
             .Where(candidate => candidate.Type == MeasurementType.WeightAndSizes
                 && candidate.MeasuredAtUtc < measurement.MeasuredAtUtc
-                && candidate.NeckCm.HasValue
-                && candidate.AbdomenCm.HasValue)
+                && candidate.Gender == measurement.Gender
+                && HasRequiredSizes(candidate))
             .OrderByDescending(candidate => candidate.MeasuredAtUtc)
             .FirstOrDefault();
     }
+
+    private static bool HasRequiredSizes(Measurement measurement)
+        => measurement.Type == MeasurementType.WeightAndSizes
+            && measurement.NeckCm.HasValue
+            && measurement.AbdomenCm.HasValue
+            && (measurement.Gender != ProfileGender.Female || measurement.HipCm.HasValue);
 }

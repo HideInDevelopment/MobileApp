@@ -27,7 +27,9 @@ public sealed record MeasurementDto(
     decimal? NeckCm,
     decimal? AbdomenCm,
     int AgeYears,
-    ActivityLevel ActivityLevel);
+    ActivityLevel ActivityLevel,
+    decimal? HipCm = null,
+    ProfileGender Gender = ProfileGender.Male);
 
 public sealed record CalculationResultDto(
     CalculationResultId Id,
@@ -53,7 +55,7 @@ internal static class ApplicationModels
             profile.Gender);
 
     public static MeasurementDto ToDto(Measurement measurement)
-        => new(measurement.Id, measurement.ProfileId, measurement.Type, measurement.MeasuredAtUtc, measurement.WeightKg, measurement.HeightCm, measurement.NeckCm, measurement.AbdomenCm, measurement.AgeYears, measurement.ActivityLevel);
+        => new(measurement.Id, measurement.ProfileId, measurement.Type, measurement.MeasuredAtUtc, measurement.WeightKg, measurement.HeightCm, measurement.NeckCm, measurement.AbdomenCm, measurement.AgeYears, measurement.ActivityLevel, measurement.HipCm, measurement.Gender);
 
     public static CalculationResultDto ToDto(CalculationResult result)
         => new(result.Id, result.MeasurementId, result.CalculationType, result.FormulaId, result.FormulaVersion, result.Value, result.Unit, result.CalculatedAtUtc);

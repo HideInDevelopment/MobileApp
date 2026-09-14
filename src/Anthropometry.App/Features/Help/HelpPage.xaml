@@ -20,10 +20,26 @@
             </VerticalStackLayout>
 
             <VerticalStackLayout Spacing="6">
+                <Label Text="{DynamicResource HelpFemaleBodyFatTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpFemaleBodyFatDescription}" LineBreakMode="WordWrap" />
+                <Border Padding="12" StrokeThickness="1">
+                    <Label Text="{DynamicResource HelpFemaleBodyFatFormula}" LineBreakMode="WordWrap" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
                 <Label Text="{DynamicResource HelpBmrTitle}" FontAttributes="Bold" />
                 <Label Text="{DynamicResource HelpBmrDescription}" LineBreakMode="WordWrap" />
                 <Border Padding="12" StrokeThickness="1">
                     <Label Text="{DynamicResource HelpBmrFormula}" LineBreakMode="WordWrap" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{DynamicResource HelpFemaleBmrTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpFemaleBmrDescription}" LineBreakMode="WordWrap" />
+                <Border Padding="12" StrokeThickness="1">
+                    <Label Text="{DynamicResource HelpFemaleBmrFormula}" LineBreakMode="WordWrap" />
                 </Border>
             </VerticalStackLayout>
 

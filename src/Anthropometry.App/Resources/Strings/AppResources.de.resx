@@ -49,11 +49,14 @@
   <data name="Weight" xml:space="preserve"><value>Gewicht</value></data>
   <data name="Neck" xml:space="preserve"><value>Hals</value></data>
   <data name="Abdomen" xml:space="preserve"><value>Bauch</value></data>
+  <data name="Waist" xml:space="preserve"><value>Taille</value></data>
+  <data name="Hip" xml:space="preserve"><value>Hüfte</value></data>
   <data name="Kg" xml:space="preserve"><value>kg</value></data>
   <data name="Cm" xml:space="preserve"><value>cm</value></data>
   <data name="SaveWeight" xml:space="preserve"><value>Gewicht speichern</value></data>
   <data name="CalculateResults" xml:space="preserve"><value>Ergebnisse berechnen</value></data>
   <data name="ValidMeasurementExtended" xml:space="preserve"><value>Gib gültige Werte für Gewicht, Hals und Bauch ein.</value></data>
+  <data name="ValidMeasurementExtendedFemale" xml:space="preserve"><value>Gib gültige Werte für Gewicht, Hals, Taille und Hüfte ein.</value></data>
   <data name="ValidWeight" xml:space="preserve"><value>Gib ein gültiges Gewicht ein.</value></data>
   <data name="MeasurementValuesError" xml:space="preserve"><value>Überprüfe die Messwerte und versuche es erneut.</value></data>
   <data name="CompleteProfileDetails" xml:space="preserve"><value>Vervollständige die Profildaten, bevor du eine Messung hinzufügst.</value></data>
@@ -66,7 +69,7 @@
   <data name="ViewResults" xml:space="preserve"><value>Ergebnisse anzeigen</value></data>
   <data name="WeightOnly" xml:space="preserve"><value>Nur Gewicht</value></data>
   <data name="WeightAndSizes" xml:space="preserve"><value>Gewicht und Maße</value></data>
-  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>Diese Ergebnisse verwenden die vorherigen Hals- und Bauchmessungen erneut.</value></data>
+  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>Diese Ergebnisse verwenden die vorherigen Körpermaße erneut.</value></data>
   <data name="EstimatedResults" xml:space="preserve"><value>Geschätzte Ergebnisse</value></data>
   <data name="ResultsTitle" xml:space="preserve"><value>Ergebnisse</value></data>
   <data name="BodyFatPercentage" xml:space="preserve"><value>Körperfettanteil</value></data>
@@ -84,7 +87,7 @@
   <data name="DeleteAction" xml:space="preserve"><value>Löschen</value></data>
   <data name="GenerateSampleData" xml:space="preserve"><value>Beispieldaten generieren</value></data>
   <data name="SampleDataGenerated" xml:space="preserve"><value>Beispieldaten wurden generiert.</value></data>
-  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Füge zuerst eine Messung mit Nacken- und Bauchumfang hinzu.</value></data>
+  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Füge zuerst eine vollständige Körpermessung hinzu.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>Beispieldaten konnten nicht generiert werden. Versuche es erneut.</value></data>
   <data name="Charts" xml:space="preserve"><value>Diagramme</value></data>
   <data name="WeightGraphic" xml:space="preserve"><value>Gewichtsdiagramm</value></data>
@@ -99,9 +102,15 @@
   <data name="HelpBodyFatTitle" xml:space="preserve"><value>Körperfettanteil — US Navy (männlich), Version 1.0</value></data>
   <data name="HelpBodyFatDescription" xml:space="preserve"><value>Verwendet Bauchumfang, Halsumfang und Körpergröße. In Zentimetern eingegebene Werte werden vor der Berechnung in Zoll umgerechnet. Diese Gleichung ist für Männer bestimmt.</value></data>
   <data name="HelpBodyFatFormula" xml:space="preserve"><value>86.010 × log₁₀(Bauch − Hals) − 70.041 × log₁₀(Größe) + 36.76</value></data>
+  <data name="HelpFemaleBodyFatTitle" xml:space="preserve"><value>Körperfettanteil — US Navy (weiblich), Version 1.0</value></data>
+  <data name="HelpFemaleBodyFatDescription" xml:space="preserve"><value>Verwendet Taille, Hüfte, Hals und Körpergröße. In Zentimetern eingegebene Werte werden vor der Berechnung in Zoll umgerechnet. Diese Gleichung ist für Frauen bestimmt.</value></data>
+  <data name="HelpFemaleBodyFatFormula" xml:space="preserve"><value>163.205 × log₁₀(Taille + Hüfte − Hals) − 97.684 × log₁₀(Größe) − 78.387</value></data>
   <data name="HelpBmrTitle" xml:space="preserve"><value>Grundumsatz — Mifflin–St Jeor (männlich), Version 1.0</value></data>
   <data name="HelpBmrDescription" xml:space="preserve"><value>Schätzt anhand von Gewicht, Körpergröße und Alter, wie viele Kalorien der Körper in Ruhe verbraucht. Diese Gleichung ist für Männer bestimmt.</value></data>
   <data name="HelpBmrFormula" xml:space="preserve"><value>10 × Gewicht + 6.25 × Größe − 5 × Alter + 5</value></data>
+  <data name="HelpFemaleBmrTitle" xml:space="preserve"><value>Grundumsatz — Mifflin–St Jeor (weiblich), Version 1.0</value></data>
+  <data name="HelpFemaleBmrDescription" xml:space="preserve"><value>Schätzt anhand von Gewicht, Körpergröße und Alter, wie viele Kalorien der Körper in Ruhe verbraucht. Diese Gleichung ist für Frauen bestimmt.</value></data>
+  <data name="HelpFemaleBmrFormula" xml:space="preserve"><value>10 × Gewicht + 6.25 × Größe − 5 × Alter − 161</value></data>
   <data name="HelpTdeeTitle" xml:space="preserve"><value>Gesamter täglicher Energieverbrauch</value></data>
   <data name="HelpTdeeDescription" xml:space="preserve"><value>Wird berechnet, indem der Grundumsatz mit dem im Profil ausgewählten Aktivitätsfaktor multipliziert wird.</value></data>
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = Grundumsatz × Aktivitätsfaktor</value></data>

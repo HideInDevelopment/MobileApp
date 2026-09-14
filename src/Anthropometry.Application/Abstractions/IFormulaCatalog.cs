@@ -7,9 +7,13 @@ namespace Anthropometry.Application.Abstractions;
 
 public interface IFormulaCatalog
 {
-    ICalculationFormula<BodyFatInput, CalculationResultValue> BodyFat { get; }
+    ICalculationFormula<BodyFatInput, CalculationResultValue> MaleBodyFat { get; }
 
-    ICalculationFormula<BmrInput, CalculationResultValue> Bmr { get; }
+    ICalculationFormula<FemaleBodyFatInput, CalculationResultValue> FemaleBodyFat { get; }
+
+    ICalculationFormula<BmrInput, CalculationResultValue> MaleBmr { get; }
+
+    ICalculationFormula<BmrInput, CalculationResultValue> FemaleBmr { get; }
 
     ICalculationFormula<TdeeInput, CalculationResultValue> Tdee { get; }
 }

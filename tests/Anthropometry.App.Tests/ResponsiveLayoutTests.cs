@@ -19,7 +19,12 @@ public sealed class ResponsiveLayoutTests
         profiles.Items.Add(profile);
         var measurements = new FakeMeasurementRepository();
         var results = new FakeCalculationResultRepository();
-        var catalog = new FormulaCatalog(new UsNavyMaleBodyFatFormula(), new MifflinStJeorMaleBmrFormula(), new TdeeFormula());
+        var catalog = new FormulaCatalog(
+            new UsNavyMaleBodyFatFormula(),
+            new MifflinStJeorMaleBmrFormula(),
+            new TdeeFormula(),
+            new UsNavyFemaleBodyFatFormula(),
+            new MifflinStJeorFemaleBmrFormula());
         var measurementViewModel = new MeasurementEditorViewModel(
             new RecordMeasurement(profiles, measurements, new FakeClock()),
             new CalculateBodyFat(measurements, results, catalog, new FakeClock()),

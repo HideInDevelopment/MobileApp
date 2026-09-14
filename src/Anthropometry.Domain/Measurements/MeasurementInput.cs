@@ -1,4 +1,5 @@
 using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Domain.Measurements;
 
@@ -10,4 +11,6 @@ public sealed record MeasurementInput(
     decimal? AbdomenCm,
     int AgeYears,
     ActivityLevel ActivityLevel,
-    DateTimeOffset MeasuredAtUtc);
+    DateTimeOffset MeasuredAtUtc,
+    decimal? HipCm = null,
+    ProfileGender Gender = ProfileGender.Male);

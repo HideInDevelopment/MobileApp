@@ -49,11 +49,14 @@
   <data name="Weight" xml:space="preserve"><value>Weight</value></data>
   <data name="Neck" xml:space="preserve"><value>Neck</value></data>
   <data name="Abdomen" xml:space="preserve"><value>Abdomen</value></data>
+  <data name="Waist" xml:space="preserve"><value>Waist</value></data>
+  <data name="Hip" xml:space="preserve"><value>Hip</value></data>
   <data name="Kg" xml:space="preserve"><value>kg</value></data>
   <data name="Cm" xml:space="preserve"><value>cm</value></data>
   <data name="SaveWeight" xml:space="preserve"><value>Save weight</value></data>
   <data name="CalculateResults" xml:space="preserve"><value>Calculate results</value></data>
   <data name="ValidMeasurementExtended" xml:space="preserve"><value>Enter valid weight, neck, and abdomen values.</value></data>
+  <data name="ValidMeasurementExtendedFemale" xml:space="preserve"><value>Enter valid weight, neck, waist, and hip values.</value></data>
   <data name="ValidWeight" xml:space="preserve"><value>Enter a valid weight.</value></data>
   <data name="MeasurementValuesError" xml:space="preserve"><value>Check the measurement values and try again.</value></data>
   <data name="CompleteProfileDetails" xml:space="preserve"><value>Complete the profile details before adding a measurement.</value></data>
@@ -66,7 +69,7 @@
   <data name="ViewResults" xml:space="preserve"><value>View results</value></data>
   <data name="WeightOnly" xml:space="preserve"><value>Weight only</value></data>
   <data name="WeightAndSizes" xml:space="preserve"><value>Weight and sizes</value></data>
-  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>These results reuse the previous neck and abdomen measurements.</value></data>
+  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>These results reuse the previous size measurements.</value></data>
   <data name="EstimatedResults" xml:space="preserve"><value>Estimated results</value></data>
   <data name="ResultsTitle" xml:space="preserve"><value>Results</value></data>
   <data name="BodyFatPercentage" xml:space="preserve"><value>Body Fat Percentage</value></data>
@@ -84,7 +87,7 @@
   <data name="DeleteAction" xml:space="preserve"><value>Delete</value></data>
   <data name="GenerateSampleData" xml:space="preserve"><value>Generate sample data</value></data>
   <data name="SampleDataGenerated" xml:space="preserve"><value>Sample data generated.</value></data>
-  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Add a measurement with neck and abdomen sizes before generating sample data.</value></data>
+  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Add a complete size measurement before generating sample data.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>We couldn't generate sample data. Try again.</value></data>
   <data name="Charts" xml:space="preserve"><value>Charts</value></data>
   <data name="WeightGraphic" xml:space="preserve"><value>Weight graphic</value></data>
@@ -99,9 +102,15 @@
   <data name="HelpBodyFatTitle" xml:space="preserve"><value>Body-fat percentage — US Navy (male), version 1.0</value></data>
   <data name="HelpBodyFatDescription" xml:space="preserve"><value>Uses abdomen, neck, and height. Values entered in centimetres are converted to inches before calculation. This equation is intended for men.</value></data>
   <data name="HelpBodyFatFormula" xml:space="preserve"><value>86.010 × log₁₀(abdomen − neck) − 70.041 × log₁₀(height) + 36.76</value></data>
+  <data name="HelpFemaleBodyFatTitle" xml:space="preserve"><value>Body-fat percentage — US Navy (female), version 1.0</value></data>
+  <data name="HelpFemaleBodyFatDescription" xml:space="preserve"><value>Uses waist, hip, neck, and height. Values entered in centimetres are converted to inches before calculation. This equation is intended for women.</value></data>
+  <data name="HelpFemaleBodyFatFormula" xml:space="preserve"><value>163.205 × log₁₀(waist + hip − neck) − 97.684 × log₁₀(height) − 78.387</value></data>
   <data name="HelpBmrTitle" xml:space="preserve"><value>Basal metabolic rate — Mifflin–St Jeor (male), version 1.0</value></data>
   <data name="HelpBmrDescription" xml:space="preserve"><value>Estimates the calories your body uses at rest from weight, height, and age. This equation is intended for men.</value></data>
   <data name="HelpBmrFormula" xml:space="preserve"><value>10 × weight + 6.25 × height − 5 × age + 5</value></data>
+  <data name="HelpFemaleBmrTitle" xml:space="preserve"><value>Basal metabolic rate — Mifflin–St Jeor (female), version 1.0</value></data>
+  <data name="HelpFemaleBmrDescription" xml:space="preserve"><value>Estimates the calories your body uses at rest from weight, height, and age. This equation is intended for women.</value></data>
+  <data name="HelpFemaleBmrFormula" xml:space="preserve"><value>10 × weight + 6.25 × height − 5 × age − 161</value></data>
   <data name="HelpTdeeTitle" xml:space="preserve"><value>Total daily energy expenditure</value></data>
   <data name="HelpTdeeDescription" xml:space="preserve"><value>Calculated by multiplying BMR by the activity factor selected in the profile.</value></data>
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × activity factor</value></data>

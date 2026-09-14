@@ -24,9 +24,9 @@
 - Network: Out of scope for the MVP; no backend or synchronization.
 - Initial units: Metric system.
 - Store `AgeYears` on each measurement so the age used by historical calculations is preserved.
-- The initial body-fat formula is the male US Navy equation and converts centimeters to inches before calculation.
-- The initial BMR formula is the male Mifflin-St Jeor equation.
-- TDEE is BMR multiplied by a named activity level and its defined factor.
+- The male body-fat formula is the US Navy equation and converts centimeters to inches before calculation; the female body-fat formula is the versioned US Navy/Hodgdon-Beckett equation using waist, hip, neck, and height.
+- Male and female BMR use their corresponding Mifflin-St Jeor variants.
+- TDEE is the gender-specific BMR multiplied by a named activity level and its defined factor; no separate female TDEE equation is introduced.
 - Every formula has a stable identity and version.
 - UI code never accesses SQLite directly.
 - Domain code never references MAUI, Android, XAML, or SQLite.
@@ -796,9 +796,9 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ### Post-MVP feature slice: Profile gender
 
-**Status:** Implemented on `master` as a local profile-data and Presentation feature; gender-specific equations remain a later slice.
+**Status:** Implemented on `master` as a local profile-data and Presentation feature; gender-specific equations are implemented in the following slice.
 
-**Review boundary:** Profile creation and editing allow a required Male/Female selection, the value is validated and persisted in SQLite through schema migration 3, existing profiles default to Male, and the profile list/detail title show the corresponding gender symbol. The current male-only calculations are unchanged.
+**Review boundary:** Profile creation and editing allow a required Male/Female selection, the value is validated and persisted in SQLite through schema migration 3, existing profiles default to Male, and the profile list/detail title show the corresponding gender symbol.
 
 **Acceptance criteria:**
 
@@ -813,6 +813,32 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 - [x] Domain, Application, Infrastructure, and App tests cover gender validation, persistence, migration defaults, editor state, icon mapping, and markup.
 - [x] The Android Release build completed with 0 warnings and 0 errors.
+
+---
+
+### Post-MVP feature slice: Gender-specific calculations
+
+**Status:** Implemented on `master` as the approved female-calculation extension.
+
+**Review boundary:** Female profiles use the classic versioned US Navy/Hodgdon-Beckett body-fat equation with waist, hip, neck, and height; female profiles use the female Mifflin-St Jeor BMR equation; TDEE reuses the existing activity multiplier; measurement gender and hip values are persisted for correct historical and weight-only recalculations.
+
+**Acceptance criteria:**
+
+- [x] Domain tests cover the female body-fat equation, metric-to-imperial conversion, invalid logarithm inputs, formula identity, version, and units.
+- [x] Domain tests cover the female Mifflin-St Jeor equation, invalid inputs, formula identity, version, and units.
+- [x] Female `WeightAndSizes` measurements require and persist hip circumference; `WeightOnly` measurements continue to reject all size fields.
+- [x] Measurement records persist the selected gender and migration 4 defaults legacy records to Male.
+- [x] Calculation use cases select male or female body-fat and BMR formulas from the measurement gender snapshot.
+- [x] Female TDEE uses female BMR multiplied by the existing named activity factor.
+- [x] Female weight-only calculations reuse the latest earlier female size measurement, including hip circumference.
+- [x] Female measurement entry shows waist and hip labels and validates decimal metric inputs.
+- [x] Help displays both male and female body-fat and BMR equations in English, Spanish, and German.
+- [x] Female sample-history generation persists hip variations and female calculation results.
+
+**Verification:**
+
+- [x] `dotnet test Anthropometry.sln -f net10.0 --configuration Release --no-restore -m:1` — 159 tests passed.
+- [ ] Android Release build and manual female-profile acceptance pass — pending the final verification command/device pass.
 
 ---
 

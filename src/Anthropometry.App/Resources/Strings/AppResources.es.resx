@@ -49,11 +49,14 @@
   <data name="Weight" xml:space="preserve"><value>Peso</value></data>
   <data name="Neck" xml:space="preserve"><value>Cuello</value></data>
   <data name="Abdomen" xml:space="preserve"><value>Abdomen</value></data>
+  <data name="Waist" xml:space="preserve"><value>Cintura</value></data>
+  <data name="Hip" xml:space="preserve"><value>Cadera</value></data>
   <data name="Kg" xml:space="preserve"><value>kg</value></data>
   <data name="Cm" xml:space="preserve"><value>cm</value></data>
   <data name="SaveWeight" xml:space="preserve"><value>Guardar peso</value></data>
   <data name="CalculateResults" xml:space="preserve"><value>Calcular resultados</value></data>
   <data name="ValidMeasurementExtended" xml:space="preserve"><value>Introduce valores válidos de peso, cuello y abdomen.</value></data>
+  <data name="ValidMeasurementExtendedFemale" xml:space="preserve"><value>Introduce valores válidos de peso, cuello, cintura y cadera.</value></data>
   <data name="ValidWeight" xml:space="preserve"><value>Introduce un peso válido.</value></data>
   <data name="MeasurementValuesError" xml:space="preserve"><value>Revisa las medidas e inténtalo de nuevo.</value></data>
   <data name="CompleteProfileDetails" xml:space="preserve"><value>Completa los datos del perfil antes de añadir una medida.</value></data>
@@ -66,7 +69,7 @@
   <data name="ViewResults" xml:space="preserve"><value>Ver resultados</value></data>
   <data name="WeightOnly" xml:space="preserve"><value>Solo peso</value></data>
   <data name="WeightAndSizes" xml:space="preserve"><value>Peso y medidas</value></data>
-  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>Estos resultados reutilizan las medidas anteriores de cuello y abdomen.</value></data>
+  <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>Estos resultados reutilizan las medidas corporales anteriores.</value></data>
   <data name="EstimatedResults" xml:space="preserve"><value>Resultados estimados</value></data>
   <data name="ResultsTitle" xml:space="preserve"><value>Resultados</value></data>
   <data name="BodyFatPercentage" xml:space="preserve"><value>Porcentaje de grasa corporal</value></data>
@@ -84,7 +87,7 @@
   <data name="DeleteAction" xml:space="preserve"><value>Eliminar</value></data>
   <data name="GenerateSampleData" xml:space="preserve"><value>Generar datos de prueba</value></data>
   <data name="SampleDataGenerated" xml:space="preserve"><value>Datos de prueba generados.</value></data>
-  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Añade una medición con cuello y abdomen antes de generar datos de prueba.</value></data>
+  <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Añade una medición completa de medidas antes de generar datos de prueba.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>No se pudieron generar los datos de prueba. Inténtalo de nuevo.</value></data>
   <data name="Charts" xml:space="preserve"><value>Gráficos</value></data>
   <data name="WeightGraphic" xml:space="preserve"><value>Gráfico de peso</value></data>
@@ -99,9 +102,15 @@
   <data name="HelpBodyFatTitle" xml:space="preserve"><value>Porcentaje de grasa corporal — US Navy (hombres), versión 1.0</value></data>
   <data name="HelpBodyFatDescription" xml:space="preserve"><value>Utiliza abdomen, cuello y altura. Los valores introducidos en centímetros se convierten a pulgadas antes del cálculo. Esta ecuación está pensada para hombres.</value></data>
   <data name="HelpBodyFatFormula" xml:space="preserve"><value>86.010 × log₁₀(abdomen − cuello) − 70.041 × log₁₀(altura) + 36.76</value></data>
+  <data name="HelpFemaleBodyFatTitle" xml:space="preserve"><value>Porcentaje de grasa corporal — US Navy (mujeres), versión 1.0</value></data>
+  <data name="HelpFemaleBodyFatDescription" xml:space="preserve"><value>Utiliza cintura, cadera, cuello y altura. Los valores introducidos en centímetros se convierten a pulgadas antes del cálculo. Esta ecuación está pensada para mujeres.</value></data>
+  <data name="HelpFemaleBodyFatFormula" xml:space="preserve"><value>163.205 × log₁₀(cintura + cadera − cuello) − 97.684 × log₁₀(altura) − 78.387</value></data>
   <data name="HelpBmrTitle" xml:space="preserve"><value>Metabolismo basal — Mifflin–St Jeor (hombres), versión 1.0</value></data>
   <data name="HelpBmrDescription" xml:space="preserve"><value>Estima las calorías que tu cuerpo utiliza en reposo a partir del peso, la altura y la edad. Esta ecuación está pensada para hombres.</value></data>
   <data name="HelpBmrFormula" xml:space="preserve"><value>10 × peso + 6.25 × altura − 5 × edad + 5</value></data>
+  <data name="HelpFemaleBmrTitle" xml:space="preserve"><value>Metabolismo basal — Mifflin–St Jeor (mujeres), versión 1.0</value></data>
+  <data name="HelpFemaleBmrDescription" xml:space="preserve"><value>Estima las calorías que tu cuerpo utiliza en reposo a partir del peso, la altura y la edad. Esta ecuación está pensada para mujeres.</value></data>
+  <data name="HelpFemaleBmrFormula" xml:space="preserve"><value>10 × peso + 6.25 × altura − 5 × edad − 161</value></data>
   <data name="HelpTdeeTitle" xml:space="preserve"><value>Gasto energético diario total</value></data>
   <data name="HelpTdeeDescription" xml:space="preserve"><value>Se calcula multiplicando el metabolismo basal por el factor de actividad seleccionado en el perfil.</value></data>
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × factor de actividad</value></data>
