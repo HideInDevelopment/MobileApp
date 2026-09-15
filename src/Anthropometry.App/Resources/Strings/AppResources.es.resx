@@ -118,5 +118,16 @@
   <data name="HelpTdeeDescription" xml:space="preserve"><value>Se calcula multiplicando el metabolismo basal por el factor de actividad seleccionado en el perfil.</value></data>
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × factor de actividad</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Factores de actividad: Sedentario 1.2 · Ligeramente activo 1.375 · Moderadamente activo 1.55 · Muy activo 1.725 · Extremadamente activo 1.9</value></data>
-  <data name="HelpUnits" xml:space="preserve"><value>Unidades: peso en kg, altura y medidas en cm, edad en años y energía en kcal/día.</value></data>
+  <data name="HelpUnits" xml:space="preserve"><value>Los cálculos usan kilogramos y centímetros internamente. Las unidades mostradas se pueden cambiar en Ajustes; la edad se expresa en años y la energía en kcal/día.</value></data>
+  <data name="DateFormat" xml:space="preserve"><value>Formato de fecha</value></data>
+  <data name="DayMonthYear" xml:space="preserve"><value>dd/mm/yyyy</value></data>
+  <data name="MonthDayYear" xml:space="preserve"><value>mm/dd/yyyy</value></data>
+  <data name="WeightUnit" xml:space="preserve"><value>Unidad de peso</value></data>
+  <data name="HeightUnit" xml:space="preserve"><value>Unidad de altura</value></data>
+  <data name="Kilograms" xml:space="preserve"><value>Kilogramos (kg)</value></data>
+  <data name="Pounds" xml:space="preserve"><value>Libras (lb)</value></data>
+  <data name="Centimeters" xml:space="preserve"><value>Centímetros (cm)</value></data>
+  <data name="Inches" xml:space="preserve"><value>Pulgadas (in)</value></data>
+  <data name="Lb" xml:space="preserve"><value>lb</value></data>
+  <data name="In" xml:space="preserve"><value>in</value></data>
 </root>

@@ -1,4 +1,5 @@
 using Anthropometry.App.Features.Profiles;
+using Anthropometry.App.Display;
 using Anthropometry.Application.Profiles;
 using Anthropometry.Application.Common;
 using Anthropometry.App.Tests.Support;
@@ -18,7 +19,8 @@ public sealed class ProfileEditorViewModelTests
             new UpdateProfile(repository, new FakeClock()),
             null,
             new NavigationSpy(),
-            TestData.LanguageService());
+            TestData.LanguageService(),
+            CreateDisplayPreferences());
         viewModel.Name = " ";
 
         await viewModel.SaveCommand.ExecuteAsync(null);
@@ -37,7 +39,8 @@ public sealed class ProfileEditorViewModelTests
             new UpdateProfile(repository, new FakeClock()),
             null,
             navigation,
-            TestData.LanguageService())
+            TestData.LanguageService(),
+            CreateDisplayPreferences())
         {
             Name = "Manuel",
             HeightText = "180",
@@ -61,7 +64,8 @@ public sealed class ProfileEditorViewModelTests
             new UpdateProfile(repository, new FakeClock()),
             null,
             new NavigationSpy(),
-            TestData.LanguageService())
+            TestData.LanguageService(),
+            CreateDisplayPreferences())
         {
             Name = "Manuel",
             HeightText = "180",
@@ -84,7 +88,8 @@ public sealed class ProfileEditorViewModelTests
             new UpdateProfile(repository, new FakeClock()),
             null,
             new NavigationSpy(),
-            TestData.LanguageService())
+            TestData.LanguageService(),
+            CreateDisplayPreferences())
         {
             Name = "Manuel",
             HeightText = "0",
@@ -109,7 +114,8 @@ public sealed class ProfileEditorViewModelTests
             new UpdateProfile(repository, new FakeClock()),
             new ProfileDto(profile.Id, profile.Name, new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate), profile.CreatedAtUtc, profile.UpdatedAtUtc),
             new NavigationSpy(),
-            TestData.LanguageService())
+            TestData.LanguageService(),
+            CreateDisplayPreferences())
         {
             Name = "Updated",
             HeightText = "181",
@@ -133,7 +139,8 @@ public sealed class ProfileEditorViewModelTests
             new UpdateProfile(repository, new FakeClock()),
             null,
             new NavigationSpy(),
-            TestData.LanguageService())
+            TestData.LanguageService(),
+            CreateDisplayPreferences())
         {
             Name = "Anna",
             HeightText = "180",
@@ -145,6 +152,77 @@ public sealed class ProfileEditorViewModelTests
         await viewModel.SaveCommand.ExecuteAsync(null);
 
         Assert.Equal(ProfileGender.Female, Assert.Single(repository.Items).Gender);
+    }
+
+    [Fact]
+    public async Task Imperial_height_input_is_saved_as_centimeters()
+    {
+        var repository = new FakeProfileRepository();
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.InchesCode);
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(repository, new FakeClock()),
+            new UpdateProfile(repository, new FakeClock()),
+            null,
+            new NavigationSpy(),
+            TestData.LanguageService(),
+            displayPreferences)
+        {
+            Name = "Manuel",
+            HeightText = "70.8661417",
+            AgeText = "35",
+            SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.Moderate, "Moderately active")
+        };
+
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(180m, Assert.Single(repository.Items).Settings!.HeightCm, 6);
+    }
+
+    [Fact]
+    public void Changing_height_unit_reformats_an_existing_editor_value()
+    {
+        var profile = TestData.Profile();
+        var displayPreferences = CreateDisplayPreferences();
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(new FakeProfileRepository(), new FakeClock()),
+            new UpdateProfile(new FakeProfileRepository(), new FakeClock()),
+            new ProfileDto(profile.Id, profile.Name, new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate), profile.CreatedAtUtc, profile.UpdatedAtUtc),
+            new NavigationSpy(),
+            TestData.LanguageService(),
+            displayPreferences);
+
+        displayPreferences.SetHeightUnit(DisplayPreferencesService.InchesCode);
+
+        Assert.Equal("70.87", viewModel.HeightText);
+        Assert.Equal("in", viewModel.HeightUnitText);
+    }
+
+    private static DisplayPreferencesService CreateDisplayPreferences(string? heightUnitCode = null)
+    {
+        var service = new DisplayPreferencesService(new FakeDisplayPreferenceStore { HeightUnitCode = heightUnitCode });
+        service.Initialize();
+        return service;
+    }
+
+    private sealed class FakeDisplayPreferenceStore : IDisplayPreferenceStore
+    {
+        public string? DateFormatCode { get; set; }
+
+        public string? WeightUnitCode { get; set; }
+
+        public string? HeightUnitCode { get; set; }
+
+        public string? GetDateFormatCode() => DateFormatCode;
+
+        public string? GetWeightUnitCode() => WeightUnitCode;
+
+        public string? GetHeightUnitCode() => HeightUnitCode;
+
+        public void SetDateFormatCode(string code) => DateFormatCode = code;
+
+        public void SetWeightUnitCode(string code) => WeightUnitCode = code;
+
+        public void SetHeightUnitCode(string code) => HeightUnitCode = code;
     }
 
     private sealed class NavigationSpy : IProfileNavigation

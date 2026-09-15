@@ -1,6 +1,7 @@
 using System.Globalization;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
+using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Profiles;
@@ -16,6 +17,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     private readonly ProfileDto? _existingProfile;
     private readonly IProfileNavigation _navigation;
     private readonly LanguageService _languageService;
+    private readonly DisplayPreferencesService _displayPreferences;
     private string _name;
     private string _heightText;
     private string _ageText;
@@ -25,21 +27,27 @@ public sealed class ProfileEditorViewModel : ObservableObject
     private string? _errorMessage;
     private bool _isBusy;
     private bool _isCompleted;
+    private string _heightUnitCode;
 
     public ProfileEditorViewModel(
         CreateProfile createProfile,
         UpdateProfile updateProfile,
         ProfileDto? existingProfile,
         IProfileNavigation navigation,
-        LanguageService languageService)
+        LanguageService languageService,
+        DisplayPreferencesService displayPreferences)
     {
         _createProfile = createProfile;
         _updateProfile = updateProfile;
         _existingProfile = existingProfile;
         _navigation = navigation;
         _languageService = languageService;
+        _displayPreferences = displayPreferences;
+        _heightUnitCode = _displayPreferences.HeightUnitCode;
         _name = existingProfile?.Name ?? string.Empty;
-        _heightText = existingProfile?.Settings?.HeightCm.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
+        _heightText = existingProfile?.Settings is { } existingSettings
+            ? _displayPreferences.ToDisplayHeight(existingSettings.HeightCm).ToString("0.##", CultureInfo.CurrentCulture)
+            : string.Empty;
         _ageText = existingProfile?.Settings?.AgeYears.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
         ActivityLevels =
         [
@@ -60,6 +68,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
         _selectedGender = GenderOptions.Single(option => option.Value == (existingProfile?.Gender ?? ProfileGender.Male));
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
+        _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
     }
 
     public string Name
@@ -73,6 +82,9 @@ public sealed class ProfileEditorViewModel : ObservableObject
         get => _heightText;
         set => SetProperty(ref _heightText, value);
     }
+
+    public string HeightUnitText => _languageService.Get(
+        _displayPreferences.HeightUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm");
 
     public string AgeText
     {
@@ -175,9 +187,9 @@ public sealed class ProfileEditorViewModel : ObservableObject
 
     private bool TryCreateSettings(out ProfileSettingsInput settings)
     {
-        if ((!decimal.TryParse(HeightText, NumberStyles.Number, CultureInfo.CurrentCulture, out var height)
-                && !decimal.TryParse(HeightText, NumberStyles.Number, CultureInfo.InvariantCulture, out height))
+        if (!TryParseDecimal(HeightText, out var enteredHeight)
             || !int.TryParse(AgeText, NumberStyles.Integer, CultureInfo.CurrentCulture, out var age)
+            || !TryConvertHeight(enteredHeight, out var height)
             || height is < 50m or > 300m
             || age is < 1 or > 120
             || SelectedActivityLevel is null)
@@ -188,5 +200,34 @@ public sealed class ProfileEditorViewModel : ObservableObject
 
         settings = new ProfileSettingsInput(height, age, SelectedActivityLevel.Value);
         return true;
+    }
+
+    private bool TryConvertHeight(decimal enteredHeight, out decimal height)
+    {
+        height = _displayPreferences.ToMetricHeight(enteredHeight);
+        return height > 0;
+    }
+
+    private static bool TryParseDecimal(string value, out decimal result)
+    {
+        var normalized = value.Trim().Replace(',', '.');
+        return decimal.TryParse(
+            normalized,
+            NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint,
+            CultureInfo.InvariantCulture,
+            out result);
+    }
+
+    private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
+    {
+        if (TryParseDecimal(_heightText, out var enteredHeight))
+        {
+            var heightCm = DisplayPreferencesService.ConvertHeightToMetric(enteredHeight, _heightUnitCode);
+            _heightText = _displayPreferences.ToDisplayHeight(heightCm).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(HeightText));
+        }
+
+        _heightUnitCode = _displayPreferences.HeightUnitCode;
+        OnPropertyChanged(nameof(HeightUnitText));
     }
 }

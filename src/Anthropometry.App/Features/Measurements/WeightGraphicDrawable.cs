@@ -167,7 +167,7 @@ public sealed class WeightGraphicDrawable : IDrawable
         var x = _points.Count == 1
             ? PlotLeft + plotWidth / 2
             : PlotLeft + plotWidth * index / (_points.Count - 1);
-        var y = plotBottom - ((float)_points[index].WeightKg - _minimumWeight) / (_maximumWeight - _minimumWeight) * plotHeight;
+        var y = plotBottom - ((float)_points[index].DisplayedWeight - _minimumWeight) / (_maximumWeight - _minimumWeight) * plotHeight;
         return new PointF(x, y);
     }
 }

@@ -6,17 +6,21 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="12">
             <Label Text="{DynamicResource ResultsEstimateDisclaimer}" />
-            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" RowSpacing="10" ColumnSpacing="8">
+            <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Weight}" VerticalOptions="Center" />
-                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding WeightText}" Keyboard="Numeric" Placeholder="{DynamicResource Kg}" WidthRequest="150" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding WeightText}" Keyboard="Numeric" WidthRequest="150" />
+                <Label Grid.Row="0" Grid.Column="2" Text="{Binding WeightUnitText}" VerticalOptions="Center" />
             </Grid>
-            <Grid IsVisible="{Binding IsExtended}" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
+            <Grid IsVisible="{Binding IsExtended}" ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Neck}" VerticalOptions="Center" />
-                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Text" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Text" WidthRequest="150" />
+                <Label Grid.Row="0" Grid.Column="2" Text="{Binding LengthUnitText}" VerticalOptions="Center" />
                 <Label Grid.Row="1" Text="{Binding TrunkLabel}" VerticalOptions="Center" />
-                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Text" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Text" WidthRequest="150" />
+                <Label Grid.Row="1" Grid.Column="2" Text="{Binding LengthUnitText}" VerticalOptions="Center" />
                 <Label Grid.Row="2" Text="{DynamicResource Hip}" IsVisible="{Binding IsFemale}" VerticalOptions="Center" />
-                <Entry Grid.Row="2" Grid.Column="1" Text="{Binding HipText}" Keyboard="Text" IsVisible="{Binding IsFemale}" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Entry Grid.Row="2" Grid.Column="1" Text="{Binding HipText}" Keyboard="Text" IsVisible="{Binding IsFemale}" WidthRequest="150" />
+                <Label Grid.Row="2" Grid.Column="2" Text="{Binding LengthUnitText}" IsVisible="{Binding IsFemale}" VerticalOptions="Center" />
             </Grid>
             <Label Text="{Binding ValidationMessage}" TextColor="Red" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />

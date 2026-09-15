@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using Anthropometry.Application.Measurements;
+using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Profiles;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -11,6 +12,7 @@ namespace Anthropometry.App.Features.Measurements;
 public sealed record WeightGraphicPoint(
     DateTimeOffset MeasuredAtUtc,
     decimal WeightKg,
+    decimal DisplayedWeight,
     string DateText);
 
 public sealed class WeightGraphicViewModel : ObservableObject
@@ -20,6 +22,7 @@ public sealed class WeightGraphicViewModel : ObservableObject
     private readonly GetMeasurementHistory _getHistory;
     private readonly ProfileId _profileId;
     private readonly LanguageService _languageService;
+    private readonly DisplayPreferencesService _displayPreferences;
     private readonly ObservableCollection<WeightGraphicPoint> _points = [];
     private bool _isLoading;
     private string? _errorMessage;
@@ -28,13 +31,17 @@ public sealed class WeightGraphicViewModel : ObservableObject
     public WeightGraphicViewModel(
         GetMeasurementHistory getHistory,
         ProfileId profileId,
-        LanguageService languageService)
+        LanguageService languageService,
+        DisplayPreferencesService displayPreferences)
     {
         _getHistory = getHistory;
         _profileId = profileId;
         _languageService = languageService;
+        _displayPreferences = displayPreferences;
         Points = new ReadOnlyObservableCollection<WeightGraphicPoint>(_points);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
+        _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
+        _languageService.LanguageChanged += OnLanguageChanged;
     }
 
     public ReadOnlyObservableCollection<WeightGraphicPoint> Points { get; }
@@ -53,15 +60,19 @@ public sealed class WeightGraphicViewModel : ObservableObject
             CultureInfo.CurrentCulture,
             "{0}: {1}{2}{3}: {4} {5}",
             DateAxisLabel,
-            _selectedPoint.MeasuredAtUtc.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture),
+            _displayPreferences.FormatDate(_selectedPoint.MeasuredAtUtc),
             Environment.NewLine,
             WeightAxisLabel,
-            _selectedPoint.WeightKg.ToString("0.##", CultureInfo.CurrentCulture),
-            _languageService.Get("Kg"));
+            _selectedPoint.DisplayedWeight.ToString("0.##", CultureInfo.CurrentCulture),
+            _languageService.Get(_displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg"));
 
-    public decimal ChartMinimumWeight => Points.Count == 0 ? 0m : Points.Min(point => point.WeightKg) - 10m;
+    public decimal ChartMinimumWeight => Points.Count == 0
+        ? 0m
+        : Points.Min(point => point.DisplayedWeight) - _displayPreferences.ToDisplayWeight(10m);
 
-    public decimal ChartMaximumWeight => Points.Count == 0 ? 0m : Points.Max(point => point.WeightKg) + 10m;
+    public decimal ChartMaximumWeight => Points.Count == 0
+        ? 0m
+        : Points.Max(point => point.DisplayedWeight) + _displayPreferences.ToDisplayWeight(10m);
 
     public bool HasPoints => Points.Count > 0;
 
@@ -122,7 +133,8 @@ public sealed class WeightGraphicViewModel : ObservableObject
                     _points.Add(new WeightGraphicPoint(
                         measurement.MeasuredAtUtc,
                         measurement.WeightKg,
-                        measurement.MeasuredAtUtc.ToString("dd/MM", CultureInfo.CurrentCulture)));
+                        _displayPreferences.ToDisplayWeight(measurement.WeightKg),
+                        _displayPreferences.FormatCompactDate(measurement.MeasuredAtUtc)));
                 }
             }
             else
@@ -139,5 +151,43 @@ public sealed class WeightGraphicViewModel : ObservableObject
             OnPropertyChanged(nameof(ChartMaximumWeight));
             OnPropertyChanged(nameof(IsEmpty));
         }
+    }
+
+    private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
+    {
+        RefreshPointDisplay();
+        SelectPoint(null);
+        OnPropertyChanged(nameof(ChartMinimumWeight));
+        OnPropertyChanged(nameof(ChartMaximumWeight));
+    }
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+    {
+        RefreshPointDisplay();
+        OnPropertyChanged(nameof(WeightAxisLabel));
+        OnPropertyChanged(nameof(DateAxisLabel));
+        OnPropertyChanged(nameof(LegendText));
+    }
+
+    private void RefreshPointDisplay()
+    {
+        if (_points.Count == 0)
+        {
+            return;
+        }
+
+        var canonicalPoints = _points.Select(point => (point.MeasuredAtUtc, point.WeightKg)).ToArray();
+        _points.Clear();
+        foreach (var point in canonicalPoints)
+        {
+            _points.Add(new WeightGraphicPoint(
+                point.MeasuredAtUtc,
+                point.WeightKg,
+                _displayPreferences.ToDisplayWeight(point.WeightKg),
+                _displayPreferences.FormatCompactDate(point.MeasuredAtUtc)));
+        }
+
+        OnPropertyChanged(nameof(HasPoints));
+        OnPropertyChanged(nameof(ChartWidth));
     }
 }

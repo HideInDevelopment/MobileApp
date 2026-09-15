@@ -118,5 +118,16 @@
   <data name="HelpTdeeDescription" xml:space="preserve"><value>Calculated by multiplying BMR by the activity factor selected in the profile.</value></data>
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × activity factor</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Activity factors: Sedentary 1.2 · Lightly active 1.375 · Moderately active 1.55 · Highly active 1.725 · Very highly active 1.9</value></data>
-  <data name="HelpUnits" xml:space="preserve"><value>Units: weight in kg, height and sizes in cm, age in years, and energy in kcal/day.</value></data>
+  <data name="HelpUnits" xml:space="preserve"><value>Calculations use kilograms and centimetres internally. Display values can be changed in Settings; age is in years and energy is in kcal/day.</value></data>
+  <data name="DateFormat" xml:space="preserve"><value>Date format</value></data>
+  <data name="DayMonthYear" xml:space="preserve"><value>dd/mm/yyyy</value></data>
+  <data name="MonthDayYear" xml:space="preserve"><value>mm/dd/yyyy</value></data>
+  <data name="WeightUnit" xml:space="preserve"><value>Weight unit</value></data>
+  <data name="HeightUnit" xml:space="preserve"><value>Height unit</value></data>
+  <data name="Kilograms" xml:space="preserve"><value>Kilograms (kg)</value></data>
+  <data name="Pounds" xml:space="preserve"><value>Pounds (lb)</value></data>
+  <data name="Centimeters" xml:space="preserve"><value>Centimeters (cm)</value></data>
+  <data name="Inches" xml:space="preserve"><value>Inches (in)</value></data>
+  <data name="Lb" xml:space="preserve"><value>lb</value></data>
+  <data name="In" xml:space="preserve"><value>in</value></data>
 </root>

@@ -1,4 +1,5 @@
 using Anthropometry.Infrastructure.Persistence.Migrations;
+using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,22 +12,26 @@ public partial class App : Microsoft.Maui.Controls.Application
     private readonly IServiceProvider _services;
     private readonly LanguageService _languageService;
     private readonly ThemeService _themeService;
+    private readonly DisplayPreferencesService _displayPreferences;
 
     public App(
         MigrationRunner migrationRunner,
         IServiceProvider services,
         LanguageService languageService,
-        ThemeService themeService)
+        ThemeService themeService,
+        DisplayPreferencesService displayPreferences)
     {
         InitializeComponent();
         _migrationRunner = migrationRunner;
         _services = services;
         _languageService = languageService;
         _themeService = themeService;
+        _displayPreferences = displayPreferences;
         _languageService.LanguageChanged += (_, _) => ApplyLocalizedResources();
         _themeService.ThemeChanged += (_, _) => ApplyTheme();
         _languageService.Initialize();
         _themeService.Initialize();
+        _displayPreferences.Initialize();
         ApplyLocalizedResources();
     }
 

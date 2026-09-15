@@ -29,7 +29,8 @@ The application will target Android first while keeping a structure that allows 
 | Domain design | Entities, value objects, use cases, and calculation strategies |
 | Testing | TDD for domain and application; infrastructure tests and critical UI-flow tests |
 | Network | Out of scope for the MVP; no backend or synchronization |
-| Initial units | Metric system |
+| Canonical units | Metric system (kilograms and centimeters) |
+| Display units | Persisted Presentation preference; metric defaults with optional pounds/inches |
 
 .NET MAUI is the evolution of Xamarin.Forms and allows code sharing between Android and iOS while retaining access to native APIs when needed. See the [official .NET MAUI documentation](https://learn.microsoft.com/en-us/dotnet/maui/?view=net-maui-10.0).
 
@@ -442,7 +443,7 @@ Minimum states for each flow:
 - recoverable error;
 - operation completed.
 
-The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History uses `dd/MM/yyyy` dates and offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow background because their results reuse the previous neck and abdomen values. History also exposes a ruler toolbar action with a `Weight graphic` option; the graphic plots every persisted weight measurement chronologically as points joined by a line, and tapping a point shows its date and weight legend until another chart location is tapped. Profile detail also exposes a temporary `Generate sample data` action that creates a deterministic 30-day alternating history from the latest size-based measurement, including persisted calculation results. The toolbar uses icon-only Settings and Help actions; Settings opens a Presentation-only settings screen where English, Spanish, and German can be selected. The selected language is persisted in local MAUI Preferences and restored before the first feature page is created.
+The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History formats local dates using the selected `dd/MM/yyyy` or `MM/dd/yyyy` order and displays weight and height using the selected Presentation units. It offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow background because their results reuse the previous neck and abdomen values. History also exposes a ruler toolbar action with a `Weight graphic` option; the graphic plots every persisted weight measurement chronologically as points joined by a line, and tapping a point shows its date and weight legend until another chart location is tapped. The chart uses the selected weight unit and date format for display. Profile detail also exposes a temporary `Generate sample data` action that creates a deterministic 30-day alternating history from the latest size-based measurement, including persisted calculation results. The toolbar uses icon-only Settings and Help actions; Settings opens a Presentation-only settings screen where English, Spanish, and German can be selected, along with the date order and weight/height display units. The selected language, appearance, and display preferences are persisted in local MAUI Preferences and restored before the first feature page is created.
 
 The visual style will be minimal and functional:
 
@@ -456,7 +457,7 @@ The visual style will be minimal and functional:
 
 The UI will use `Grid`, `VerticalStackLayout`, `ScrollView`, `CollectionView`, and shared styles. Absolute positioning is avoided unless there is a specific visual reason. Screens will be tested at small and large sizes, with the keyboard visible, and in every supported orientation.
 
-Localization resources and the language preference remain in Presentation. ViewModels consume the Presentation language service for derived labels and errors, while XAML uses dynamic resource keys for static copy. Domain and Application do not reference cultures, resource files, MAUI, or Preferences.
+Localization resources, language preference, appearance preference, and display-unit preference remain in Presentation. ViewModels consume Presentation services for derived labels, errors, conversions, and formatting, while XAML uses dynamic resource keys for static copy. Domain and Application do not reference cultures, resource files, MAUI, or Preferences.
 
 ## 10. Dependency injection and configuration
 

@@ -1,4 +1,5 @@
 using Anthropometry.App.Features.Measurements;
+using Anthropometry.App.Display;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
@@ -138,6 +139,65 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
+    public async Task Imperial_measurement_input_is_saved_as_metric_values()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var results = new FakeCalculationResultRepository();
+        var displayPreferences = new DisplayPreferencesService(new FakeDisplayPreferenceStore
+        {
+            WeightUnitCode = DisplayPreferencesService.PoundsCode,
+            HeightUnitCode = DisplayPreferencesService.InchesCode
+        });
+        displayPreferences.Initialize();
+        var viewModel = CreateViewModel(
+            profile,
+            MeasurementType.WeightAndSizes,
+            profiles,
+            measurements,
+            results,
+            displayPreferences: displayPreferences);
+
+        viewModel.WeightText = "176.3698";
+        viewModel.NeckText = "15.7480";
+        viewModel.AbdomenText = "35.4331";
+
+        Assert.Equal("lb", viewModel.WeightUnitText);
+        Assert.Equal("in", viewModel.LengthUnitText);
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(measurements.Items);
+        Assert.InRange(saved.WeightKg, 79.999m, 80.001m);
+        Assert.InRange(saved.NeckCm!.Value, 39.999m, 40.001m);
+        Assert.InRange(saved.AbdomenCm!.Value, 89.999m, 90.001m);
+    }
+
+    [Fact]
+    public void Changing_measurement_units_reformats_entered_values()
+    {
+        var displayPreferences = TestData.DisplayPreferences();
+        var viewModel = CreateViewModel(
+            TestData.Profile(),
+            MeasurementType.WeightAndSizes,
+            new FakeProfileRepository(),
+            new FakeMeasurementRepository(),
+            new FakeCalculationResultRepository(),
+            displayPreferences: displayPreferences);
+        viewModel.WeightText = "80";
+        viewModel.NeckText = "40";
+        viewModel.AbdomenText = "90";
+
+        displayPreferences.SetWeightUnit(DisplayPreferencesService.PoundsCode);
+        displayPreferences.SetHeightUnit(DisplayPreferencesService.InchesCode);
+
+        Assert.Equal("176.37", viewModel.WeightText);
+        Assert.Equal("15.75", viewModel.NeckText);
+        Assert.Equal("35.43", viewModel.AbdomenText);
+    }
+
+    [Fact]
     public async Task Female_weight_and_sizes_save_requires_and_persists_hip()
     {
         var profile = Profile.Create(
@@ -225,7 +285,8 @@ public sealed class MeasurementEditorViewModelTests
         FakeMeasurementRepository measurements,
         FakeCalculationResultRepository results,
         NavigationSpy? navigation = null,
-        Anthropometry.App.Localization.LanguageService? languageService = null)
+        Anthropometry.App.Localization.LanguageService? languageService = null,
+        DisplayPreferencesService? displayPreferences = null)
     {
         var catalog = new FormulaCatalog(
             new UsNavyMaleBodyFatFormula(),
@@ -249,7 +310,36 @@ public sealed class MeasurementEditorViewModelTests
             profileDto,
             measurementType,
             navigation ?? new NavigationSpy(),
-            languageService ?? TestData.LanguageService());
+            languageService ?? TestData.LanguageService(),
+            displayPreferences ?? CreateDisplayPreferences());
+    }
+
+    private static DisplayPreferencesService CreateDisplayPreferences()
+    {
+        var service = new DisplayPreferencesService(new FakeDisplayPreferenceStore());
+        service.Initialize();
+        return service;
+    }
+
+    private sealed class FakeDisplayPreferenceStore : IDisplayPreferenceStore
+    {
+        public string? DateFormatCode { get; set; }
+
+        public string? WeightUnitCode { get; set; }
+
+        public string? HeightUnitCode { get; set; }
+
+        public string? GetDateFormatCode() => DateFormatCode;
+
+        public string? GetWeightUnitCode() => WeightUnitCode;
+
+        public string? GetHeightUnitCode() => HeightUnitCode;
+
+        public void SetDateFormatCode(string code) => DateFormatCode = code;
+
+        public void SetWeightUnitCode(string code) => WeightUnitCode = code;
+
+        public void SetHeightUnitCode(string code) => HeightUnitCode = code;
     }
 
     private sealed class NavigationSpy : IMeasurementNavigation

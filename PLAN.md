@@ -864,6 +864,32 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
+### Post-MVP feature slice: Persisted display preferences
+
+**Status:** Implemented as a Presentation-only preference slice.
+
+**Review boundary:** Settings persists the date order (`dd/mm/yyyy` or `mm/dd/yyyy`), weight unit (kilograms or pounds), and height unit (centimeters or inches). Profile and measurement forms accept the selected display units, while domain calculations and SQLite remain in kilograms, centimeters, and UTC. History and the weight graphic use the selected date and units.
+
+**Acceptance criteria:**
+
+- [x] Display preferences default to `dd/mm/yyyy`, kilograms, and centimeters and restore from local Preferences.
+- [x] Settings exposes localized date-format, weight-unit, and height-unit selectors in English, Spanish, and German.
+- [x] Profile height input and measurement weight/size inputs convert selected display units to canonical centimeters/kilograms before Application use cases run.
+- [x] History formats local dates with the selected order and displays weight/height in the selected units.
+- [x] The weight graphic keeps canonical kilogram points internally but displays selected-unit values, padding, legends, and date labels.
+- [x] Formula inputs, calculation results, SQLite schema, and persisted timestamps remain unchanged.
+- [x] App tests cover preference persistence/defaults, conversions, settings bindings, input boundaries, history formatting, and chart formatting.
+
+**Verification:**
+
+- [x] App test suite passed with 91 tests.
+- [x] Full solution test suite passed: 52 Domain, 31 Application, 11 Infrastructure, and 91 App tests.
+- [x] Android Debug build completed with 0 warnings and 0 errors.
+- [x] Android Release source/package build completed with 0 warnings and 0 errors when `PublishTrimmed=false` and `RunAOTCompilation=false` were supplied as environment-only verification overrides.
+- [ ] Default trimmed Android Release packaging remains blocked by the host's `Microsoft.NET.ILLink` task-host failure (`MSB4216`), unrelated to application compilation.
+
+---
+
 ### Slice 8: Release verification and handoff
 
 **Review boundary:** The MVP is reproducibly buildable, testable, privacy-reviewed, and ready for a manual Android acceptance pass.

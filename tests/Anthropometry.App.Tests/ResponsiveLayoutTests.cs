@@ -38,7 +38,8 @@ public sealed class ResponsiveLayoutTests
                 profile.UpdatedAtUtc),
             Anthropometry.Domain.Measurements.MeasurementType.WeightOnly,
             new NavigationSpy(),
-            TestData.LanguageService());
+            TestData.LanguageService(),
+            TestData.DisplayPreferences());
         var profileViewModel = new ProfileListViewModel(
             new Anthropometry.Application.Profiles.GetProfiles(profiles),
             new Anthropometry.Application.Profiles.DeleteProfile(profiles),

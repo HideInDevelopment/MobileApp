@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
+using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
@@ -16,6 +17,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     private readonly ProfileId _profileId;
     private readonly IMeasurementNavigation _navigation;
     private readonly LanguageService _languageService;
+    private readonly DisplayPreferencesService _displayPreferences;
     private readonly ObservableCollection<MeasurementHistoryItem> _measurements = [];
     private bool _isLoading;
     private string? _errorMessage;
@@ -24,16 +26,20 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         GetMeasurementHistory getHistory,
         ProfileId profileId,
         IMeasurementNavigation navigation,
-        LanguageService languageService)
+        LanguageService languageService,
+        DisplayPreferencesService displayPreferences)
     {
         _getHistory = getHistory;
         _profileId = profileId;
         _navigation = navigation;
         _languageService = languageService;
+        _displayPreferences = displayPreferences;
         Measurements = new ReadOnlyObservableCollection<MeasurementHistoryItem>(_measurements);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SelectCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(SelectAsync);
         ChartsCommand = new AsyncRelayCommand(() => _navigation.ShowChartOptionsAsync(_profileId));
+        _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
+        _languageService.LanguageChanged += OnLanguageChanged;
     }
 
     public ReadOnlyObservableCollection<MeasurementHistoryItem> Measurements { get; }
@@ -76,16 +82,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
             {
                 foreach (var measurement in result.Value)
                 {
-                    _measurements.Add(new MeasurementHistoryItem(
-                        measurement,
-                        measurement.MeasuredAtUtc.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture),
-                        measurement.Type == MeasurementType.WeightOnly
-                            ? _languageService.Get("WeightOnly")
-                            : _languageService.Get("WeightAndSizes"),
-                        string.Format(CultureInfo.CurrentCulture, "{0}: {1} {2}",
-                            _languageService.Get("Weight"), measurement.WeightKg, _languageService.Get("Kg")),
-                        string.Format(CultureInfo.CurrentCulture, "{0}: {1} {2}",
-                            _languageService.Get("Height"), measurement.HeightCm, _languageService.Get("Cm"))));
+                    _measurements.Add(CreateItem(measurement));
                 }
             }
             else
@@ -104,4 +101,45 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         => item is null || !item.CanViewResults
             ? Task.CompletedTask
             : _navigation.ShowResultsAsync(item.Measurement);
+
+    private MeasurementHistoryItem CreateItem(MeasurementDto measurement)
+        => new(
+            measurement,
+            _displayPreferences.FormatDate(measurement.MeasuredAtUtc),
+            measurement.Type == MeasurementType.WeightOnly
+                ? _languageService.Get("WeightOnly")
+                : _languageService.Get("WeightAndSizes"),
+            string.Format(
+                CultureInfo.CurrentCulture,
+                "{0}: {1:0.##} {2}",
+                _languageService.Get("Weight"),
+                _displayPreferences.ToDisplayWeight(measurement.WeightKg),
+                _languageService.Get(_displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg")),
+            string.Format(
+                CultureInfo.CurrentCulture,
+                "{0}: {1:0.##} {2}",
+                _languageService.Get("Height"),
+                _displayPreferences.ToDisplayHeight(measurement.HeightCm),
+                _languageService.Get(_displayPreferences.HeightUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm")));
+
+    private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
+        => RefreshItems();
+
+    private void OnLanguageChanged(object? sender, EventArgs e)
+        => RefreshItems();
+
+    private void RefreshItems()
+    {
+        if (_measurements.Count == 0)
+        {
+            return;
+        }
+
+        var measurements = _measurements.Select(item => item.Measurement).ToArray();
+        _measurements.Clear();
+        foreach (var measurement in measurements)
+        {
+            _measurements.Add(CreateItem(measurement));
+        }
+    }
 }

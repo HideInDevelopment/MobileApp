@@ -1,4 +1,5 @@
 using Microsoft.Maui.Graphics;
+using System.ComponentModel;
 
 namespace Anthropometry.App.Features.Measurements;
 
@@ -12,21 +13,39 @@ public partial class WeightGraphicPage : ContentPage
         InitializeComponent();
         _viewModel = viewModel;
         BindingContext = viewModel;
+        _viewModel.PropertyChanged += OnViewModelPropertyChanged;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
         await _viewModel.LoadCommand.ExecuteAsync(null);
+        UpdateChartDrawable();
+        _selectedPoint = null;
+        PositionLegendBubble();
+        WeightChart.Invalidate();
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(WeightGraphicViewModel.ChartMinimumWeight)
+            or nameof(WeightGraphicViewModel.ChartMaximumWeight)
+            or nameof(WeightGraphicViewModel.WeightAxisLabel)
+            or nameof(WeightGraphicViewModel.DateAxisLabel))
+        {
+            UpdateChartDrawable();
+            WeightChart.Invalidate();
+        }
+    }
+
+    private void UpdateChartDrawable()
+    {
         WeightChart.Drawable = new WeightGraphicDrawable(
             _viewModel.Points,
             _viewModel.DateAxisLabel,
             _viewModel.WeightAxisLabel,
             (float)_viewModel.ChartMinimumWeight,
             (float)_viewModel.ChartMaximumWeight);
-        _selectedPoint = null;
-        PositionLegendBubble();
-        WeightChart.Invalidate();
     }
 
     private void OnChartStartInteraction(object? sender, TouchEventArgs e)

@@ -7,9 +7,10 @@
         <VerticalStackLayout Padding="20" Spacing="16">
             <Label Text="{DynamicResource ProfileName}" />
             <Entry Text="{Binding Name}" Placeholder="{DynamicResource ProfileName}" ClearButtonVisibility="WhileEditing" />
-            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
+            <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Height}" VerticalOptions="Center" />
-                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding HeightText}" Keyboard="Numeric" Placeholder="{DynamicResource Cm}" WidthRequest="150" />
+                <Entry Grid.Row="0" Grid.Column="1" Text="{Binding HeightText}" Keyboard="Numeric" WidthRequest="150" />
+                <Label Grid.Row="0" Grid.Column="2" Text="{Binding HeightUnitText}" VerticalOptions="Center" />
                 <Label Grid.Row="1" Text="{DynamicResource Age}" VerticalOptions="Center" />
                 <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AgeText}" Keyboard="Numeric" Placeholder="{DynamicResource Years}" WidthRequest="150" />
                 <Label Grid.Row="2" Text="{DynamicResource Gender}" VerticalOptions="Center" />

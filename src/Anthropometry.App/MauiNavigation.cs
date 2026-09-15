@@ -3,6 +3,7 @@ using Anthropometry.App.Features.Help;
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Features.Results;
+using Anthropometry.App.Display;
 using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
@@ -19,11 +20,16 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 {
     private readonly IServiceProvider _services;
     private readonly LanguageService _languageService;
+    private readonly DisplayPreferencesService _displayPreferences;
 
-    public MauiNavigation(IServiceProvider services, LanguageService languageService)
+    public MauiNavigation(
+        IServiceProvider services,
+        LanguageService languageService,
+        DisplayPreferencesService displayPreferences)
     {
         _services = services;
         _languageService = languageService;
+        _displayPreferences = displayPreferences;
     }
 
     public Task CreateProfileAsync()
@@ -33,7 +39,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _services.GetRequiredService<UpdateProfile>(),
             null,
             this,
-            _languageService));
+            _languageService,
+            _displayPreferences));
         return PushAsync(page);
     }
 
@@ -52,7 +59,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _services.GetRequiredService<UpdateProfile>(),
             profile,
             this,
-            _languageService));
+            _languageService,
+            _displayPreferences));
         return PushAsync(page);
     }
 
@@ -75,7 +83,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             profile,
             type,
             this,
-            _languageService));
+            _languageService,
+            _displayPreferences));
         return PushAsync(page);
     }
 
@@ -84,7 +93,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _services.GetRequiredService<GetMeasurementHistory>(),
             profile.Id,
             this,
-            _languageService)));
+            _languageService,
+            _displayPreferences)));
 
     public async Task ShowChartOptionsAsync(ProfileId profileId)
     {
@@ -100,14 +110,16 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             await PushAsync(new WeightGraphicPage(new WeightGraphicViewModel(
                 _services.GetRequiredService<GetMeasurementHistory>(),
                 profileId,
-                _languageService)));
+                _languageService,
+                _displayPreferences)));
         }
     }
 
     public Task ShowSettingsAsync()
         => PushAsync(new SettingsPage(new SettingsViewModel(
             _services.GetRequiredService<LanguageService>(),
-            _services.GetRequiredService<ThemeService>())));
+            _services.GetRequiredService<ThemeService>(),
+            _displayPreferences)));
 
     public Task ShowHelpAsync() => PushAsync(new HelpPage());
 

@@ -1,4 +1,5 @@
 using Anthropometry.Application.Abstractions;
+using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
@@ -58,6 +59,13 @@ public static class TestData
         return service;
     }
 
+    public static DisplayPreferencesService DisplayPreferences()
+    {
+        var service = new DisplayPreferencesService(new InMemoryDisplayPreferenceStore());
+        service.Initialize();
+        return service;
+    }
+
     public static Profile Profile(string name = "Manuel")
         => Anthropometry.Domain.Profiles.Profile.Create(
             name,
@@ -78,6 +86,27 @@ internal sealed class InMemoryLanguagePreferenceStore : ILanguagePreferenceStore
     public string? GetLanguageCode() => LanguageCode;
 
     public void SetLanguageCode(string code) => LanguageCode = code;
+}
+
+internal sealed class InMemoryDisplayPreferenceStore : IDisplayPreferenceStore
+{
+    public string? DateFormatCode { get; private set; }
+
+    public string? WeightUnitCode { get; private set; }
+
+    public string? HeightUnitCode { get; private set; }
+
+    public string? GetDateFormatCode() => DateFormatCode;
+
+    public string? GetWeightUnitCode() => WeightUnitCode;
+
+    public string? GetHeightUnitCode() => HeightUnitCode;
+
+    public void SetDateFormatCode(string code) => DateFormatCode = code;
+
+    public void SetWeightUnitCode(string code) => WeightUnitCode = code;
+
+    public void SetHeightUnitCode(string code) => HeightUnitCode = code;
 }
 
 public sealed class FakeMeasurementRepository : IMeasurementRepository

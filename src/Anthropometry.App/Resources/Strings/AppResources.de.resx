@@ -118,5 +118,16 @@
   <data name="HelpTdeeDescription" xml:space="preserve"><value>Wird berechnet, indem der Grundumsatz mit dem im Profil ausgewählten Aktivitätsfaktor multipliziert wird.</value></data>
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = Grundumsatz × Aktivitätsfaktor</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Aktivitätsfaktoren: Sitzend 1.2 · Leicht aktiv 1.375 · Moderat aktiv 1.55 · Sehr aktiv 1.725 · Extrem aktiv 1.9</value></data>
-  <data name="HelpUnits" xml:space="preserve"><value>Einheiten: Gewicht in kg, Körpergröße und Maße in cm, Alter in Jahren und Energie in kcal/Tag.</value></data>
+  <data name="HelpUnits" xml:space="preserve"><value>Die Berechnungen verwenden intern Kilogramm und Zentimeter. Die angezeigten Einheiten können in den Einstellungen geändert werden; das Alter wird in Jahren und die Energie in kcal/Tag angegeben.</value></data>
+  <data name="DateFormat" xml:space="preserve"><value>Datumsformat</value></data>
+  <data name="DayMonthYear" xml:space="preserve"><value>dd/mm/yyyy</value></data>
+  <data name="MonthDayYear" xml:space="preserve"><value>mm/dd/yyyy</value></data>
+  <data name="WeightUnit" xml:space="preserve"><value>Gewichtseinheit</value></data>
+  <data name="HeightUnit" xml:space="preserve"><value>Größeneinheit</value></data>
+  <data name="Kilograms" xml:space="preserve"><value>Kilogramm (kg)</value></data>
+  <data name="Pounds" xml:space="preserve"><value>Pfund (lb)</value></data>
+  <data name="Centimeters" xml:space="preserve"><value>Zentimeter (cm)</value></data>
+  <data name="Inches" xml:space="preserve"><value>Zoll (in)</value></data>
+  <data name="Lb" xml:space="preserve"><value>lb</value></data>
+  <data name="In" xml:space="preserve"><value>in</value></data>
 </root>

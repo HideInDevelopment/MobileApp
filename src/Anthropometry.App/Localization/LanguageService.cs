@@ -45,7 +45,9 @@ public sealed class LanguageService
         "HelpFemaleBodyFatDescription", "HelpFemaleBodyFatFormula", "HelpBmrTitle", "HelpBmrDescription",
         "HelpBmrFormula", "HelpFemaleBmrTitle", "HelpFemaleBmrDescription", "HelpFemaleBmrFormula",
         "HelpTdeeTitle", "HelpTdeeDescription", "HelpTdeeFormula",
-        "HelpActivityFactors", "HelpUnits", "Theme", "LightTheme", "DarkTheme"
+        "HelpActivityFactors", "HelpUnits", "Theme", "LightTheme", "DarkTheme",
+        "DateFormat", "DayMonthYear", "MonthDayYear", "WeightUnit", "HeightUnit",
+        "Kilograms", "Pounds", "Centimeters", "Inches", "Lb", "In"
     ];
 
     private readonly ILanguagePreferenceStore _preferences;

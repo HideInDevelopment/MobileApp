@@ -1,4 +1,5 @@
 using Anthropometry.App.Features.Measurements;
+using Anthropometry.App.Display;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Measurements;
@@ -73,6 +74,25 @@ public sealed class MeasurementHistoryViewModelTests
     }
 
     [Fact]
+    public async Task Load_formats_history_values_using_selected_date_and_units()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, new DateTimeOffset(2026, 9, 8, 12, 0, 0, TimeSpan.Zero)));
+        var displayPreferences = TestData.DisplayPreferences();
+        displayPreferences.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
+        displayPreferences.SetWeightUnit(DisplayPreferencesService.PoundsCode);
+        displayPreferences.SetHeightUnit(DisplayPreferencesService.InchesCode);
+        var viewModel = CreateViewModel(repository, out _, profile.Id, displayPreferences: displayPreferences);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal("09/08/2026", viewModel.Measurements[0].DateText);
+        Assert.Equal("Weight: 176.37 lb", viewModel.Measurements[0].WeightText);
+        Assert.Equal("Height: 70.87 in", viewModel.Measurements[0].HeightText);
+    }
+
+    [Fact]
     public async Task Weight_only_history_item_opens_results()
     {
         var profile = TestData.Profile();
@@ -119,14 +139,16 @@ public sealed class MeasurementHistoryViewModelTests
         FakeMeasurementRepository repository,
         out NavigationSpy navigation,
         Anthropometry.Domain.Profiles.ProfileId profileId,
-        Anthropometry.App.Localization.LanguageService? languageService = null)
+        Anthropometry.App.Localization.LanguageService? languageService = null,
+        DisplayPreferencesService? displayPreferences = null)
     {
         navigation = new NavigationSpy();
         return new MeasurementHistoryViewModel(
             new GetMeasurementHistory(repository),
             profileId,
             navigation,
-            languageService ?? TestData.LanguageService());
+            languageService ?? TestData.LanguageService(),
+            displayPreferences ?? TestData.DisplayPreferences());
     }
 
     private static Measurement CreateMeasurement(Anthropometry.Domain.Profiles.ProfileId profileId, MeasurementType type, DateTimeOffset measuredAtUtc)

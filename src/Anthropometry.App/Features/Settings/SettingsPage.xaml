@@ -23,6 +23,33 @@
                         WidthRequest="170"
                         SemanticProperties.Description="{DynamicResource Theme}" />
             </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Grid.Column="0" Text="{DynamicResource DateFormat}" VerticalOptions="Center" />
+                <Picker Grid.Column="1"
+                        ItemsSource="{Binding DateFormats}"
+                        ItemDisplayBinding="{Binding DisplayName}"
+                        SelectedItem="{Binding SelectedDateFormat}"
+                        WidthRequest="170"
+                        SemanticProperties.Description="{DynamicResource DateFormat}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Grid.Column="0" Text="{DynamicResource WeightUnit}" VerticalOptions="Center" />
+                <Picker Grid.Column="1"
+                        ItemsSource="{Binding WeightUnits}"
+                        ItemDisplayBinding="{Binding DisplayName}"
+                        SelectedItem="{Binding SelectedWeightUnit}"
+                        WidthRequest="170"
+                        SemanticProperties.Description="{DynamicResource WeightUnit}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Grid.Column="0" Text="{DynamicResource HeightUnit}" VerticalOptions="Center" />
+                <Picker Grid.Column="1"
+                        ItemsSource="{Binding HeightUnits}"
+                        ItemDisplayBinding="{Binding DisplayName}"
+                        SelectedItem="{Binding SelectedHeightUnit}"
+                        WidthRequest="170"
+                        SemanticProperties.Description="{DynamicResource HeightUnit}" />
+            </Grid>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

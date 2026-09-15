@@ -1,4 +1,5 @@
 using Anthropometry.App.Common;
+using Anthropometry.App.Display;
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Localization;
@@ -45,6 +46,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<LanguageService>();
         builder.Services.AddSingleton<IThemePreferenceStore, PreferencesThemePreferenceStore>();
         builder.Services.AddSingleton<ThemeService>();
+        builder.Services.AddSingleton<IDisplayPreferenceStore, PreferencesDisplayPreferenceStore>();
+        builder.Services.AddSingleton<DisplayPreferencesService>();
 
         builder.Services.AddSingleton<UsNavyMaleBodyFatFormula>();
         builder.Services.AddSingleton<UsNavyFemaleBodyFatFormula>();

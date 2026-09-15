@@ -2,6 +2,7 @@ using System.Globalization;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
+using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
@@ -20,6 +21,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private readonly MeasurementType _measurementType;
     private readonly IMeasurementNavigation _navigation;
     private readonly LanguageService _languageService;
+    private readonly DisplayPreferencesService _displayPreferences;
     private string _weightText = string.Empty;
     private string _neckText = string.Empty;
     private string _abdomenText = string.Empty;
@@ -28,6 +30,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private bool _isCompleted;
     private string? _validationMessage;
     private string? _errorMessage;
+    private string _weightUnitCode;
+    private string _lengthUnitCode;
 
     public MeasurementEditorViewModel(
         RecordMeasurement recordMeasurement,
@@ -37,7 +41,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         ProfileDto profile,
         MeasurementType measurementType,
         IMeasurementNavigation navigation,
-        LanguageService languageService)
+        LanguageService languageService,
+        DisplayPreferencesService displayPreferences)
     {
         _recordMeasurement = recordMeasurement;
         _calculateBodyFat = calculateBodyFat;
@@ -47,8 +52,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _measurementType = measurementType;
         _navigation = navigation;
         _languageService = languageService;
+        _displayPreferences = displayPreferences;
+        _weightUnitCode = _displayPreferences.WeightUnitCode;
+        _lengthUnitCode = _displayPreferences.HeightUnitCode;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
+        _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
     }
 
     public string Title => _measurementType == MeasurementType.WeightOnly
@@ -64,6 +73,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     public bool IsFemale => _profile.Gender == ProfileGender.Female;
 
     public string TrunkLabel => _languageService.Get(IsFemale ? "Waist" : "Abdomen");
+
+    public string WeightUnitText => _languageService.Get(
+        _displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg");
+
+    public string LengthUnitText => _languageService.Get(
+        _displayPreferences.HeightUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm");
 
     public string WeightText
     {
@@ -108,12 +123,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         private set => SetProperty(ref _isCompleted, value);
     }
 
-    public bool CanSave => !IsBusy
-        && TryParseDecimal(WeightText, out var weight) && weight is >= 1m and <= 500m
-        && (!IsExtended ||
-            (TryParseDecimal(NeckText, out var neck) && neck is >= 1m and <= 100m
-            && TryParseDecimal(AbdomenText, out var abdomen) && abdomen is >= 1m and <= 400m
-            && (!IsFemale || TryParseDecimal(HipText, out var hip) && hip is >= 1m and <= 400m)));
+    public bool CanSave => !IsBusy && HasValidInput();
 
     public string? ValidationMessage
     {
@@ -179,7 +189,14 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
     private bool TryCreateCommand(out RecordMeasurementCommand command)
     {
-        if (!TryParseDecimal(WeightText, out var weight))
+        if (!TryParseDecimal(WeightText, out var enteredWeight))
+        {
+            command = null!;
+            return false;
+        }
+
+        var weight = _displayPreferences.ToMetricWeight(enteredWeight);
+        if (weight is < 1m or > 500m)
         {
             command = null!;
             return false;
@@ -197,8 +214,14 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                 return false;
             }
 
-            neck = neckValue;
-            abdomen = abdomenValue;
+            neck = _displayPreferences.ToMetricHeight(neckValue);
+            abdomen = _displayPreferences.ToMetricHeight(abdomenValue);
+            if (neck is < 1m or > 100m || abdomen is < 1m or > 400m)
+            {
+                command = null!;
+                return false;
+            }
+
             if (IsFemale)
             {
                 if (!TryParseDecimal(HipText, out var hipValue))
@@ -207,13 +230,21 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                     return false;
                 }
 
-                hip = hipValue;
+                hip = _displayPreferences.ToMetricHeight(hipValue);
+                if (hip is < 1m or > 400m)
+                {
+                    command = null!;
+                    return false;
+                }
             }
         }
 
         command = new RecordMeasurementCommand(_profile.Id, _measurementType, weight, neck, abdomen, DateTimeOffset.UtcNow, hip);
         return true;
     }
+
+    private bool HasValidInput()
+        => TryCreateCommand(out _);
 
     private static bool TryParseDecimal(string value, out decimal result)
     {
@@ -232,5 +263,43 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             OnPropertyChanged(nameof(CanSave));
             SaveCommand.NotifyCanExecuteChanged();
         }
+    }
+
+    private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
+    {
+        if (TryParseDecimal(_weightText, out var enteredWeight))
+        {
+            var weightKg = DisplayPreferencesService.ConvertWeightToMetric(enteredWeight, _weightUnitCode);
+            _weightText = DisplayPreferencesService.ConvertWeightToDisplay(weightKg, _displayPreferences.WeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(WeightText));
+        }
+
+        if (TryParseDecimal(_neckText, out var enteredNeck))
+        {
+            var neckCm = DisplayPreferencesService.ConvertHeightToMetric(enteredNeck, _lengthUnitCode);
+            _neckText = DisplayPreferencesService.ConvertHeightToDisplay(neckCm, _displayPreferences.HeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(NeckText));
+        }
+
+        if (TryParseDecimal(_abdomenText, out var enteredAbdomen))
+        {
+            var abdomenCm = DisplayPreferencesService.ConvertHeightToMetric(enteredAbdomen, _lengthUnitCode);
+            _abdomenText = DisplayPreferencesService.ConvertHeightToDisplay(abdomenCm, _displayPreferences.HeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(AbdomenText));
+        }
+
+        if (TryParseDecimal(_hipText, out var enteredHip))
+        {
+            var hipCm = DisplayPreferencesService.ConvertHeightToMetric(enteredHip, _lengthUnitCode);
+            _hipText = DisplayPreferencesService.ConvertHeightToDisplay(hipCm, _displayPreferences.HeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(HipText));
+        }
+
+        _weightUnitCode = _displayPreferences.WeightUnitCode;
+        _lengthUnitCode = _displayPreferences.HeightUnitCode;
+        OnPropertyChanged(nameof(WeightUnitText));
+        OnPropertyChanged(nameof(LengthUnitText));
+        OnPropertyChanged(nameof(CanSave));
+        SaveCommand.NotifyCanExecuteChanged();
     }
 }

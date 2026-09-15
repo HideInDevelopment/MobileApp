@@ -1,4 +1,5 @@
 using Anthropometry.App.Features.Measurements;
+using Anthropometry.App.Display;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Measurements;
@@ -81,6 +82,27 @@ public sealed class WeightGraphicViewModelTests
     }
 
     [Fact]
+    public async Task Load_uses_selected_units_for_chart_values_and_legend()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, 80m, new DateTimeOffset(2026, 9, 8, 12, 0, 0, TimeSpan.Zero)));
+        var displayPreferences = TestData.DisplayPreferences();
+        displayPreferences.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
+        displayPreferences.SetWeightUnit(DisplayPreferencesService.PoundsCode);
+        var viewModel = CreateViewModel(repository, profile.Id, displayPreferences: displayPreferences);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        viewModel.SelectPoint(viewModel.Points[0]);
+
+        Assert.Equal("09/08", viewModel.Points[0].DateText);
+        Assert.Equal(176.369809744m, viewModel.Points[0].DisplayedWeight, 9);
+        Assert.Equal(154.323583526m, viewModel.ChartMinimumWeight, 9);
+        Assert.Equal(198.416035962m, viewModel.ChartMaximumWeight, 9);
+        Assert.Contains("176.37 lb", viewModel.LegendText);
+    }
+
+    [Fact]
     public async Task Selecting_no_point_hides_the_legend()
     {
         var profile = TestData.Profile();
@@ -133,11 +155,13 @@ public sealed class WeightGraphicViewModelTests
     private static WeightGraphicViewModel CreateViewModel(
         IMeasurementRepository repository,
         Anthropometry.Domain.Profiles.ProfileId profileId,
-        Anthropometry.App.Localization.LanguageService? languageService = null)
+        Anthropometry.App.Localization.LanguageService? languageService = null,
+        DisplayPreferencesService? displayPreferences = null)
         => new(
             new GetMeasurementHistory(repository),
             profileId,
-            languageService ?? TestData.LanguageService());
+            languageService ?? TestData.LanguageService(),
+            displayPreferences ?? TestData.DisplayPreferences());
 
     private static Measurement CreateMeasurement(
         Anthropometry.Domain.Profiles.ProfileId profileId,
