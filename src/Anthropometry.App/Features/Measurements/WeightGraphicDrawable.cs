@@ -88,10 +88,10 @@ public sealed class WeightGraphicDrawable : IDrawable
             }
         }
 
-        canvas.StrokeColor = Color.FromArgb("#512BD4");
+        canvas.StrokeColor = Color.FromArgb("#1F2937");
         canvas.StrokeSize = 2.5f;
         canvas.DrawPath(path);
-        canvas.FillColor = Color.FromArgb("#512BD4");
+        canvas.FillColor = Color.FromArgb("#1F2937");
         for (var index = 0; index < _points.Count; index++)
         {
             var point = GetPointPosition(index, dirtyRect.Width, dirtyRect.Height);
