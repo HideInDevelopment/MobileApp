@@ -23,8 +23,8 @@
 
                     <Border x:Name="LegendBubble"
                             IsVisible="{Binding IsLegendVisible}"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-                            Stroke="{StaticResource Primary}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+                            Stroke="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray200}}"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 12"
                             Padding="12,8"

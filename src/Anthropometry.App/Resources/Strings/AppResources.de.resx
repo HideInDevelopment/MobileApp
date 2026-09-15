@@ -77,6 +77,9 @@
   <data name="TotalDailyEnergyExpenditure" xml:space="preserve"><value>Gesamter täglicher Energieverbrauch</value></data>
   <data name="ResultsLoadError" xml:space="preserve"><value>Die Ergebnisse konnten nicht geladen werden. Bitte versuche es erneut.</value></data>
   <data name="Language" xml:space="preserve"><value>Sprache</value></data>
+  <data name="Theme" xml:space="preserve"><value>Erscheinungsbild</value></data>
+  <data name="LightTheme" xml:space="preserve"><value>Hell</value></data>
+  <data name="DarkTheme" xml:space="preserve"><value>Dunkel</value></data>
   <data name="Sedentary" xml:space="preserve"><value>Sitzend</value></data>
   <data name="LightlyActive" xml:space="preserve"><value>Leicht aktiv</value></data>
   <data name="ModeratelyActive" xml:space="preserve"><value>Moderat aktiv</value></data>

@@ -45,7 +45,7 @@ public sealed class LanguageService
         "HelpFemaleBodyFatDescription", "HelpFemaleBodyFatFormula", "HelpBmrTitle", "HelpBmrDescription",
         "HelpBmrFormula", "HelpFemaleBmrTitle", "HelpFemaleBmrDescription", "HelpFemaleBmrFormula",
         "HelpTdeeTitle", "HelpTdeeDescription", "HelpTdeeFormula",
-        "HelpActivityFactors", "HelpUnits"
+        "HelpActivityFactors", "HelpUnits", "Theme", "LightTheme", "DarkTheme"
     ];
 
     private readonly ILanguagePreferenceStore _preferences;

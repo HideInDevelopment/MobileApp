@@ -7,11 +7,11 @@
              Title="{DynamicResource ProfilesTitle}">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="{DynamicResource SettingsLabel}"
-                     IconImageSource="settings.svg"
+                     IconImageSource="{AppThemeBinding Light=settings.svg, Dark=settings_dark.svg}"
                      Command="{Binding SettingsCommand}"
                      SemanticProperties.Description="{DynamicResource SettingsLabel}" />
         <ToolbarItem Text="{DynamicResource HelpLabel}"
-                     IconImageSource="help.svg"
+                     IconImageSource="{AppThemeBinding Light=help.svg, Dark=help_dark.svg}"
                      Command="{Binding HelpCommand}"
                      SemanticProperties.Description="{DynamicResource HelpLabel}" />
     </ContentPage.ToolbarItems>

@@ -5,7 +5,7 @@
              Title="{DynamicResource MeasurementHistory}">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="{DynamicResource Charts}"
-                     IconImageSource="ruler.svg"
+                     IconImageSource="{AppThemeBinding Light=ruler.svg, Dark=ruler_dark.svg}"
                      Command="{Binding ChartsCommand}"
                      Order="Primary"
                      SemanticProperties.Description="{DynamicResource Charts}" />

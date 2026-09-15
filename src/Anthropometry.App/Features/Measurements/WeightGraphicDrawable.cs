@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 
 namespace Anthropometry.App.Features.Measurements;
@@ -44,11 +45,16 @@ public sealed class WeightGraphicDrawable : IDrawable
         var plotHeight = MathF.Max(1, plotBottom - PlotTop);
         var minWeight = _minimumWeight;
         var weightRange = _maximumWeight - minWeight;
+        var isDarkTheme = Microsoft.Maui.Controls.Application.Current?.RequestedTheme == AppTheme.Dark;
+        var chartTextColor = isDarkTheme ? Color.FromArgb("#D1D5DB") : Color.FromArgb("#4B5563");
+        var chartGridColor = isDarkTheme ? Color.FromArgb("#374151") : Color.FromArgb("#D1D5DB");
+        var chartAxisColor = isDarkTheme ? Color.FromArgb("#9CA3AF") : Color.FromArgb("#6B7280");
+        var chartAccentColor = isDarkTheme ? Color.FromArgb("#E5E7EB") : Color.FromArgb("#1F2937");
 
         canvas.SaveState();
-        canvas.FontColor = Color.FromArgb("#4B5563");
+        canvas.FontColor = chartTextColor;
         canvas.FontSize = 12;
-        canvas.StrokeColor = Color.FromArgb("#D1D5DB");
+        canvas.StrokeColor = chartGridColor;
         canvas.StrokeSize = 1;
 
         for (var tick = 0; tick <= TickCount; tick++)
@@ -67,7 +73,7 @@ public sealed class WeightGraphicDrawable : IDrawable
                 VerticalAlignment.Center);
         }
 
-        canvas.StrokeColor = Color.FromArgb("#6B7280");
+        canvas.StrokeColor = chartAxisColor;
         canvas.StrokeSize = 1.5f;
         canvas.DrawLine(PlotLeft, PlotTop, PlotLeft, plotBottom);
         canvas.DrawLine(PlotLeft, plotBottom, dirtyRect.Width - PlotRight, plotBottom);
@@ -88,10 +94,10 @@ public sealed class WeightGraphicDrawable : IDrawable
             }
         }
 
-        canvas.StrokeColor = Color.FromArgb("#1F2937");
+        canvas.StrokeColor = chartAccentColor;
         canvas.StrokeSize = 2.5f;
         canvas.DrawPath(path);
-        canvas.FillColor = Color.FromArgb("#1F2937");
+        canvas.FillColor = chartAccentColor;
         for (var index = 0; index < _points.Count; index++)
         {
             var point = GetPointPosition(index, dirtyRect.Width, dirtyRect.Height);

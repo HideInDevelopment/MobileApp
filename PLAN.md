@@ -842,6 +842,28 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
+### Post-MVP feature slice: Persisted appearance themes
+
+**Status:** Implemented on `master` as a Presentation-only appearance preference.
+
+**Review boundary:** Settings allows users to switch between the default Light theme and a neutral Dark theme. The selection is stored in local Preferences, restored before the first feature page is created, and applied immediately while the app is open.
+
+**Acceptance criteria:**
+
+- [x] The default theme is Light and the Settings page exposes localized Light and Dark options.
+- [x] Selecting a theme applies it immediately and persists the canonical theme code locally.
+- [x] App startup restores the saved theme before creating the first feature page.
+- [x] The Dark theme uses neutral near-black backgrounds, charcoal controls, slate borders, and high-contrast text across shared styles and the weight chart.
+- [x] Toolbar icons use distinct light and dark assets with valid Android resource names.
+- [x] Default `.NET` startup artwork remains absent from the splash and launcher assets.
+
+**Verification:**
+
+- [x] App tests cover default and restored themes, persistence notifications, Settings selection, dark resource bindings, and theme-specific icon assets.
+- [x] Android Release build completed with 0 warnings and 0 errors.
+
+---
+
 ### Slice 8: Release verification and handoff
 
 **Review boundary:** The MVP is reproducibly buildable, testable, privacy-reviewed, and ready for a manual Android acceptance pass.

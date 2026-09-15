@@ -1,5 +1,6 @@
 using Anthropometry.Infrastructure.Persistence.Migrations;
 using Anthropometry.App.Localization;
+using Anthropometry.App.Theme;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anthropometry.App;
@@ -9,15 +10,23 @@ public partial class App : Microsoft.Maui.Controls.Application
     private readonly MigrationRunner _migrationRunner;
     private readonly IServiceProvider _services;
     private readonly LanguageService _languageService;
+    private readonly ThemeService _themeService;
 
-    public App(MigrationRunner migrationRunner, IServiceProvider services, LanguageService languageService)
+    public App(
+        MigrationRunner migrationRunner,
+        IServiceProvider services,
+        LanguageService languageService,
+        ThemeService themeService)
     {
         InitializeComponent();
         _migrationRunner = migrationRunner;
         _services = services;
         _languageService = languageService;
+        _themeService = themeService;
         _languageService.LanguageChanged += (_, _) => ApplyLocalizedResources();
+        _themeService.ThemeChanged += (_, _) => ApplyTheme();
         _languageService.Initialize();
+        _themeService.Initialize();
         ApplyLocalizedResources();
     }
 
@@ -76,4 +85,9 @@ public partial class App : Microsoft.Maui.Controls.Application
             Resources[key] = _languageService.Get(key);
         }
     }
+
+    private void ApplyTheme()
+        => UserAppTheme = _themeService.CurrentTheme == ThemeMode.Dark
+            ? AppTheme.Dark
+            : AppTheme.Light;
 }

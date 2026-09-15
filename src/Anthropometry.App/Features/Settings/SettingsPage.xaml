@@ -14,6 +14,15 @@
                         WidthRequest="170"
                         SemanticProperties.Description="{DynamicResource Language}" />
             </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Label Grid.Column="0" Text="{DynamicResource Theme}" VerticalOptions="Center" />
+                <Picker Grid.Column="1"
+                        ItemsSource="{Binding Themes}"
+                        ItemDisplayBinding="{Binding DisplayName}"
+                        SelectedItem="{Binding SelectedTheme}"
+                        WidthRequest="170"
+                        SemanticProperties.Description="{DynamicResource Theme}" />
+            </Grid>
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

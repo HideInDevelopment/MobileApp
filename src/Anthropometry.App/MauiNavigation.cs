@@ -5,6 +5,7 @@ using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Features.Results;
 using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Localization;
+using Anthropometry.App.Theme;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
@@ -105,7 +106,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 
     public Task ShowSettingsAsync()
         => PushAsync(new SettingsPage(new SettingsViewModel(
-            _services.GetRequiredService<LanguageService>())));
+            _services.GetRequiredService<LanguageService>(),
+            _services.GetRequiredService<ThemeService>())));
 
     public Task ShowHelpAsync() => PushAsync(new HelpPage());
 

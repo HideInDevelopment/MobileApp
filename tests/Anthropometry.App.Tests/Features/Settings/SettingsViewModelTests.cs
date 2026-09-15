@@ -1,5 +1,6 @@
 using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Localization;
+using Anthropometry.App.Theme;
 
 namespace Anthropometry.App.Tests.Features.Settings;
 
@@ -11,11 +12,15 @@ public sealed class SettingsViewModelTests
         var preferences = new FakeLanguagePreferenceStore { LanguageCode = "de" };
         var service = new LanguageService(preferences);
         service.Initialize();
+        var themeService = new ThemeService(new FakeThemePreferenceStore { ThemeCode = "dark" });
+        themeService.Initialize();
 
-        var viewModel = new SettingsViewModel(service);
+        var viewModel = new SettingsViewModel(service, themeService);
 
         Assert.Equal(["en", "es", "de"], viewModel.Languages.Select(language => language.Code));
         Assert.Equal("de", viewModel.SelectedLanguage!.Code);
+        Assert.Equal(["light", "dark"], viewModel.Themes.Select(theme => theme.Code));
+        Assert.Equal("dark", viewModel.SelectedTheme!.Code);
     }
 
     [Fact]
@@ -24,12 +29,30 @@ public sealed class SettingsViewModelTests
         var preferences = new FakeLanguagePreferenceStore();
         var service = new LanguageService(preferences);
         service.Initialize();
-        var viewModel = new SettingsViewModel(service);
+        var themeService = new ThemeService(new FakeThemePreferenceStore());
+        themeService.Initialize();
+        var viewModel = new SettingsViewModel(service, themeService);
 
         viewModel.SelectedLanguage = viewModel.Languages.Single(language => language.Code == "es");
 
         Assert.Equal("es", service.CurrentLanguageCode);
         Assert.Equal("es", preferences.LanguageCode);
+    }
+
+    [Fact]
+    public void Selecting_a_theme_applies_and_persists_it()
+    {
+        var languageService = new LanguageService(new FakeLanguagePreferenceStore());
+        languageService.Initialize();
+        var preferences = new FakeThemePreferenceStore();
+        var themeService = new ThemeService(preferences);
+        themeService.Initialize();
+        var viewModel = new SettingsViewModel(languageService, themeService);
+
+        viewModel.SelectedTheme = viewModel.Themes.Single(theme => theme.Code == "dark");
+
+        Assert.Equal("dark", themeService.CurrentThemeCode);
+        Assert.Equal("dark", preferences.ThemeCode);
     }
 
     private sealed class FakeLanguagePreferenceStore : ILanguagePreferenceStore
@@ -39,5 +62,14 @@ public sealed class SettingsViewModelTests
         public string? GetLanguageCode() => LanguageCode;
 
         public void SetLanguageCode(string code) => LanguageCode = code;
+    }
+
+    private sealed class FakeThemePreferenceStore : IThemePreferenceStore
+    {
+        public string? ThemeCode { get; set; }
+
+        public string? GetThemeCode() => ThemeCode;
+
+        public void SetThemeCode(string code) => ThemeCode = code;
     }
 }
