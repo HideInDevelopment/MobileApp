@@ -15,20 +15,20 @@ public sealed class WeightGraphicDrawable : IDrawable
     private const float PointHitRadius = 24;
     private readonly IReadOnlyList<WeightGraphicPoint> _points;
     private readonly string _dateAxisLabel;
-    private readonly string _weightAxisLabel;
+    private readonly string _valueAxisLabel;
     private readonly float _minimumWeight;
     private readonly float _maximumWeight;
 
     public WeightGraphicDrawable(
         IReadOnlyList<WeightGraphicPoint> points,
         string dateAxisLabel,
-        string weightAxisLabel,
+        string valueAxisLabel,
         float minimumWeight,
         float maximumWeight)
     {
         _points = points;
         _dateAxisLabel = dateAxisLabel;
-        _weightAxisLabel = weightAxisLabel;
+        _valueAxisLabel = valueAxisLabel;
         _minimumWeight = minimumWeight;
         _maximumWeight = maximumWeight;
     }
@@ -116,7 +116,7 @@ public sealed class WeightGraphicDrawable : IDrawable
 
         canvas.FontSize = 13;
         canvas.DrawString(
-            _weightAxisLabel,
+            _valueAxisLabel,
             0,
             0,
             PlotLeft,
@@ -167,7 +167,7 @@ public sealed class WeightGraphicDrawable : IDrawable
         var x = _points.Count == 1
             ? PlotLeft + plotWidth / 2
             : PlotLeft + plotWidth * index / (_points.Count - 1);
-        var y = plotBottom - ((float)_points[index].DisplayedWeight - _minimumWeight) / (_maximumWeight - _minimumWeight) * plotHeight;
+        var y = plotBottom - ((float)_points[index].DisplayedValue - _minimumWeight) / (_maximumWeight - _minimumWeight) * plotHeight;
         return new PointF(x, y);
     }
 }

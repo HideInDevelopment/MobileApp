@@ -40,7 +40,7 @@ public sealed class LanguageService
         "Language", "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",
         "DeleteProfileTitle", "DeleteProfileMessage", "DeleteAction",
         "GenerateSampleData", "SampleDataGenerated", "SampleDataRequiresMeasurement", "SampleDataError",
-        "Charts", "WeightGraphic", "WeightGraphicTitle", "WeightGraphicNoMeasurements", "WeightGraphicLoadError", "Date",
+        "Charts", "MetricChart", "MetricChartTitle", "MetricChartNoMeasurements", "MetricChartLoadError", "InvalidMetricChartDateRange", "ChartMetric", "WeightGraphic", "WeightGraphicTitle", "WeightGraphicNoMeasurements", "WeightGraphicLoadError", "Date",
         "HelpAboutTitle", "HelpDisclaimer", "HelpMeasurementConsistency", "HelpEquationsTitle",
         "HelpBodyFatTitle", "HelpBodyFatDescription", "HelpBodyFatFormula", "HelpFemaleBodyFatTitle",
         "HelpFemaleBodyFatDescription", "HelpFemaleBodyFatFormula", "HelpBmrTitle", "HelpBmrDescription",

@@ -110,6 +110,12 @@
   <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Füge zuerst eine vollständige Körpermessung hinzu.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>Beispieldaten konnten nicht generiert werden. Versuche es erneut.</value></data>
   <data name="Charts" xml:space="preserve"><value>Diagramme</value></data>
+  <data name="MetricChart" xml:space="preserve"><value>Messwerte im Verlauf</value></data>
+  <data name="MetricChartTitle" xml:space="preserve"><value>Messwerte im Verlauf</value></data>
+  <data name="MetricChartNoMeasurements" xml:space="preserve"><value>Für diese Messgröße und diesen Zeitraum gibt es keine Daten.</value></data>
+  <data name="MetricChartLoadError" xml:space="preserve"><value>Das Diagramm konnte nicht geladen werden. Bitte versuche es erneut.</value></data>
+  <data name="InvalidMetricChartDateRange" xml:space="preserve"><value>Wähle ein Startdatum, das vor dem Enddatum liegt oder diesem entspricht.</value></data>
+  <data name="ChartMetric" xml:space="preserve"><value>Messgröße</value></data>
   <data name="WeightGraphic" xml:space="preserve"><value>Gewichtsdiagramm</value></data>
   <data name="WeightGraphicTitle" xml:space="preserve"><value>Gewichtsdiagramm</value></data>
   <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>Noch keine Gewichtsmessungen.</value></data>

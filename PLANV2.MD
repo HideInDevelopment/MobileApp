@@ -471,23 +471,23 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - `GetMetricHistory.ExecuteAsync(MetricHistoryQuery query, CancellationToken cancellationToken)` returns results ordered oldest to newest for chart mapping and excludes measurements without the requested persisted result.
 - Chart state exposes `SelectedMetric`, `FromDate`, `ToDate`, `Points`, `IsEmpty`, and a localized legend.
 
-- [ ] **Step 1: Add failing Application tests for metric history**
+- [x] **Step 1: Add failing Application tests for metric history**
 
   Cover weight history from measurements, calculated metric history from stored results, date filtering, chronological ordering, and missing-result exclusion.
 
-- [ ] **Step 2: Add failing chart ViewModel tests**
+- [x] **Step 2: Add failing chart ViewModel tests**
 
   Cover metric selection, date-range reload, empty state, point mapping, localized legend, and selected-unit formatting.
 
-- [ ] **Step 3: Implement the metric history use case**
+- [x] **Step 3: Implement the metric history use case**
 
   Compose existing measurement and calculation-result ports in Application. Keep the join and date filtering out of the chart page. Do not recalculate historical results merely to draw a chart.
 
-- [ ] **Step 4: Extend the existing custom chart**
+- [x] **Step 4: Extend the existing custom chart**
 
   Add a compact metric selector and date-range controls. Reuse the current horizontal scrolling, point selection, axis padding, theme colors, and no-data/error states. Rename labels from `Weight graphic` to a localized metric-neutral chart title only after the UI tests cover the new copy.
 
-- [ ] **Step 5: Run full verification**
+- [x] **Step 5: Run full verification**
 
   ```powershell
   dotnet test Anthropometry.sln -f net10.0 --configuration Release --no-restore -m:1
@@ -496,7 +496,7 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: all tests pass and the Android build has 0 warnings and 0 errors.
 
-- [ ] **Step 6: Commit trend charts**
+- [x] **Step 6: Commit trend charts**
 
   ```powershell
   git add src/Anthropometry.Application/Calculations src/Anthropometry.Application/Common src/Anthropometry.App/Features/Measurements src/Anthropometry.App/MauiNavigation.cs src/Anthropometry.App/MauiProgram.cs src/Anthropometry.App/Resources/Strings tests

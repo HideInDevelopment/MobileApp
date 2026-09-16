@@ -110,6 +110,12 @@
   <data name="SampleDataRequiresMeasurement" xml:space="preserve"><value>Añade una medición completa de medidas antes de generar datos de prueba.</value></data>
   <data name="SampleDataError" xml:space="preserve"><value>No se pudieron generar los datos de prueba. Inténtalo de nuevo.</value></data>
   <data name="Charts" xml:space="preserve"><value>Gráficos</value></data>
+  <data name="MetricChart" xml:space="preserve"><value>Tendencias de medidas</value></data>
+  <data name="MetricChartTitle" xml:space="preserve"><value>Tendencias de medidas</value></data>
+  <data name="MetricChartNoMeasurements" xml:space="preserve"><value>No hay datos para esta medida y rango de fechas.</value></data>
+  <data name="MetricChartLoadError" xml:space="preserve"><value>No se pudo cargar el gráfico. Inténtalo de nuevo.</value></data>
+  <data name="InvalidMetricChartDateRange" xml:space="preserve"><value>Elige una fecha inicial anterior o igual a la fecha final.</value></data>
+  <data name="ChartMetric" xml:space="preserve"><value>Medida</value></data>
   <data name="WeightGraphic" xml:space="preserve"><value>Gráfico de peso</value></data>
   <data name="WeightGraphicTitle" xml:space="preserve"><value>Gráfico de peso</value></data>
   <data name="WeightGraphicNoMeasurements" xml:space="preserve"><value>Aún no hay medidas de peso.</value></data>

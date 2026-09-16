@@ -2,6 +2,7 @@ using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Display;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Application.Abstractions;
+using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Measurements;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
@@ -120,6 +121,50 @@ public sealed class WeightGraphicViewModelTests
     }
 
     [Fact]
+    public async Task Selecting_body_fat_metric_uses_persisted_results_and_excludes_missing_results()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        var resultRepository = new FakeCalculationResultRepository();
+        var older = CreateMeasurement(profile.Id, 80m, new DateTimeOffset(2026, 9, 6, 8, 0, 0, TimeSpan.Zero));
+        var newerWithoutResult = CreateMeasurement(profile.Id, 82m, new DateTimeOffset(2026, 9, 8, 8, 0, 0, TimeSpan.Zero));
+        repository.Items.Add(older);
+        repository.Items.Add(newerWithoutResult);
+        resultRepository.Items.Add(CreateResult(older, CalculationType.BodyFatPercentage, 18.5m, "%"));
+        var viewModel = CreateViewModel(repository, profile.Id, resultRepository: resultRepository);
+
+        viewModel.SelectedMetric = MetricKind.BodyFatPercentage;
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        var point = Assert.Single(viewModel.Points);
+        Assert.Equal(older.Id, point.MeasurementId);
+        Assert.Equal(18.5m, point.MetricValue);
+        Assert.Equal("%", point.MetricUnit);
+        viewModel.SelectPoint(point);
+        Assert.Contains("18.5 %", viewModel.LegendText);
+    }
+
+    [Fact]
+    public async Task Date_range_reload_filters_chart_points()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, 80m, new DateTimeOffset(2026, 9, 6, 8, 0, 0, TimeSpan.Zero)));
+        repository.Items.Add(CreateMeasurement(profile.Id, 81m, new DateTimeOffset(2026, 9, 7, 8, 0, 0, TimeSpan.Zero)));
+        repository.Items.Add(CreateMeasurement(profile.Id, 82m, new DateTimeOffset(2026, 9, 8, 8, 0, 0, TimeSpan.Zero)));
+        var viewModel = CreateViewModel(repository, profile.Id);
+
+        viewModel.UseFromDate = true;
+        viewModel.UseToDate = true;
+        viewModel.FromDate = new DateTime(2026, 9, 7);
+        viewModel.ToDate = new DateTime(2026, 9, 8);
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal(2, viewModel.Points.Count);
+        Assert.Equal([81m, 82m], viewModel.Points.Select(point => point.WeightKg));
+    }
+
+    [Fact]
     public async Task Load_shows_empty_state_when_no_measurements_exist()
     {
         var viewModel = CreateViewModel(new FakeMeasurementRepository(), TestData.Profile().Id);
@@ -139,7 +184,7 @@ public sealed class WeightGraphicViewModelTests
         await viewModel.LoadCommand.ExecuteAsync(null);
 
         Assert.False(viewModel.IsEmpty);
-        Assert.Equal("We couldn't load the weight graphic. Try again.", viewModel.ErrorMessage);
+        Assert.Equal("We couldn't load this chart. Try again.", viewModel.ErrorMessage);
     }
 
     [Fact]
@@ -157,9 +202,10 @@ public sealed class WeightGraphicViewModelTests
         IMeasurementRepository repository,
         Anthropometry.Domain.Profiles.ProfileId profileId,
         Anthropometry.App.Localization.LanguageService? languageService = null,
-        DisplayPreferencesService? displayPreferences = null)
+        DisplayPreferencesService? displayPreferences = null,
+        FakeCalculationResultRepository? resultRepository = null)
         => new(
-            new GetMeasurementHistory(repository),
+            new GetMetricHistory(repository, resultRepository ?? new FakeCalculationResultRepository()),
             profileId,
             languageService ?? TestData.LanguageService(),
             displayPreferences ?? TestData.DisplayPreferences());
@@ -180,4 +226,15 @@ public sealed class WeightGraphicViewModelTests
                 ActivityLevel.Moderate,
                 measuredAtUtc),
             measuredAtUtc).Value;
+
+    private static CalculationResult CreateResult(
+        Measurement measurement,
+        CalculationType type,
+        decimal value,
+        string unit)
+        => CalculationResult.Create(
+            measurement.Id,
+            type,
+            new CalculationResultValue(value, unit, "test-formula", "1.0"),
+            measurement.MeasuredAtUtc.AddMinutes(1)).Value;
 }

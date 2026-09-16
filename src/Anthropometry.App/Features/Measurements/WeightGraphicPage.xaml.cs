@@ -28,8 +28,10 @@ public partial class WeightGraphicPage : ContentPage
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(WeightGraphicViewModel.ChartMinimumWeight)
-            or nameof(WeightGraphicViewModel.ChartMaximumWeight)
+        if (e.PropertyName is nameof(WeightGraphicViewModel.ChartMinimumValue)
+            or nameof(WeightGraphicViewModel.ChartMaximumValue)
+            or nameof(WeightGraphicViewModel.MetricAxisLabel)
+            or nameof(WeightGraphicViewModel.ValueAxisLabel)
             or nameof(WeightGraphicViewModel.WeightAxisLabel)
             or nameof(WeightGraphicViewModel.DateAxisLabel))
         {
@@ -43,9 +45,9 @@ public partial class WeightGraphicPage : ContentPage
         WeightChart.Drawable = new WeightGraphicDrawable(
             _viewModel.Points,
             _viewModel.DateAxisLabel,
-            _viewModel.WeightAxisLabel,
-            (float)_viewModel.ChartMinimumWeight,
-            (float)_viewModel.ChartMaximumWeight);
+            _viewModel.MetricAxisLabel,
+            (float)_viewModel.ChartMinimumValue,
+            (float)_viewModel.ChartMaximumValue);
     }
 
     private void OnChartStartInteraction(object? sender, TouchEventArgs e)
