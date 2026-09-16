@@ -564,6 +564,12 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
 **Review boundary:** The focused-but-inclusive product direction is tested with both knowledgeable and non-knowledgeable users, the acceptance results are documented, and the release checklist covers privacy and supported responsive states.
 
+**Status:** The synthetic-data protocols and release matrix are prepared in
+`docs/testing/v2-guidance-acceptance.md` and
+`docs/testing/v2-history-chart-acceptance.md`. Human acceptance sessions and
+the Android device matrix remain required before this slice can be marked
+complete; no session outcomes are inferred from automated tests.
+
 **Files:**
 
 - Create: `docs/testing/v2-guidance-acceptance.md`
@@ -571,7 +577,7 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - Modify: `README.md` with the product promise and estimate disclaimer
 - Modify: `PLANV2.MD` with completed slice status and verification results
 
-- [ ] **Step 1: Prepare synthetic test data**
+- [x] **Step 1: Prepare synthetic test data**
 
   Use the existing deterministic sample-history action or a disposable local database. Do not collect or commit real health measurements, screenshots containing personal data, or device database files.
 
@@ -598,11 +604,11 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Run the Android acceptance checklist on a supported emulator or device, including offline startup, database reload, deletion confirmation, large text, Light/Dark themes, Metric/Imperial units, and English/Spanish/German copy.
 
-- [ ] **Step 6: Review privacy, architecture, dependencies, and diff scope**
+- [x] **Step 6: Review privacy, architecture, dependencies, and diff scope**
 
   Confirm there are no network calls, analytics packages, unnecessary permissions, credentials, raw measurement logs, personal sample databases, direct SQLite calls from Presentation, or formula changes outside an explicitly versioned Domain change. V2 must leave `ARCHITECTURE.md` unchanged; a new public boundary requires a separate approved slice before implementation.
 
-- [ ] **Step 7: Commit the V2 handoff documentation**
+- [x] **Step 7: Commit the V2 handoff documentation**
 
   ```powershell
   git add docs/testing README.md PLANV2.MD

@@ -1,6 +1,13 @@
 # Anthropometry Tracking App
 
-Offline-first Android application for local profile, measurement, body-fat, BMR, and TDEE tracking. Results are estimates and are not medical diagnoses.
+Private, offline body-measurement tracking with understandable estimates and
+personal trends. The app records profiles and measurements locally, explains
+body-fat, BMR, and TDEE estimates, and keeps historical results available
+without an account or network service.
+
+Measurements and calculated results are estimates for personal tracking only;
+they are not medical diagnoses, medical advice, or a replacement for guidance
+from a qualified healthcare professional.
 
 ## Requirements
 
