@@ -268,6 +268,16 @@
         </Setter>
     </Style>
 
+    <Style x:Key="DropdownArrow" TargetType="Label">
+        <Setter Property="Text" Value="▼" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray200}}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="HorizontalOptions" Value="End" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+        <Setter Property="InputTransparent" Value="True" />
+    </Style>
+
     <Style TargetType="ProgressBar">
         <Setter Property="ProgressColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
         <Setter Property="VisualStateManager.VisualStateGroups">

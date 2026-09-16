@@ -15,9 +15,15 @@
                 <Label Grid.Row="1" Text="{DynamicResource Age}" VerticalOptions="Center" />
                 <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AgeText}" Keyboard="Numeric" Placeholder="{DynamicResource Years}" WidthRequest="150" />
                 <Label Grid.Row="2" Text="{DynamicResource Gender}" VerticalOptions="Center" />
-                <Picker Grid.Row="2" Grid.Column="1" ItemsSource="{Binding GenderOptions}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedGender}" WidthRequest="150" />
+                <Grid Grid.Row="2" Grid.Column="1" WidthRequest="150">
+                    <Picker ItemsSource="{Binding GenderOptions}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedGender}" />
+                    <Label Style="{StaticResource DropdownArrow}" />
+                </Grid>
                 <Label Grid.Row="3" Text="{DynamicResource ActivityLevel}" VerticalOptions="Center" />
-                <Picker Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ActivityLevels}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedActivityLevel}" WidthRequest="150" />
+                <Grid Grid.Row="3" Grid.Column="1" WidthRequest="150">
+                    <Picker ItemsSource="{Binding ActivityLevels}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedActivityLevel}" />
+                    <Label Style="{StaticResource DropdownArrow}" />
+                </Grid>
                 <Button Grid.Row="3" Grid.Column="2"
                         Text="?"
                         Command="{Binding ShowGuidanceCommand}"

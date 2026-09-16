@@ -67,11 +67,11 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Null(saved.NeckCm);
         Assert.Null(saved.AbdomenCm);
         Assert.Equal(3, results.Items.Count);
-        Assert.Equal(1, navigation.CloseCalls);
+        Assert.Equal(0, navigation.CloseCalls);
         Assert.Equal(0, navigation.HistoryCalls);
         Assert.NotNull(navigation.SavedMeasurement);
         Assert.NotNull(navigation.SavedProfile);
-        Assert.Equal(["close", "results"], navigation.Destinations);
+        Assert.Equal(["results"], navigation.Destinations);
     }
 
     [Fact]
@@ -116,9 +116,9 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(3, results.Items.Count);
         Assert.NotNull(navigation.SavedMeasurement);
         Assert.NotNull(navigation.SavedProfile);
-        Assert.Equal(1, navigation.CloseCalls);
+        Assert.Equal(0, navigation.CloseCalls);
         Assert.Equal(0, navigation.HistoryCalls);
-        Assert.Equal(["close", "results"], navigation.Destinations);
+        Assert.Equal(["results"], navigation.Destinations);
     }
 
     [Fact]
@@ -307,9 +307,9 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(1745m * 1.55m, results.Items.Single(result => result.MeasurementId == measurements.Items[1].Id && result.CalculationType == CalculationType.TotalDailyEnergyExpenditure).Value);
         Assert.NotNull(navigation.SavedMeasurement);
         Assert.NotNull(navigation.SavedProfile);
-        Assert.Equal(1, navigation.CloseCalls);
+        Assert.Equal(0, navigation.CloseCalls);
         Assert.Equal(0, navigation.HistoryCalls);
-        Assert.Equal(["close", "results"], navigation.Destinations);
+        Assert.Equal(["results"], navigation.Destinations);
     }
 
     [Fact]
@@ -346,7 +346,7 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(82m, saved.WeightKg);
         Assert.Equal(3, results.Items.Count);
         Assert.Equal(existing.Id, navigation.SavedMeasurement!.Id);
-        Assert.Equal(["close", "results"], navigation.Destinations);
+        Assert.Equal(["results"], navigation.Destinations);
     }
 
     private static MeasurementEditorViewModel CreateViewModel(

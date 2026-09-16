@@ -8,10 +8,12 @@
             <VerticalStackLayout Spacing="10">
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
                     <Label Grid.Column="0" Text="{DynamicResource ChartMetric}" VerticalOptions="Center" />
-                    <Picker Grid.Column="1"
-                            ItemsSource="{Binding MetricOptions}"
-                            ItemDisplayBinding="{Binding DisplayName}"
-                            SelectedItem="{Binding SelectedMetricOption}" />
+                    <Grid Grid.Column="1">
+                        <Picker ItemsSource="{Binding MetricOptions}"
+                                ItemDisplayBinding="{Binding DisplayName}"
+                                SelectedItem="{Binding SelectedMetricOption}" />
+                        <Label Style="{StaticResource DropdownArrow}" />
+                    </Grid>
                 </Grid>
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                     <CheckBox Grid.Column="0" IsChecked="{Binding UseFromDate}" VerticalOptions="Center" />

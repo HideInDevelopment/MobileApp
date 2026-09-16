@@ -160,16 +160,39 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         => ShowResultsPageAsync(null, measurement);
 
     public Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement)
-        => ShowResultsPageAsync(profile, measurement);
+        => ShowResultsPageAsync(profile, measurement, replaceCurrentPage: true);
 
-    private Task ShowResultsPageAsync(ProfileDto? profile, MeasurementDto measurement)
-        => PushAsync(new CalculationResultPage(new CalculationResultViewModel(
+    private Task ShowResultsPageAsync(
+        ProfileDto? profile,
+        MeasurementDto measurement,
+        bool replaceCurrentPage = false)
+    {
+        var page = new CalculationResultPage(new CalculationResultViewModel(
             _services.GetRequiredService<GetCalculationResults>(),
             measurement.Id,
             measurement.Type,
             _languageService,
             profile,
-            this)));
+            this));
+
+        if (!replaceCurrentPage)
+        {
+            return PushAsync(page);
+        }
+
+        var navigationStack = Shell.Current.Navigation.NavigationStack;
+        var currentPage = navigationStack.Count == 0
+            ? null
+            : navigationStack[navigationStack.Count - 1];
+        if (currentPage is not MeasurementEditorPage)
+        {
+            return PushAsync(page);
+        }
+
+        Shell.Current.Navigation.InsertPageBefore(page, currentPage);
+        Shell.Current.Navigation.RemovePage(currentPage);
+        return Task.CompletedTask;
+    }
 
     public Task CloseMeasurementAsync() => PopAsync();
 
