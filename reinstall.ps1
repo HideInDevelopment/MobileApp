@@ -22,6 +22,24 @@ try {
         throw "The Android debug keystore was not found at '$androidDebugKeystore'."
     }
 
+    $keytool = Join-Path $javaSdk 'bin\keytool.exe'
+    $apksigner = Get-ChildItem -LiteralPath (Join-Path $androidSdk 'build-tools') -Filter 'apksigner.bat' -File -Recurse |
+        Sort-Object FullName -Descending |
+        Select-Object -First 1
+    if (-not (Test-Path -LiteralPath $keytool)) {
+        throw "The Java keytool was not found at '$keytool'."
+    }
+    if (-not $apksigner) {
+        throw "The Android APK signer was not found below '$androidSdk\build-tools'."
+    }
+
+    # The Android signing target can otherwise reuse a stale signed APK after
+    # the signing key changes. Remove only this generated artifact; app data
+    # on the emulator is preserved.
+    if (Test-Path -LiteralPath $apk) {
+        Remove-Item -LiteralPath $apk -Force
+    }
+
     # Use a complete APK so XAML and resource changes are always installed,
     # instead of relying on Debug fast deployment caches.
     & dotnet build $project `
@@ -48,6 +66,20 @@ try {
 
     if (-not (Test-Path -LiteralPath $apk)) {
         throw "The build succeeded, but the APK was not found at '$apk'."
+    }
+
+    $keystoreOutput = & $keytool -list -v -keystore $androidDebugKeystore -alias androiddebugkey -storepass android -keypass android 2>&1 | Out-String
+    $expectedCertificateMatch = [regex]::Match($keystoreOutput, '(?im)^\s*SHA256:\s*([0-9a-f:]+)')
+    $apkOutput = & $apksigner.FullName verify --print-certs $apk 2>&1 | Out-String
+    $actualCertificateMatch = [regex]::Match($apkOutput, '(?im)certificate SHA-256 digest:\s*([0-9a-f]+)')
+    if (-not $expectedCertificateMatch.Success -or -not $actualCertificateMatch.Success) {
+        throw 'The APK certificate could not be verified after the build.'
+    }
+
+    $expectedCertificate = $expectedCertificateMatch.Groups[1].Value.Replace(':', '').ToLowerInvariant()
+    $actualCertificate = $actualCertificateMatch.Groups[1].Value.ToLowerInvariant()
+    if ($expectedCertificate -ne $actualCertificate) {
+        throw "The APK was signed with an unexpected certificate. Expected '$expectedCertificate' but found '$actualCertificate'."
     }
 
     & $adb -e install -r $apk
