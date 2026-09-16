@@ -120,6 +120,33 @@
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × activity factor</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Activity factors: Sedentary 1.2 · Lightly active 1.375 · Moderately active 1.55 · Highly active 1.725 · Very highly active 1.9</value></data>
   <data name="HelpUnits" xml:space="preserve"><value>Calculations use kilograms and centimetres internally. Display values can be changed in Settings; age is in years and energy is in kcal/day.</value></data>
+  <data name="GuidanceActivityLevelTitle" xml:space="preserve"><value>Activity level</value></data>
+  <data name="GuidanceActivityLevelBody" xml:space="preserve"><value>Choose the option that best matches your usual weekly activity. This helps estimate your daily energy needs.</value></data>
+  <data name="GuidanceWeightTitle" xml:space="preserve"><value>How to measure weight</value></data>
+  <data name="GuidanceWeightBody" xml:space="preserve"><value>Measure under similar conditions each time, preferably at a consistent time of day and before eating.</value></data>
+  <data name="GuidanceNeckTitle" xml:space="preserve"><value>How to measure the neck</value></data>
+  <data name="GuidanceNeckBody" xml:space="preserve"><value>Place the tape around the neck below the larynx. Keep it level and snug without compressing the skin.</value></data>
+  <data name="GuidanceAbdomenTitle" xml:space="preserve"><value>How to measure the abdomen</value></data>
+  <data name="GuidanceAbdomenBody" xml:space="preserve"><value>Measure at navel level while standing relaxed. Do not pull your stomach in, and keep the tape level.</value></data>
+  <data name="GuidanceWaistTitle" xml:space="preserve"><value>How to measure the waist</value></data>
+  <data name="GuidanceWaistBody" xml:space="preserve"><value>Measure the narrowest part of your waist while standing relaxed, and use the same location each time.</value></data>
+  <data name="GuidanceHipTitle" xml:space="preserve"><value>How to measure the hips</value></data>
+  <data name="GuidanceHipBody" xml:space="preserve"><value>Measure around the widest part of the hips and buttocks with the tape level and neither tight nor loose.</value></data>
+  <data name="GuidanceBodyFatTitle" xml:space="preserve"><value>Body-fat percentage</value></data>
+  <data name="GuidanceBodyFatBody" xml:space="preserve"><value>This estimates the proportion of your body weight that is fat using your height and circumference measurements.</value></data>
+  <data name="GuidanceBmrTitle" xml:space="preserve"><value>Basal metabolic rate</value></data>
+  <data name="GuidanceBmrBody" xml:space="preserve"><value>This estimates the energy your body uses at rest from your weight, height, age, and profile information.</value></data>
+  <data name="GuidanceTdeeTitle" xml:space="preserve"><value>Total daily energy expenditure</value></data>
+  <data name="GuidanceTdeeBody" xml:space="preserve"><value>This estimates daily energy needs by combining basal metabolism with your selected activity level.</value></data>
+  <data name="GuidanceReusedSizesTitle" xml:space="preserve"><value>Reused size measurements</value></data>
+  <data name="GuidanceReusedSizesBody" xml:space="preserve"><value>A weight-only entry reuses the latest available size measurements. Update the sizes when they change for more current estimates.</value></data>
+  <data name="GuidanceEstimateDisclaimerTitle" xml:space="preserve"><value>Estimate disclaimer</value></data>
+  <data name="GuidanceEstimateDisclaimerBody" xml:space="preserve"><value>These results are estimates for tracking only. They are not a medical diagnosis or medical advice.</value></data>
+  <data name="ActivityLevelSedentaryDescription" xml:space="preserve"><value>Little or no planned exercise.</value></data>
+  <data name="ActivityLevelLightDescription" xml:space="preserve"><value>Light exercise one to three days per week.</value></data>
+  <data name="ActivityLevelModerateDescription" xml:space="preserve"><value>Moderate exercise three to five days per week.</value></data>
+  <data name="ActivityLevelHighDescription" xml:space="preserve"><value>Hard exercise six to seven days per week.</value></data>
+  <data name="ActivityLevelVeryHighDescription" xml:space="preserve"><value>Very hard exercise or a physically demanding job.</value></data>
   <data name="DateFormat" xml:space="preserve"><value>Date format</value></data>
   <data name="DayMonthYear" xml:space="preserve"><value>dd/mm/yyyy</value></data>
   <data name="MonthDayYear" xml:space="preserve"><value>mm/dd/yyyy</value></data>

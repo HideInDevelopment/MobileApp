@@ -120,6 +120,33 @@
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × factor de actividad</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Factores de actividad: Sedentario 1.2 · Ligeramente activo 1.375 · Moderadamente activo 1.55 · Muy activo 1.725 · Extremadamente activo 1.9</value></data>
   <data name="HelpUnits" xml:space="preserve"><value>Los cálculos usan kilogramos y centímetros internamente. Las unidades mostradas se pueden cambiar en Ajustes; la edad se expresa en años y la energía en kcal/día.</value></data>
+  <data name="GuidanceActivityLevelTitle" xml:space="preserve"><value>Nivel de actividad</value></data>
+  <data name="GuidanceActivityLevelBody" xml:space="preserve"><value>Elige la opción que mejor describa tu actividad habitual durante la semana. Esto ayuda a estimar tus necesidades energéticas diarias.</value></data>
+  <data name="GuidanceWeightTitle" xml:space="preserve"><value>Cómo medir el peso</value></data>
+  <data name="GuidanceWeightBody" xml:space="preserve"><value>Mídete en condiciones similares cada vez, preferiblemente a la misma hora y antes de comer.</value></data>
+  <data name="GuidanceNeckTitle" xml:space="preserve"><value>Cómo medir el cuello</value></data>
+  <data name="GuidanceNeckBody" xml:space="preserve"><value>Coloca la cinta alrededor del cuello, por debajo de la laringe. Mantenla nivelada y ajustada sin comprimir la piel.</value></data>
+  <data name="GuidanceAbdomenTitle" xml:space="preserve"><value>Cómo medir el abdomen</value></data>
+  <data name="GuidanceAbdomenBody" xml:space="preserve"><value>Mide a la altura del ombligo, de pie y relajado. No metas el abdomen y mantén la cinta nivelada.</value></data>
+  <data name="GuidanceWaistTitle" xml:space="preserve"><value>Cómo medir la cintura</value></data>
+  <data name="GuidanceWaistBody" xml:space="preserve"><value>Mide la parte más estrecha de la cintura de pie y relajado, usando siempre el mismo punto.</value></data>
+  <data name="GuidanceHipTitle" xml:space="preserve"><value>Cómo medir la cadera</value></data>
+  <data name="GuidanceHipBody" xml:space="preserve"><value>Mide alrededor de la parte más ancha de la cadera y los glúteos, con la cinta nivelada y sin apretar.</value></data>
+  <data name="GuidanceBodyFatTitle" xml:space="preserve"><value>Porcentaje de grasa corporal</value></data>
+  <data name="GuidanceBodyFatBody" xml:space="preserve"><value>Estima qué proporción de tu peso corporal corresponde a grasa usando tu altura y tus medidas corporales.</value></data>
+  <data name="GuidanceBmrTitle" xml:space="preserve"><value>Metabolismo basal</value></data>
+  <data name="GuidanceBmrBody" xml:space="preserve"><value>Estima la energía que tu cuerpo usa en reposo a partir de tu peso, altura, edad y datos del perfil.</value></data>
+  <data name="GuidanceTdeeTitle" xml:space="preserve"><value>Gasto energético diario total</value></data>
+  <data name="GuidanceTdeeBody" xml:space="preserve"><value>Estima tus necesidades energéticas diarias combinando el metabolismo basal con tu nivel de actividad.</value></data>
+  <data name="GuidanceReusedSizesTitle" xml:space="preserve"><value>Medidas reutilizadas</value></data>
+  <data name="GuidanceReusedSizesBody" xml:space="preserve"><value>Una entrada de solo peso reutiliza las últimas medidas corporales disponibles. Actualiza las medidas cuando cambien para obtener estimaciones más actuales.</value></data>
+  <data name="GuidanceEstimateDisclaimerTitle" xml:space="preserve"><value>Aviso sobre las estimaciones</value></data>
+  <data name="GuidanceEstimateDisclaimerBody" xml:space="preserve"><value>Estos resultados son estimaciones para el seguimiento. No son un diagnóstico ni consejo médico.</value></data>
+  <data name="ActivityLevelSedentaryDescription" xml:space="preserve"><value>Poco o ningún ejercicio planificado.</value></data>
+  <data name="ActivityLevelLightDescription" xml:space="preserve"><value>Ejercicio ligero de uno a tres días por semana.</value></data>
+  <data name="ActivityLevelModerateDescription" xml:space="preserve"><value>Ejercicio moderado de tres a cinco días por semana.</value></data>
+  <data name="ActivityLevelHighDescription" xml:space="preserve"><value>Ejercicio intenso de seis a siete días por semana.</value></data>
+  <data name="ActivityLevelVeryHighDescription" xml:space="preserve"><value>Ejercicio muy intenso o trabajo físicamente exigente.</value></data>
   <data name="DateFormat" xml:space="preserve"><value>Formato de fecha</value></data>
   <data name="DayMonthYear" xml:space="preserve"><value>dd/mm/yyyy</value></data>
   <data name="MonthDayYear" xml:space="preserve"><value>mm/dd/yyyy</value></data>

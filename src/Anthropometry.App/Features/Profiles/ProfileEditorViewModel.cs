@@ -51,11 +51,11 @@ public sealed class ProfileEditorViewModel : ObservableObject
         _ageText = existingProfile?.Settings?.AgeYears.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
         ActivityLevels =
         [
-            new(ActivityLevel.Sedentary, _languageService.Get("Sedentary")),
-            new(ActivityLevel.Light, _languageService.Get("LightlyActive")),
-            new(ActivityLevel.Moderate, _languageService.Get("ModeratelyActive")),
-            new(ActivityLevel.High, _languageService.Get("HighlyActive")),
-            new(ActivityLevel.VeryHigh, _languageService.Get("VeryHighlyActive"))
+            ActivityLevelOption.Create(ActivityLevel.Sedentary, _languageService),
+            ActivityLevelOption.Create(ActivityLevel.Light, _languageService),
+            ActivityLevelOption.Create(ActivityLevel.Moderate, _languageService),
+            ActivityLevelOption.Create(ActivityLevel.High, _languageService),
+            ActivityLevelOption.Create(ActivityLevel.VeryHigh, _languageService)
         ];
         GenderOptions =
         [

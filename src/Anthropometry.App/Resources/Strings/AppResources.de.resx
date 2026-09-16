@@ -120,6 +120,33 @@
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = Grundumsatz × Aktivitätsfaktor</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Aktivitätsfaktoren: Sitzend 1.2 · Leicht aktiv 1.375 · Moderat aktiv 1.55 · Sehr aktiv 1.725 · Extrem aktiv 1.9</value></data>
   <data name="HelpUnits" xml:space="preserve"><value>Die Berechnungen verwenden intern Kilogramm und Zentimeter. Die angezeigten Einheiten können in den Einstellungen geändert werden; das Alter wird in Jahren und die Energie in kcal/Tag angegeben.</value></data>
+  <data name="GuidanceActivityLevelTitle" xml:space="preserve"><value>Aktivitätsniveau</value></data>
+  <data name="GuidanceActivityLevelBody" xml:space="preserve"><value>Wähle die Option, die deiner üblichen Aktivität während der Woche am besten entspricht. Das hilft bei der Schätzung deines täglichen Energiebedarfs.</value></data>
+  <data name="GuidanceWeightTitle" xml:space="preserve"><value>Gewicht messen</value></data>
+  <data name="GuidanceWeightBody" xml:space="preserve"><value>Miss dich jedes Mal unter ähnlichen Bedingungen, möglichst zur gleichen Tageszeit und vor dem Essen.</value></data>
+  <data name="GuidanceNeckTitle" xml:space="preserve"><value>Hals messen</value></data>
+  <data name="GuidanceNeckBody" xml:space="preserve"><value>Lege das Maßband unterhalb des Kehlkopfs um den Hals. Halte es waagerecht und eng anliegend, ohne die Haut einzudrücken.</value></data>
+  <data name="GuidanceAbdomenTitle" xml:space="preserve"><value>Bauch messen</value></data>
+  <data name="GuidanceAbdomenBody" xml:space="preserve"><value>Miss auf Höhe des Bauchnabels im entspannten Stand. Ziehe den Bauch nicht ein und halte das Maßband waagerecht.</value></data>
+  <data name="GuidanceWaistTitle" xml:space="preserve"><value>Taille messen</value></data>
+  <data name="GuidanceWaistBody" xml:space="preserve"><value>Miss die schmalste Stelle der Taille im entspannten Stand und verwende jedes Mal dieselbe Stelle.</value></data>
+  <data name="GuidanceHipTitle" xml:space="preserve"><value>Hüfte messen</value></data>
+  <data name="GuidanceHipBody" xml:space="preserve"><value>Miss an der breitesten Stelle von Hüfte und Gesäß. Das Maßband soll waagerecht liegen und weder drücken noch locker sein.</value></data>
+  <data name="GuidanceBodyFatTitle" xml:space="preserve"><value>Körperfettanteil</value></data>
+  <data name="GuidanceBodyFatBody" xml:space="preserve"><value>Schätzt den Anteil deines Körpergewichts, der aus Fett besteht, anhand deiner Körpergröße und Umfangmessungen.</value></data>
+  <data name="GuidanceBmrTitle" xml:space="preserve"><value>Grundumsatz</value></data>
+  <data name="GuidanceBmrBody" xml:space="preserve"><value>Schätzt die Energie, die dein Körper in Ruhe aus Gewicht, Größe, Alter und Profilangaben benötigt.</value></data>
+  <data name="GuidanceTdeeTitle" xml:space="preserve"><value>Gesamtenergieverbrauch pro Tag</value></data>
+  <data name="GuidanceTdeeBody" xml:space="preserve"><value>Schätzt deinen täglichen Energiebedarf, indem der Grundumsatz mit deinem Aktivitätsniveau kombiniert wird.</value></data>
+  <data name="GuidanceReusedSizesTitle" xml:space="preserve"><value>Wiederverwendete Maße</value></data>
+  <data name="GuidanceReusedSizesBody" xml:space="preserve"><value>Ein Eintrag nur mit Gewicht verwendet die zuletzt verfügbaren Umfangmessungen erneut. Aktualisiere die Maße, wenn sie sich ändern, damit die Schätzungen aktueller sind.</value></data>
+  <data name="GuidanceEstimateDisclaimerTitle" xml:space="preserve"><value>Hinweis zu den Schätzwerten</value></data>
+  <data name="GuidanceEstimateDisclaimerBody" xml:space="preserve"><value>Diese Ergebnisse sind nur Schätzwerte zur Verlaufskontrolle. Sie sind keine medizinische Diagnose oder Beratung.</value></data>
+  <data name="ActivityLevelSedentaryDescription" xml:space="preserve"><value>Wenig oder keine geplante Bewegung.</value></data>
+  <data name="ActivityLevelLightDescription" xml:space="preserve"><value>Leichte Bewegung an ein bis drei Tagen pro Woche.</value></data>
+  <data name="ActivityLevelModerateDescription" xml:space="preserve"><value>Moderate Bewegung an drei bis fünf Tagen pro Woche.</value></data>
+  <data name="ActivityLevelHighDescription" xml:space="preserve"><value>Intensive Bewegung an sechs bis sieben Tagen pro Woche.</value></data>
+  <data name="ActivityLevelVeryHighDescription" xml:space="preserve"><value>Sehr intensive Bewegung oder körperlich anspruchsvolle Arbeit.</value></data>
   <data name="DateFormat" xml:space="preserve"><value>Datumsformat</value></data>
   <data name="DayMonthYear" xml:space="preserve"><value>dd/mm/yyyy</value></data>
   <data name="MonthDayYear" xml:space="preserve"><value>mm/dd/yyyy</value></data>

@@ -9,6 +9,29 @@
             <Label Text="{DynamicResource HelpDisclaimer}" LineBreakMode="WordWrap" />
             <Label Text="{DynamicResource HelpMeasurementConsistency}" LineBreakMode="WordWrap" />
 
+            <Label Text="{DynamicResource GuidanceActivityLevelTitle}" FontSize="22" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceActivityLevelBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceWeightTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceWeightBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceNeckTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceNeckBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceAbdomenTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceAbdomenBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceWaistTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceWaistBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceHipTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceHipBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceBodyFatTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceBodyFatBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceBmrTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceBmrBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceTdeeTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceTdeeBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceReusedSizesTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceReusedSizesBody}" LineBreakMode="WordWrap" />
+            <Label Text="{DynamicResource GuidanceEstimateDisclaimerTitle}" FontAttributes="Bold" />
+            <Label Text="{DynamicResource GuidanceEstimateDisclaimerBody}" LineBreakMode="WordWrap" />
+
             <Label Text="{DynamicResource HelpEquationsTitle}" FontSize="22" FontAttributes="Bold" />
 
             <VerticalStackLayout Spacing="6">

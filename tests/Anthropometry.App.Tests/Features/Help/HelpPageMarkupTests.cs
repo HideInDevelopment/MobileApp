@@ -25,4 +25,18 @@ public sealed class HelpPageMarkupTests
 
         Assert.DoesNotContain("<Label Text=\"{DynamicResource HelpTitle}\"", markup);
     }
+
+    [Fact]
+    public void Shows_localized_guidance_topics_for_measurements_and_estimates()
+    {
+        var path = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Features", "Help", "HelpPage.xaml"));
+        var markup = File.ReadAllText(path);
+
+        Assert.Contains("Text=\"{DynamicResource GuidanceWeightBody}\"", markup);
+        Assert.Contains("Text=\"{DynamicResource GuidanceNeckBody}\"", markup);
+        Assert.Contains("Text=\"{DynamicResource GuidanceEstimateDisclaimerBody}\"", markup);
+    }
 }

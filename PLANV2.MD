@@ -144,11 +144,11 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - `GuidanceContent.Get(LanguageService, GuidanceTopic)` produces a localized title and body without reading Domain or Application objects.
 - `ActivityLevelOption` produces a display name and a short localized description while preserving its existing `ActivityLevel Value`.
 
-- [ ] **Step 1: Add failing tests for topic coverage and localized content**
+- [x] **Step 1: Add failing tests for topic coverage and localized content**
 
   Assert that every `GuidanceTopic` returns a non-empty title and body in `en`, `es`, and `de`, and that no body contains an untranslated resource key.
 
-- [ ] **Step 2: Run the focused tests and verify the failure**
+- [x] **Step 2: Run the focused tests and verify the failure**
 
   Run:
 
@@ -158,15 +158,15 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: the tests fail because the new topic/content contract does not exist.
 
-- [ ] **Step 3: Add the localized resource keys and content contract**
+- [x] **Step 3: Add the localized resource keys and content contract**
 
   Add concise copy for each topic to all three `.resx` files. Keep measurement instructions actionable: location, posture, tape placement, and consistency. Keep activity descriptions concrete and non-judgmental. Keep the disclaimer explicit that estimates are population-level formulas and not medical advice.
 
-- [ ] **Step 4: Run the focused tests and verify the content**
+- [x] **Step 4: Run the focused tests and verify the content**
 
   Run the same focused command. Expected: PASS for all locales and topics.
 
-- [ ] **Step 5: Run the existing Help and localization tests**
+- [x] **Step 5: Run the existing Help and localization tests**
 
   Run:
 
@@ -176,7 +176,7 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: existing Help/localization tests remain green.
 
-- [ ] **Step 6: Commit the content contract**
+- [x] **Step 6: Commit the content contract**
 
   ```powershell
   git add src/Anthropometry.App/Features/Help src/Anthropometry.App/Features/Profiles/ActivityLevelOption.cs src/Anthropometry.App/Resources/Strings tests/Anthropometry.App.Tests/Features/Help tests/Anthropometry.App.Tests/Features/Profiles/ActivityLevelOptionTests.cs
