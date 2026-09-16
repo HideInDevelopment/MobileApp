@@ -1,5 +1,6 @@
 using Anthropometry.Infrastructure.Persistence.Migrations;
 using Anthropometry.App.Display;
+using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,13 +14,15 @@ public partial class App : Microsoft.Maui.Controls.Application
     private readonly LanguageService _languageService;
     private readonly ThemeService _themeService;
     private readonly DisplayPreferencesService _displayPreferences;
+    private readonly ReminderCoordinator _reminders;
 
     public App(
         MigrationRunner migrationRunner,
         IServiceProvider services,
         LanguageService languageService,
         ThemeService themeService,
-        DisplayPreferencesService displayPreferences)
+        DisplayPreferencesService displayPreferences,
+        ReminderCoordinator reminders)
     {
         InitializeComponent();
         _migrationRunner = migrationRunner;
@@ -27,11 +30,13 @@ public partial class App : Microsoft.Maui.Controls.Application
         _languageService = languageService;
         _themeService = themeService;
         _displayPreferences = displayPreferences;
+        _reminders = reminders;
         _languageService.LanguageChanged += (_, _) => ApplyLocalizedResources();
         _themeService.ThemeChanged += (_, _) => ApplyTheme();
         _languageService.Initialize();
         _themeService.Initialize();
         _displayPreferences.Initialize();
+        _reminders.Initialize();
         ApplyLocalizedResources();
     }
 

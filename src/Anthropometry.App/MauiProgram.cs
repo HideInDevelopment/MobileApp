@@ -2,6 +2,7 @@ using Anthropometry.App.Common;
 using Anthropometry.App.Display;
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Features.Profiles;
+using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
 using Anthropometry.Application.Abstractions;
@@ -48,6 +49,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<ThemeService>();
         builder.Services.AddSingleton<IDisplayPreferenceStore, PreferencesDisplayPreferenceStore>();
         builder.Services.AddSingleton<DisplayPreferencesService>();
+        builder.Services.AddSingleton<IReminderSettingsStore, PreferencesReminderSettingsStore>();
+#if ANDROID
+        builder.Services.AddSingleton<IReminderPermissionService, AndroidReminderPermissionService>();
+        builder.Services.AddSingleton<IReminderScheduler, AndroidReminderScheduler>();
+#endif
+        builder.Services.AddSingleton<ReminderCoordinator>();
 
         builder.Services.AddSingleton<UsNavyMaleBodyFatFormula>();
         builder.Services.AddSingleton<UsNavyFemaleBodyFatFormula>();

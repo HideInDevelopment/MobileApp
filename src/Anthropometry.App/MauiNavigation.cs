@@ -145,7 +145,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         => PushAsync(new SettingsPage(new SettingsViewModel(
             _services.GetRequiredService<LanguageService>(),
             _services.GetRequiredService<ThemeService>(),
-            _displayPreferences)));
+            _displayPreferences,
+            _services.GetRequiredService<ReminderCoordinator>())));
 
     public Task ShowHelpAsync() => PushAsync(new HelpPage());
 

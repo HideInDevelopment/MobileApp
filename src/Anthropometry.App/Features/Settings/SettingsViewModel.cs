@@ -18,20 +18,33 @@ public sealed class SettingsViewModel : ObservableObject
     private string _selectedThemeCode;
     private string _selectedDateFormatCode;
     private string _selectedMeasurementSystemCode;
+    private readonly ReminderCoordinator? _reminders;
+    private bool _isDailyReminderEnabled;
+    private bool _isInactivityReminderEnabled;
+    private TimeSpan _reminderTime;
+    private int _selectedInactivityDays;
+    private string _reminderStatus = string.Empty;
 
     public SettingsViewModel(
         LanguageService languageService,
         ThemeService themeService,
-        DisplayPreferencesService displayPreferences)
+        DisplayPreferencesService displayPreferences,
+        ReminderCoordinator? reminders = null)
     {
         _languageService = languageService;
         _themeService = themeService;
         _displayPreferences = displayPreferences;
+        _reminders = reminders;
         Languages = LanguageService.SupportedLanguages;
         _selectedLanguage = Languages.Single(language => language.Code == _languageService.CurrentLanguageCode);
         _selectedThemeCode = _themeService.CurrentThemeCode;
         _selectedDateFormatCode = _displayPreferences.DateFormatCode;
         _selectedMeasurementSystemCode = _displayPreferences.MeasurementSystemCode;
+        var reminderSettings = _reminders?.Current ?? ReminderSettings.Default;
+        _isDailyReminderEnabled = reminderSettings.DailyEnabled;
+        _isInactivityReminderEnabled = reminderSettings.InactivityEnabled;
+        _reminderTime = reminderSettings.ReminderTime;
+        _selectedInactivityDays = reminderSettings.InactivityDays;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
@@ -54,6 +67,68 @@ public sealed class SettingsViewModel : ObservableObject
         new(DisplayPreferencesService.MetricCode, _languageService.Get("Metric")),
         new(DisplayPreferencesService.ImperialCode, _languageService.Get("Imperial"))
     ];
+
+    public IReadOnlyList<ReminderIntervalOption> InactivityIntervals =>
+    [
+        new(7, _languageService.Get("SevenDays")),
+        new(14, _languageService.Get("FourteenDays"))
+    ];
+
+    public bool IsDailyReminderEnabled
+    {
+        get => _isDailyReminderEnabled;
+        private set => SetProperty(ref _isDailyReminderEnabled, value);
+    }
+
+    public bool IsInactivityReminderEnabled
+    {
+        get => _isInactivityReminderEnabled;
+        private set => SetProperty(ref _isInactivityReminderEnabled, value);
+    }
+
+    public TimeSpan ReminderTime
+    {
+        get => _reminderTime;
+        set
+        {
+            if (!SetProperty(ref _reminderTime, value))
+            {
+                return;
+            }
+
+            ApplyReminderSettings();
+        }
+    }
+
+    public ReminderIntervalOption? SelectedInactivityInterval
+    {
+        get => InactivityIntervals.SingleOrDefault(option => option.Days == _selectedInactivityDays);
+        set
+        {
+            if (value is null || _selectedInactivityDays == value.Days)
+            {
+                return;
+            }
+
+            _selectedInactivityDays = value.Days;
+            OnPropertyChanged();
+            ApplyReminderSettings();
+        }
+    }
+
+    public string ReminderStatus
+    {
+        get => _reminderStatus;
+        private set
+        {
+            if (SetProperty(ref _reminderStatus, value))
+            {
+                OnPropertyChanged(nameof(HasReminderStatus));
+            }
+        }
+    }
+
+    public bool HasReminderStatus => !string.IsNullOrWhiteSpace(ReminderStatus);
 
     public LanguageOption? SelectedLanguage
     {
@@ -117,6 +192,61 @@ public sealed class SettingsViewModel : ObservableObject
         }
     }
 
+    public async Task<bool> SetDailyReminderEnabledAsync(bool enabled)
+        => await SetReminderEnabledAsync(enabled, isDaily: true);
+
+    public async Task<bool> SetInactivityReminderEnabledAsync(bool enabled)
+        => await SetReminderEnabledAsync(enabled, isDaily: false);
+
+    private async Task<bool> SetReminderEnabledAsync(bool enabled, bool isDaily)
+    {
+        var previous = isDaily ? IsDailyReminderEnabled : IsInactivityReminderEnabled;
+        if (isDaily)
+        {
+            IsDailyReminderEnabled = enabled;
+        }
+        else
+        {
+            IsInactivityReminderEnabled = enabled;
+        }
+
+        if (_reminders is null)
+        {
+            return true;
+        }
+
+        var result = await _reminders.UpdateAsync(CreateReminderSettings());
+        if (result)
+        {
+            ReminderStatus = string.Empty;
+            return true;
+        }
+
+        if (isDaily)
+        {
+            IsDailyReminderEnabled = previous;
+        }
+        else
+        {
+            IsInactivityReminderEnabled = previous;
+        }
+
+        ReminderStatus = _languageService.Get("ReminderPermissionRequired");
+        return false;
+    }
+
+    private void ApplyReminderSettings()
+    {
+        _reminders?.ApplySettings(CreateReminderSettings());
+    }
+
+    private ReminderSettings CreateReminderSettings()
+        => new(
+            IsDailyReminderEnabled,
+            ReminderTime,
+            IsInactivityReminderEnabled,
+            _selectedInactivityDays);
+
     private void OnLanguageChanged(object? sender, EventArgs e)
     {
         OnPropertyChanged(nameof(Themes));
@@ -125,5 +255,7 @@ public sealed class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedDateFormat));
         OnPropertyChanged(nameof(MeasurementSystems));
         OnPropertyChanged(nameof(SelectedMeasurementSystem));
+        OnPropertyChanged(nameof(InactivityIntervals));
+        OnPropertyChanged(nameof(SelectedInactivityInterval));
     }
 }

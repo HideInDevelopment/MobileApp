@@ -57,7 +57,9 @@ public sealed class LanguageService
         "ActivityLevelModerateDescription", "ActivityLevelHighDescription", "ActivityLevelVeryHighDescription",
         "DateFormat", "DayMonthYear", "MonthDayYear", "WeightUnit", "HeightUnit",
         "Kilograms", "Pounds", "Centimeters", "Feet", "Meters", "Inches",
-        "MeasurementSystem", "Metric", "Imperial", "Lb", "Kg", "Cm", "M", "Ft", "In"
+        "MeasurementSystem", "Metric", "Imperial", "Lb", "Kg", "Cm", "M", "Ft", "In",
+        "ReminderSettings", "DailyReminder", "ReminderTime", "InactivityReminder", "InactivityReminderInterval",
+        "SevenDays", "FourteenDays", "ReminderPermissionRequired"
     ];
 
     private readonly ILanguagePreferenceStore _preferences;

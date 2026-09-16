@@ -178,6 +178,14 @@
   <data name="MeasurementSystem" xml:space="preserve"><value>Sistema de medidas</value></data>
   <data name="Metric" xml:space="preserve"><value>Métrico</value></data>
   <data name="Imperial" xml:space="preserve"><value>Imperial</value></data>
+  <data name="ReminderSettings" xml:space="preserve"><value>Recordatorios</value></data>
+  <data name="DailyReminder" xml:space="preserve"><value>Recordatorio diario de medición</value></data>
+  <data name="ReminderTime" xml:space="preserve"><value>Hora del recordatorio</value></data>
+  <data name="InactivityReminder" xml:space="preserve"><value>Recordatorio tras inactividad</value></data>
+  <data name="InactivityReminderInterval" xml:space="preserve"><value>Después de</value></data>
+  <data name="SevenDays" xml:space="preserve"><value>7 días</value></data>
+  <data name="FourteenDays" xml:space="preserve"><value>14 días</value></data>
+  <data name="ReminderPermissionRequired" xml:space="preserve"><value>Permite las notificaciones para activar los recordatorios.</value></data>
   <data name="Kilograms" xml:space="preserve"><value>Kilogramos (kg)</value></data>
   <data name="Pounds" xml:space="preserve"><value>Libras (lb)</value></data>
   <data name="Centimeters" xml:space="preserve"><value>Centímetros (cm)</value></data>

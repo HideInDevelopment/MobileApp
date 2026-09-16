@@ -73,7 +73,8 @@ PLAN.md Slice 8 release verification
         │
         └── V2 Slice 8: user validation and release handoff
                 │
-                └── V2 Slice 9: optional reminders discovery only
+                ├── V2 Slice 9: optional reminders discovery gate
+                └── V2 Slice 10: Android local measurement reminders
 ```
 
 Population comparisons, cloud synchronization, accounts, coaching, and advanced analytics are explicitly deferred beyond this plan.
@@ -619,14 +620,13 @@ complete; no session outcomes are inferred from automated tests.
 
 ### V2 Slice 9: Optional reminders discovery gate
 
-**Review boundary:** The product decision and technical risk for optional local reminders are documented; reminders are not implemented unless the decision gate is approved after V2 validation.
+**Review boundary:** The product decision and technical risk for optional local reminders are documented. The approved Android implementation is delivered separately in Slice 10; this slice contains the discovery decision only.
 
-**Decision:** Defer reminders beyond V2. The reviewed feedback does not
-establish clear demand, and the discovery identified notification permission,
-background scheduling, reboot recovery, cancellation, and future iOS parity as
-separate risks. See
-`docs/superpowers/specs/2026-09-16-local-reminders-discovery.md`. No package,
-permission, manifest change, or notification code was added.
+**Decision:** Approve an Android-only implementation. The user selected a
+daily reminder at a chosen hour and an inactivity reminder after 7 or 14 days
+without opening the app. Both use the same hour, are app-level, local, opt-in,
+and disabled by default. iOS remains deferred. See
+`docs/superpowers/specs/2026-09-16-local-reminders-discovery.md`.
 
 **Files:**
 
@@ -643,7 +643,38 @@ permission, manifest change, or notification code was added.
 
 - [x] **Step 3: Decide whether reminders belong in a separate implementation plan**
 
-  Continue only if the acceptance evidence shows a clear user need and the implementation can remain local, opt-in, cancellable, and privacy-compatible. Otherwise mark reminders deferred without adding code.
+  Continue only if the acceptance evidence shows a clear user need and the implementation can remain local, opt-in, cancellable, and privacy-compatible. The approved path is recorded in Slice 10; no implementation belongs in this discovery slice.
+
+The approved implementation is tracked in V2 Slice 10.
+
+---
+
+### V2 Slice 10: Android local measurement reminders
+
+**Review boundary:** Android users can opt into a daily reminder at a selected
+hour and/or a local inactivity reminder after 7 or 14 days without opening the
+app. Scheduling remains outside Domain and Application, no iOS code is added,
+and no third-party package is introduced.
+
+**Files:**
+
+- Modify: `src/Anthropometry.App/Features/Settings/SettingsPage.xaml`
+- Modify: `src/Anthropometry.App/Features/Settings/SettingsPage.xaml.cs`
+- Modify: `src/Anthropometry.App/Features/Settings/SettingsViewModel.cs`
+- Create: `src/Anthropometry.App/Features/Settings/ReminderSettings.cs`
+- Create: `src/Anthropometry.App/Features/Settings/ReminderScheduleCalculator.cs`
+- Create: `src/Anthropometry.App/Features/Settings/ReminderNotificationCopy.cs`
+- Create: `src/Anthropometry.App/Features/Settings/PreferencesReminderSettingsStore.cs`
+- Create: Android permission, scheduler, alarm receiver, and boot receiver files
+- Modify: Android manifest, `MainActivity`, `MauiProgram`, `App`, and localized resources
+- Create: focused reminder coordinator, schedule, ViewModel, and markup tests
+
+- [x] **Step 1: Add failing coordinator, schedule, and markup tests**
+- [x] **Step 2: Implement local Settings persistence and reminder coordination**
+- [x] **Step 3: Add Android notification permission and AlarmManager scheduling**
+- [x] **Step 4: Add app activation, boot recovery, cancellation, and localized copy**
+- [x] **Step 5: Run full tests and Android Release verification**
+- [x] **Step 6: Commit the Android reminder slice**
 
 ## Deferred Scope
 
@@ -656,7 +687,7 @@ The following are intentionally excluded from V2:
 - Coaching, messaging, or community features.
 - A separate expert mode or a long mandatory onboarding tutorial.
 - A third-party charting library before the existing custom chart is shown to be insufficient.
-- Notifications before the V2 Slice 9 decision gate.
+- iOS notifications and cross-platform reminder support.
 
 ## Plan Self-Review Checklist
 
@@ -671,4 +702,4 @@ The following are intentionally excluded from V2:
 - [ ] Visual changes do not introduce a new dependency or architecture violation.
 - [ ] No acceptance step stores or commits real personal health data.
 - [ ] Every implementation slice has focused tests, a full applicable test command, and a reviewable commit.
-- [ ] Population comparisons and reminders remain explicitly out of the core V2 scope.
+- [ ] Population comparisons remain explicitly out of the core V2 scope; Android measurement reminders are limited to the approved Slice 10 behavior.
