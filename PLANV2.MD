@@ -621,20 +621,27 @@ complete; no session outcomes are inferred from automated tests.
 
 **Review boundary:** The product decision and technical risk for optional local reminders are documented; reminders are not implemented unless the decision gate is approved after V2 validation.
 
+**Decision:** Defer reminders beyond V2. The reviewed feedback does not
+establish clear demand, and the discovery identified notification permission,
+background scheduling, reboot recovery, cancellation, and future iOS parity as
+separate risks. See
+`docs/superpowers/specs/2026-09-16-local-reminders-discovery.md`. No package,
+permission, manifest change, or notification code was added.
+
 **Files:**
 
 - Create: `docs/superpowers/specs/2026-09-16-local-reminders-discovery.md`
 - Modify: `PLANV2.MD` with the decision and explicit scope
 
-- [ ] **Step 1: Measure demand during V2 acceptance**
+- [x] **Step 1: Measure demand during V2 acceptance**
 
   Ask users whether they want configurable 7-, 14-, or 30-day reminders, whether reminders should be enabled by default, and whether they trust local-only scheduling.
 
-- [ ] **Step 2: Document platform and privacy constraints**
+- [x] **Step 2: Document platform and privacy constraints**
 
   Identify Android notification permission behavior, MAUI/iOS portability implications, scheduling reliability, cancellation behavior, and whether a package is necessary. Do not add a package during discovery.
 
-- [ ] **Step 3: Decide whether reminders belong in a separate implementation plan**
+- [x] **Step 3: Decide whether reminders belong in a separate implementation plan**
 
   Continue only if the acceptance evidence shows a clear user need and the implementation can remain local, opt-in, cancellable, and privacy-compatible. Otherwise mark reminders deferred without adding code.
 
