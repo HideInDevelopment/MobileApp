@@ -3,6 +3,7 @@ using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Display;
+using Anthropometry.App.Features.Help;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
@@ -57,6 +58,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _circumferenceUnitCode = _displayPreferences.CircumferenceUnitCode;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
+        ShowGuidanceCommand = new AsyncRelayCommand<GuidanceTopic>(_navigation.ShowGuidanceAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
     }
 
@@ -73,6 +75,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     public bool IsFemale => _profile.Gender == ProfileGender.Female;
 
     public string TrunkLabel => _languageService.Get(IsFemale ? "Waist" : "Abdomen");
+
+    public GuidanceTopic TrunkGuidanceTopic => IsFemale ? GuidanceTopic.Waist : GuidanceTopic.Abdomen;
 
     public string WeightUnitText => _languageService.Get(
         _displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg");
@@ -140,6 +144,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     public IAsyncRelayCommand SaveCommand { get; }
 
     public IAsyncRelayCommand CancelCommand { get; }
+
+    public IAsyncRelayCommand<GuidanceTopic> ShowGuidanceCommand { get; }
 
     private async Task SaveAsync()
     {

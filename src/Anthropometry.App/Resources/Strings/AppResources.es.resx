@@ -120,6 +120,7 @@
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × factor de actividad</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Factores de actividad: Sedentario 1.2 · Ligeramente activo 1.375 · Moderadamente activo 1.55 · Muy activo 1.725 · Extremadamente activo 1.9</value></data>
   <data name="HelpUnits" xml:space="preserve"><value>Los cálculos usan kilogramos y centímetros internamente. Las unidades mostradas se pueden cambiar en Ajustes; la edad se expresa en años y la energía en kcal/día.</value></data>
+  <data name="Close" xml:space="preserve"><value>Cerrar</value></data>
   <data name="GuidanceActivityLevelTitle" xml:space="preserve"><value>Nivel de actividad</value></data>
   <data name="GuidanceActivityLevelBody" xml:space="preserve"><value>Elige la opción que mejor describa tu actividad habitual durante la semana. Esto ayuda a estimar tus necesidades energéticas diarias.</value></data>
   <data name="GuidanceWeightTitle" xml:space="preserve"><value>Cómo medir el peso</value></data>

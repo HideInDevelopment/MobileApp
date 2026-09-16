@@ -1,4 +1,5 @@
 using Anthropometry.Application.Common;
+using Anthropometry.App.Features.Help;
 using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.App.Features.Measurements;
@@ -14,4 +15,6 @@ public interface IMeasurementNavigation
     Task CloseMeasurementAsync();
 
     Task CancelAsync();
+
+    Task ShowGuidanceAsync(GuidanceTopic topic);
 }

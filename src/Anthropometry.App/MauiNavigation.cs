@@ -123,6 +123,12 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 
     public Task ShowHelpAsync() => PushAsync(new HelpPage());
 
+    public Task ShowGuidanceAsync(GuidanceTopic topic)
+    {
+        var content = GuidanceContent.Get(_languageService, topic);
+        return Shell.Current.DisplayAlertAsync(content.Title, content.Body, _languageService.Get("Close"));
+    }
+
     public Task ShowResultsAsync(MeasurementDto measurement)
         => PushAsync(new CalculationResultPage(new CalculationResultViewModel(
             _services.GetRequiredService<GetCalculationResults>(),

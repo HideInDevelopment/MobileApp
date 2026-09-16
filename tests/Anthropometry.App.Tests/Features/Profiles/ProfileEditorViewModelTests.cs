@@ -1,15 +1,38 @@
 using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Display;
+using Anthropometry.App.Features.Help;
 using Anthropometry.Application.Profiles;
 using Anthropometry.Application.Common;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Profiles;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Anthropometry.App.Tests.Features.Profiles;
 
 public sealed class ProfileEditorViewModelTests
 {
+    [Fact]
+    public async Task Activity_level_guidance_command_passes_the_topic_to_navigation()
+    {
+        var navigation = new NavigationSpy();
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(new FakeProfileRepository(), new FakeClock()),
+            new UpdateProfile(new FakeProfileRepository(), new FakeClock()),
+            null,
+            navigation,
+            TestData.LanguageService(),
+            CreateDisplayPreferences());
+
+        var command = viewModel.GetType().GetProperty("ShowGuidanceCommand")?.GetValue(viewModel)
+            as IAsyncRelayCommand<GuidanceTopic>;
+
+        Assert.NotNull(command);
+        await command!.ExecuteAsync(GuidanceTopic.ActivityLevel);
+
+        Assert.Equal(GuidanceTopic.ActivityLevel, navigation.LastGuidanceTopic);
+    }
+
     [Fact]
     public async Task Save_rejects_required_name_before_persistence()
     {
@@ -298,6 +321,8 @@ public sealed class ProfileEditorViewModelTests
     {
         public Anthropometry.Application.Common.ProfileDto? ClosedProfile { get; private set; }
 
+        public GuidanceTopic? LastGuidanceTopic { get; private set; }
+
         public Task CreateProfileAsync() => Task.CompletedTask;
 
         public Task RenameProfileAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
@@ -321,6 +346,12 @@ public sealed class ProfileEditorViewModelTests
         public Task ShowSettingsAsync() => Task.CompletedTask;
 
         public Task ShowHelpAsync() => Task.CompletedTask;
+
+        public Task ShowGuidanceAsync(GuidanceTopic topic)
+        {
+            LastGuidanceTopic = topic;
+            return Task.CompletedTask;
+        }
     }
 
 }

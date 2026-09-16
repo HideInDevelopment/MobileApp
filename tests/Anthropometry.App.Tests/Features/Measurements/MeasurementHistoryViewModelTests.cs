@@ -181,5 +181,7 @@ public sealed class MeasurementHistoryViewModelTests
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 
         public Task CancelAsync() => Task.CompletedTask;
+
+        public Task ShowGuidanceAsync(Anthropometry.App.Features.Help.GuidanceTopic topic) => Task.CompletedTask;
     }
 }

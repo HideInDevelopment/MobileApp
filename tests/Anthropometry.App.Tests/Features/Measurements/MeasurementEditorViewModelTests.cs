@@ -1,5 +1,6 @@
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Display;
+using Anthropometry.App.Features.Help;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
@@ -10,11 +11,39 @@ using Anthropometry.Domain.Profiles;
 using Anthropometry.Domain.Calculations.Bmr;
 using Anthropometry.Domain.Calculations.BodyFat;
 using Anthropometry.Domain.Calculations.Tdee;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Anthropometry.App.Tests.Features.Measurements;
 
 public sealed class MeasurementEditorViewModelTests
 {
+    [Fact]
+    public async Task Guidance_command_passes_waist_and_hip_topics_to_navigation()
+    {
+        var navigation = new NavigationSpy();
+        var profile = Profile.Create(
+            "Anna",
+            ProfileSettings.Create(180m, 35, ActivityLevel.Moderate).Value,
+            DateTimeOffset.UtcNow,
+            ProfileGender.Female).Value;
+        var viewModel = CreateViewModel(
+            profile,
+            MeasurementType.WeightAndSizes,
+            new FakeProfileRepository(),
+            new FakeMeasurementRepository(),
+            new FakeCalculationResultRepository(),
+            navigation);
+        var command = viewModel.GetType().GetProperty("ShowGuidanceCommand")?.GetValue(viewModel)
+            as IAsyncRelayCommand<GuidanceTopic>;
+
+        Assert.Equal(GuidanceTopic.Waist, viewModel.TrunkGuidanceTopic);
+        Assert.NotNull(command);
+        await command!.ExecuteAsync(GuidanceTopic.Waist);
+        await command.ExecuteAsync(GuidanceTopic.Hip);
+
+        Assert.Equal([GuidanceTopic.Waist, GuidanceTopic.Hip], navigation.GuidanceTopics);
+    }
+
     [Fact]
     public async Task Weight_only_save_requires_only_weight_and_returns_to_history()
     {
@@ -351,6 +380,8 @@ public sealed class MeasurementEditorViewModelTests
     {
         public MeasurementDto? SavedMeasurement { get; private set; }
 
+        public List<GuidanceTopic> GuidanceTopics { get; } = [];
+
         public int CloseCalls { get; private set; }
 
         public int HistoryCalls { get; private set; }
@@ -376,5 +407,11 @@ public sealed class MeasurementEditorViewModelTests
         public Task ShowChartOptionsAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;
 
         public Task CancelAsync() => Task.CompletedTask;
+
+        public Task ShowGuidanceAsync(GuidanceTopic topic)
+        {
+            GuidanceTopics.Add(topic);
+            return Task.CompletedTask;
+        }
     }
 }

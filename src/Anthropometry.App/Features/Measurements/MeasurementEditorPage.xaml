@@ -1,26 +1,56 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:help="clr-namespace:Anthropometry.App.Features.Help"
              x:Class="Anthropometry.App.Features.Measurements.MeasurementEditorPage"
              Title="{Binding Title}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="12">
             <Label Text="{DynamicResource ResultsEstimateDisclaimer}" />
-            <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto" RowSpacing="10" ColumnSpacing="8">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Weight}" VerticalOptions="Center" />
                 <Entry Grid.Row="0" Grid.Column="1" Text="{Binding WeightText}" Keyboard="Numeric" WidthRequest="150" />
                 <Label Grid.Row="0" Grid.Column="2" Text="{Binding WeightUnitText}" VerticalOptions="Center" />
+                <Button Grid.Row="0" Grid.Column="3"
+                        Text="?"
+                        Command="{Binding ShowGuidanceCommand}"
+                        CommandParameter="{x:Static help:GuidanceTopic.Weight}"
+                        SemanticProperties.Description="{DynamicResource GuidanceWeightTitle}"
+                        MinimumWidthRequest="48"
+                        MinimumHeightRequest="48" />
             </Grid>
-            <Grid IsVisible="{Binding IsExtended}" ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
+            <Grid IsVisible="{Binding IsExtended}" ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Neck}" VerticalOptions="Center" />
                 <Entry Grid.Row="0" Grid.Column="1" Text="{Binding NeckText}" Keyboard="Numeric" WidthRequest="150" />
                 <Label Grid.Row="0" Grid.Column="2" Text="{Binding LengthUnitText}" VerticalOptions="Center" />
+                <Button Grid.Row="0" Grid.Column="3"
+                        Text="?"
+                        Command="{Binding ShowGuidanceCommand}"
+                        CommandParameter="{x:Static help:GuidanceTopic.Neck}"
+                        SemanticProperties.Description="{DynamicResource GuidanceNeckTitle}"
+                        MinimumWidthRequest="48"
+                        MinimumHeightRequest="48" />
                 <Label Grid.Row="1" Text="{Binding TrunkLabel}" VerticalOptions="Center" />
                 <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AbdomenText}" Keyboard="Numeric" WidthRequest="150" />
                 <Label Grid.Row="1" Grid.Column="2" Text="{Binding LengthUnitText}" VerticalOptions="Center" />
+                <Button Grid.Row="1" Grid.Column="3"
+                        Text="?"
+                        Command="{Binding ShowGuidanceCommand}"
+                        CommandParameter="{Binding TrunkGuidanceTopic}"
+                        SemanticProperties.Description="{DynamicResource GuidanceAbdomenTitle}"
+                        MinimumWidthRequest="48"
+                        MinimumHeightRequest="48" />
                 <Label Grid.Row="2" Text="{DynamicResource Hip}" IsVisible="{Binding IsFemale}" VerticalOptions="Center" />
                 <Entry Grid.Row="2" Grid.Column="1" Text="{Binding HipText}" Keyboard="Numeric" IsVisible="{Binding IsFemale}" WidthRequest="150" />
                 <Label Grid.Row="2" Grid.Column="2" Text="{Binding LengthUnitText}" IsVisible="{Binding IsFemale}" VerticalOptions="Center" />
+                <Button Grid.Row="2" Grid.Column="3"
+                        Text="?"
+                        Command="{Binding ShowGuidanceCommand}"
+                        CommandParameter="{x:Static help:GuidanceTopic.Hip}"
+                        SemanticProperties.Description="{DynamicResource GuidanceHipTitle}"
+                        IsVisible="{Binding IsFemale}"
+                        MinimumWidthRequest="48"
+                        MinimumHeightRequest="48" />
             </Grid>
             <Label Text="{Binding ValidationMessage}" TextColor="Red" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />

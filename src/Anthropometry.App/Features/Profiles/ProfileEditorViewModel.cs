@@ -2,6 +2,7 @@ using System.Globalization;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Profiles;
 using Anthropometry.App.Display;
+using Anthropometry.App.Features.Help;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Profiles;
@@ -68,6 +69,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
         _selectedGender = GenderOptions.Single(option => option.Value == (existingProfile?.Gender ?? ProfileGender.Male));
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
+        ShowGuidanceCommand = new AsyncRelayCommand<GuidanceTopic>(_navigation.ShowGuidanceAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
     }
 
@@ -139,6 +141,8 @@ public sealed class ProfileEditorViewModel : ObservableObject
     public IAsyncRelayCommand SaveCommand { get; }
 
     public IAsyncRelayCommand CancelCommand { get; }
+
+    public IAsyncRelayCommand<GuidanceTopic> ShowGuidanceCommand { get; }
 
     private async Task SaveAsync()
     {

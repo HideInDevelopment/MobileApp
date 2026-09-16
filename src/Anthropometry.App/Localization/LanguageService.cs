@@ -45,7 +45,7 @@ public sealed class LanguageService
         "HelpFemaleBodyFatDescription", "HelpFemaleBodyFatFormula", "HelpBmrTitle", "HelpBmrDescription",
         "HelpBmrFormula", "HelpFemaleBmrTitle", "HelpFemaleBmrDescription", "HelpFemaleBmrFormula",
         "HelpTdeeTitle", "HelpTdeeDescription", "HelpTdeeFormula",
-        "HelpActivityFactors", "HelpUnits", "Theme", "LightTheme", "DarkTheme",
+        "HelpActivityFactors", "HelpUnits", "Close", "Theme", "LightTheme", "DarkTheme",
         "GuidanceActivityLevelTitle", "GuidanceActivityLevelBody", "GuidanceWeightTitle", "GuidanceWeightBody",
         "GuidanceNeckTitle", "GuidanceNeckBody", "GuidanceAbdomenTitle", "GuidanceAbdomenBody",
         "GuidanceWaistTitle", "GuidanceWaistBody", "GuidanceHipTitle", "GuidanceHipBody",

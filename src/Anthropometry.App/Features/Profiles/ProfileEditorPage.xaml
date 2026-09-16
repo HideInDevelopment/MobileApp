@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:help="clr-namespace:Anthropometry.App.Features.Help"
              x:Class="Anthropometry.App.Features.Profiles.ProfileEditorPage"
              Title="{Binding Title}">
     <ScrollView>
@@ -17,6 +18,13 @@
                 <Picker Grid.Row="2" Grid.Column="1" ItemsSource="{Binding GenderOptions}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedGender}" WidthRequest="150" />
                 <Label Grid.Row="3" Text="{DynamicResource ActivityLevel}" VerticalOptions="Center" />
                 <Picker Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ActivityLevels}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedActivityLevel}" WidthRequest="150" />
+                <Button Grid.Row="3" Grid.Column="2"
+                        Text="?"
+                        Command="{Binding ShowGuidanceCommand}"
+                        CommandParameter="{x:Static help:GuidanceTopic.ActivityLevel}"
+                        SemanticProperties.Description="{DynamicResource GuidanceActivityLevelTitle}"
+                        MinimumWidthRequest="48"
+                        MinimumHeightRequest="48" />
             </Grid>
             <Label Text="{Binding ValidationMessage}" TextColor="Red" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" />

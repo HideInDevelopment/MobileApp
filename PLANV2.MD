@@ -212,11 +212,11 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - Add `IAsyncRelayCommand<GuidanceTopic> ShowGuidanceCommand` to both editor ViewModels.
 - The command delegates to navigation; it does not call `Shell.Current` directly.
 
-- [ ] **Step 1: Add failing ViewModel and markup tests**
+- [x] **Step 1: Add failing ViewModel and markup tests**
 
   Test that executing the profile activity-level guidance command passes `GuidanceTopic.ActivityLevel` to navigation, that female measurement forms expose waist and hip guidance topics, and that each info button has a semantic description and a minimum 48-pixel touch target.
 
-- [ ] **Step 2: Run the focused tests and verify the failure**
+- [x] **Step 2: Run the focused tests and verify the failure**
 
   ```powershell
   dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release --filter "FullyQualifiedName~ProfileEditor|FullyQualifiedName~MeasurementEditor"
@@ -224,15 +224,15 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: FAIL because the commands, navigation methods, and markup do not yet exist.
 
-- [ ] **Step 3: Implement navigation-backed guidance actions**
+- [x] **Step 3: Implement navigation-backed guidance actions**
 
   Implement `MauiNavigation.ShowGuidanceAsync` using the existing local `DisplayAlertAsync` capability. The title/body must come from `GuidanceContent` and the current `LanguageService`. Add compact info buttons beside activity level, weight, neck, abdomen/waist, and hip. Keep the form labels and units visible even when the help action is present.
 
-- [ ] **Step 4: Run focused tests and verify the novice path**
+- [x] **Step 4: Run focused tests and verify the novice path**
 
   Run the focused command again. Expected: PASS. Manually verify that each topic opens without navigating away from the form and that changing language updates the next opened guidance dialog.
 
-- [ ] **Step 5: Run the full App test project**
+- [x] **Step 5: Run the full App test project**
 
   ```powershell
   dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release
@@ -240,7 +240,7 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: all existing and new App tests pass.
 
-- [ ] **Step 6: Commit contextual guidance**
+- [x] **Step 6: Commit contextual guidance**
 
   ```powershell
   git add src/Anthropometry.App/Features/Profiles src/Anthropometry.App/Features/Measurements src/Anthropometry.App/MauiNavigation.cs src/Anthropometry.App/Resources/Strings tests/Anthropometry.App.Tests/Features/Profiles tests/Anthropometry.App.Tests/Features/Measurements

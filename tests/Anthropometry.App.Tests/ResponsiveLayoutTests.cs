@@ -63,6 +63,8 @@ public sealed class ResponsiveLayoutTests
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 
         public Task CancelAsync() => Task.CompletedTask;
+
+        public Task ShowGuidanceAsync(Anthropometry.App.Features.Help.GuidanceTopic topic) => Task.CompletedTask;
     }
 
     private sealed class ProfileNavigationSpy : IProfileNavigation
@@ -86,5 +88,7 @@ public sealed class ResponsiveLayoutTests
         public Task ShowSettingsAsync() => Task.CompletedTask;
 
         public Task ShowHelpAsync() => Task.CompletedTask;
+
+        public Task ShowGuidanceAsync(Anthropometry.App.Features.Help.GuidanceTopic topic) => Task.CompletedTask;
     }
 }

@@ -120,6 +120,7 @@
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = Grundumsatz × Aktivitätsfaktor</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Aktivitätsfaktoren: Sitzend 1.2 · Leicht aktiv 1.375 · Moderat aktiv 1.55 · Sehr aktiv 1.725 · Extrem aktiv 1.9</value></data>
   <data name="HelpUnits" xml:space="preserve"><value>Die Berechnungen verwenden intern Kilogramm und Zentimeter. Die angezeigten Einheiten können in den Einstellungen geändert werden; das Alter wird in Jahren und die Energie in kcal/Tag angegeben.</value></data>
+  <data name="Close" xml:space="preserve"><value>Schließen</value></data>
   <data name="GuidanceActivityLevelTitle" xml:space="preserve"><value>Aktivitätsniveau</value></data>
   <data name="GuidanceActivityLevelBody" xml:space="preserve"><value>Wähle die Option, die deiner üblichen Aktivität während der Woche am besten entspricht. Das hilft bei der Schätzung deines täglichen Energiebedarfs.</value></data>
   <data name="GuidanceWeightTitle" xml:space="preserve"><value>Gewicht messen</value></data>
