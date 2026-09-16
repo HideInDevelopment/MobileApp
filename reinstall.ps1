@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 $repositoryRoot = $PSScriptRoot
 $androidSdk = Join-Path $env:LOCALAPPDATA 'Android\Sdk'
 $javaSdk = 'C:\Program Files\Microsoft\jdk-21.0.12.101-hotspot'
+$androidDebugKeystore = Join-Path $env:LOCALAPPDATA 'Xamarin\Mono for Android\debug.keystore'
 $project = Join-Path $repositoryRoot 'src\Anthropometry.App\Anthropometry.App.csproj'
 $adb = Join-Path $androidSdk 'platform-tools\adb.exe'
 $packageName = 'com.companyname.anthropometry.app'
@@ -17,11 +18,14 @@ try {
     if (-not (Test-Path -LiteralPath $adb)) {
         throw "Android Debug Bridge was not found at '$adb'."
     }
+    if (-not (Test-Path -LiteralPath $androidDebugKeystore)) {
+        throw "The Android debug keystore was not found at '$androidDebugKeystore'."
+    }
 
     # Use a complete APK so XAML and resource changes are always installed,
     # instead of relying on Debug fast deployment caches.
     & dotnet build $project `
-        -t:SignAndroidPackage `
+        '-t:Rebuild;SignAndroidPackage' `
         -f net10.0-android `
         -c Debug `
         -m:1 `
@@ -31,7 +35,12 @@ try {
         -p:PublishTrimmed=false `
         -p:RunAOTCompilation=false `
         -p:EmbedAssembliesIntoApk=true `
-        -p:AndroidPackageFormat=apk
+        -p:AndroidPackageFormat=apk `
+        -p:AndroidKeyStore=true `
+        -p:AndroidSigningKeyStore="$androidDebugKeystore" `
+        -p:AndroidSigningKeyAlias=androiddebugkey `
+        -p:AndroidSigningStorePass=android `
+        -p:AndroidSigningKeyPass=android
 
     if ($LASTEXITCODE -ne 0) {
         throw "The build failed with exit code $LASTEXITCODE."
