@@ -882,8 +882,8 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 **Verification:**
 
-- [x] App test suite passed with 92 tests.
-- [x] Full solution test suite passed: 52 Domain, 31 Application, 11 Infrastructure, and 92 App tests.
+- [x] App test suite passed with 93 tests.
+- [x] Full solution test suite passed: 52 Domain, 31 Application, 11 Infrastructure, and 93 App tests.
 - [x] Android Debug build completed with 0 warnings and 0 errors.
 - [x] Android Release source/package build completed with 0 warnings and 0 errors when `PublishTrimmed=false` and `RunAOTCompilation=false` were supplied as environment-only verification overrides.
 - [ ] Default trimmed Android Release packaging remains blocked by the host's `Microsoft.NET.ILLink` task-host failure (`MSB4216`), unrelated to application compilation.

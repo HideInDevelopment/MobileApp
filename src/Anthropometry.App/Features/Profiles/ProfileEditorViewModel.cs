@@ -46,7 +46,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
         _heightUnitCode = _displayPreferences.HeightUnitCode;
         _name = existingProfile?.Name ?? string.Empty;
         _heightText = existingProfile?.Settings is { } existingSettings
-            ? _displayPreferences.ToDisplayHeight(existingSettings.HeightCm).ToString("0.##", CultureInfo.CurrentCulture)
+            ? FormatHeight(existingSettings.HeightCm, _displayPreferences.HeightUnitCode)
             : string.Empty;
         _ageText = existingProfile?.Settings?.AgeYears.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
         ActivityLevels =
@@ -229,6 +229,22 @@ public sealed class ProfileEditorViewModel : ObservableObject
         return true;
     }
 
+    private static string FormatHeight(decimal heightCm, string unitCode)
+    {
+        var displayHeight = DisplayPreferencesService.ConvertHeightToDisplay(heightCm, unitCode);
+        if (unitCode == DisplayPreferencesService.InchesCode
+            && decimal.Truncate(displayHeight) == displayHeight
+            && displayHeight >= 36m
+            && displayHeight <= 107m)
+        {
+            var feet = decimal.Truncate(displayHeight / 12m);
+            var inches = displayHeight - feet * 12m;
+            return $"{feet:0}.{inches:0}";
+        }
+
+        return displayHeight.ToString("0.##", CultureInfo.CurrentCulture);
+    }
+
     private static bool TryParseDecimal(string value, out decimal result)
     {
         var normalized = value.Trim().Replace(',', '.');
@@ -244,7 +260,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
         if (TryParseDecimal(_heightText, out var enteredHeight)
             && TryConvertHeight(enteredHeight, _heightUnitCode, out var heightCm))
         {
-            _heightText = _displayPreferences.ToDisplayHeight(heightCm).ToString("0.##", CultureInfo.CurrentCulture);
+            _heightText = FormatHeight(heightCm, _displayPreferences.HeightUnitCode);
             OnPropertyChanged(nameof(HeightText));
         }
 

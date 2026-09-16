@@ -204,6 +204,28 @@ public sealed class ProfileEditorViewModelTests
     }
 
     [Fact]
+    public void Imperial_feet_and_inches_shorthand_is_shown_when_reopening_profile()
+    {
+        var profile = TestData.Profile("Anna");
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.InchesCode);
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(new FakeProfileRepository(), new FakeClock()),
+            new UpdateProfile(new FakeProfileRepository(), new FakeClock()),
+            new ProfileDto(
+                profile.Id,
+                profile.Name,
+                new ProfileSettingsDto(154.94m, 35, ActivityLevel.Moderate),
+                profile.CreatedAtUtc,
+                profile.UpdatedAtUtc,
+                ProfileGender.Female),
+            new NavigationSpy(),
+            TestData.LanguageService(),
+            displayPreferences);
+
+        Assert.Equal("5.1", viewModel.HeightText);
+    }
+
+    [Fact]
     public void Changing_height_unit_reformats_an_existing_editor_value()
     {
         var profile = TestData.Profile();
