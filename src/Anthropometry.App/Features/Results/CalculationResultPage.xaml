@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Results.CalculationResultPage"
              Title="{DynamicResource ResultsTitle}">
-    <Grid Padding="20" RowDefinitions="Auto,*,Auto" RowSpacing="16">
+    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
         <VerticalStackLayout Grid.Row="0" Spacing="8">
             <HorizontalStackLayout Spacing="8">
             <Label Text="{DynamicResource EstimatedResults}" FontSize="28" FontAttributes="Bold" />
@@ -35,11 +35,5 @@
             <ActivityIndicator IsRunning="{Binding IsLoading}" />
             <Label Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
         </Grid>
-        <Button Grid.Row="2"
-                Text="{DynamicResource ViewHistory}"
-                Style="{StaticResource SecondaryButton}"
-                Command="{Binding ViewHistoryCommand}"
-                IsVisible="{Binding CanViewHistory}"
-                MinimumHeightRequest="48" />
     </Grid>
 </ContentPage>

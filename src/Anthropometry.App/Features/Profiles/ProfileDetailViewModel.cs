@@ -18,6 +18,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
     private string? _statusMessage;
     private bool _canAddWeight;
     private bool _canGenerateSampleData;
+    private bool _hasSizeMeasurement;
     private int _measurementCount;
 
     public ProfileDetailViewModel(
@@ -105,15 +106,16 @@ public sealed class ProfileDetailViewModel : ObservableObject
         ErrorMessage = null;
         StatusMessage = null;
         _measurementCount = 0;
+        _hasSizeMeasurement = false;
         RefreshSampleDataAvailability();
-        CanAddWeight = false;
         try
         {
             var result = await _getHistory.ExecuteAsync(Profile.Id, CancellationToken.None);
             if (result.IsSuccess)
             {
                 _measurementCount = result.Value.Count;
-                CanAddWeight = result.Value.Any(measurement => measurement.Type == MeasurementType.WeightAndSizes);
+                _hasSizeMeasurement = result.Value.Any(measurement => measurement.Type == MeasurementType.WeightAndSizes);
+                CanAddWeight = _measurementCount > 0;
                 RefreshSampleDataAvailability();
             }
             else
@@ -129,7 +131,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
 
     private void RefreshSampleDataAvailability()
     {
-        CanGenerateSampleData = CanAddWeight && _measurementCount < 30;
+        CanGenerateSampleData = _hasSizeMeasurement && _measurementCount < 30;
     }
 
     private async Task GenerateSampleDataAsync()

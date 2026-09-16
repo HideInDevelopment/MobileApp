@@ -2,6 +2,7 @@ using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Anthropometry.App.Features.Settings;
 
@@ -45,10 +46,25 @@ public sealed class SettingsViewModel : ObservableObject
         _isInactivityReminderEnabled = reminderSettings.InactivityEnabled;
         _reminderTime = reminderSettings.ReminderTime;
         _selectedInactivityDays = reminderSettings.InactivityDays;
+        SelectLanguageCommand = new RelayCommand<string?>(SelectLanguage);
+        SelectThemeCommand = new RelayCommand<string?>(SelectTheme);
+        SelectDateFormatCommand = new RelayCommand<string?>(SelectDateFormat);
+        SelectMeasurementSystemCommand = new RelayCommand<string?>(SelectMeasurementSystem);
+        SelectInactivityIntervalCommand = new RelayCommand<string?>(SelectInactivityInterval);
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
     public IReadOnlyList<LanguageOption> Languages { get; }
+
+    public IRelayCommand<string?> SelectLanguageCommand { get; }
+
+    public IRelayCommand<string?> SelectThemeCommand { get; }
+
+    public IRelayCommand<string?> SelectDateFormatCommand { get; }
+
+    public IRelayCommand<string?> SelectMeasurementSystemCommand { get; }
+
+    public IRelayCommand<string?> SelectInactivityIntervalCommand { get; }
 
     public IReadOnlyList<ThemeOption> Themes =>
     [
@@ -238,6 +254,50 @@ public sealed class SettingsViewModel : ObservableObject
     private void ApplyReminderSettings()
     {
         _reminders?.ApplySettings(CreateReminderSettings());
+    }
+
+    private void SelectLanguage(string? code)
+    {
+        var option = Languages.SingleOrDefault(language => language.Code == code);
+        if (option is not null)
+        {
+            SelectedLanguage = option;
+        }
+    }
+
+    private void SelectTheme(string? code)
+    {
+        var option = Themes.SingleOrDefault(theme => theme.Code == code);
+        if (option is not null)
+        {
+            SelectedTheme = option;
+        }
+    }
+
+    private void SelectDateFormat(string? code)
+    {
+        var option = DateFormats.SingleOrDefault(format => format.Code == code);
+        if (option is not null)
+        {
+            SelectedDateFormat = option;
+        }
+    }
+
+    private void SelectMeasurementSystem(string? code)
+    {
+        var option = MeasurementSystems.SingleOrDefault(system => system.Code == code);
+        if (option is not null)
+        {
+            SelectedMeasurementSystem = option;
+        }
+    }
+
+    private void SelectInactivityInterval(string? daysText)
+    {
+        if (int.TryParse(daysText, out var days))
+        {
+            SelectedInactivityInterval = InactivityIntervals.SingleOrDefault(interval => interval.Days == days);
+        }
     }
 
     private ReminderSettings CreateReminderSettings()

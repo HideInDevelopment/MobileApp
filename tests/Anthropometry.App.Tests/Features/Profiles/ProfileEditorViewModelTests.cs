@@ -34,6 +34,24 @@ public sealed class ProfileEditorViewModelTests
     }
 
     [Fact]
+    public void Selector_commands_apply_gender_and_activity_level()
+    {
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(new FakeProfileRepository(), new FakeClock()),
+            new UpdateProfile(new FakeProfileRepository(), new FakeClock()),
+            null,
+            new NavigationSpy(),
+            TestData.LanguageService(),
+            CreateDisplayPreferences());
+
+        viewModel.SelectGenderCommand.Execute(ProfileGender.Female.ToString());
+        viewModel.SelectActivityLevelCommand.Execute(ActivityLevel.High.ToString());
+
+        Assert.Equal(ProfileGender.Female, viewModel.SelectedGender!.Value);
+        Assert.Equal(ActivityLevel.High, viewModel.SelectedActivityLevel!.Value);
+    }
+
+    [Fact]
     public async Task Save_rejects_required_name_before_persistence()
     {
         var repository = new FakeProfileRepository();

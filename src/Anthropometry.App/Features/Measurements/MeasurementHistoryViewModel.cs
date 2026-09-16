@@ -56,6 +56,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         ChartsCommand = new RelayCommand(ToggleChartMenu);
         WeightGraphicCommand = new AsyncRelayCommand(ShowWeightGraphicAsync);
         DismissChartMenuCommand = new RelayCommand(() => IsChartMenuVisible = false);
+        SelectMeasurementTypeCommand = new RelayCommand<string?>(SelectMeasurementType);
         ToggleFiltersCommand = new RelayCommand(() => IsFilterPanelVisible = !IsFilterPanelVisible);
         ClearFiltersCommand = new AsyncRelayCommand(ClearFiltersAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
@@ -204,6 +205,8 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
 
     public IRelayCommand DismissChartMenuCommand { get; }
 
+    public IRelayCommand<string?> SelectMeasurementTypeCommand { get; }
+
     public IRelayCommand ToggleFiltersCommand { get; }
 
     public IAsyncRelayCommand ClearFiltersCommand { get; }
@@ -263,6 +266,17 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
 
     private void ToggleChartMenu()
         => IsChartMenuVisible = !IsChartMenuVisible;
+
+    private void SelectMeasurementType(string? value)
+    {
+        var selectedType = string.IsNullOrWhiteSpace(value)
+            ? (MeasurementType?)null
+            : Enum.TryParse<MeasurementType>(value, ignoreCase: true, out var parsedType)
+                ? parsedType
+                : null;
+
+        SelectedTypeOption = MeasurementTypeOptions.FirstOrDefault(option => option.Value == selectedType);
+    }
 
     private async Task ShowWeightGraphicAsync()
     {

@@ -121,6 +121,16 @@ public sealed class WeightGraphicViewModelTests
     }
 
     [Fact]
+    public void Metric_selector_command_updates_the_selected_metric()
+    {
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), TestData.Profile().Id);
+
+        viewModel.SelectMetricCommand.Execute(MetricKind.BodyFatPercentage.ToString());
+
+        Assert.Equal(MetricKind.BodyFatPercentage, viewModel.SelectedMetric);
+    }
+
+    [Fact]
     public async Task Selecting_body_fat_metric_uses_persisted_results_and_excludes_missing_results()
     {
         var profile = TestData.Profile();

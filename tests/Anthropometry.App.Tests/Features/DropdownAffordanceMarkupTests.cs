@@ -3,7 +3,7 @@ namespace Anthropometry.App.Tests.Features;
 public sealed class DropdownAffordanceMarkupTests
 {
     [Fact]
-    public void Every_picker_has_a_visible_down_arrow_that_does_not_block_taps()
+    public void Every_discrete_selector_has_a_context_menu_and_visible_down_arrow()
     {
         var root = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory,
@@ -16,10 +16,10 @@ public sealed class DropdownAffordanceMarkupTests
             File.ReadAllText(Path.Combine(root, "Features", "Measurements", "MeasurementHistoryPage.xaml")),
             File.ReadAllText(Path.Combine(root, "Features", "Measurements", "WeightGraphicPage.xaml")));
 
-        var pickerCount = markup.Split("<Picker").Length - 1;
+        var menuCount = markup.Split("SelectorClicked").Length - 1;
         var arrowCount = markup.Split("Style=\"{StaticResource DropdownArrow}\"").Length - 1;
 
-        Assert.Equal(9, pickerCount);
-        Assert.Equal(pickerCount, arrowCount);
+        Assert.Equal(9, menuCount);
+        Assert.Equal(menuCount, arrowCount);
     }
 }

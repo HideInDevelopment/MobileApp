@@ -16,12 +16,16 @@
                 <Entry Grid.Row="1" Grid.Column="1" Text="{Binding AgeText}" Keyboard="Numeric" Placeholder="{DynamicResource Years}" WidthRequest="150" />
                 <Label Grid.Row="2" Text="{DynamicResource Gender}" VerticalOptions="Center" />
                 <Grid Grid.Row="2" Grid.Column="1" WidthRequest="150">
-                    <Picker ItemsSource="{Binding GenderOptions}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedGender}" />
+                    <Button Text="{Binding SelectedGender.DisplayName}"
+                            Style="{StaticResource SelectorButton}"
+                            Clicked="OnGenderSelectorClicked" />
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>
                 <Label Grid.Row="3" Text="{DynamicResource ActivityLevel}" VerticalOptions="Center" />
                 <Grid Grid.Row="3" Grid.Column="1" WidthRequest="150">
-                    <Picker ItemsSource="{Binding ActivityLevels}" ItemDisplayBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedActivityLevel}" />
+                    <Button Text="{Binding SelectedActivityLevel.DisplayName}"
+                            Style="{StaticResource SelectorButton}"
+                            Clicked="OnActivityLevelSelectorClicked" />
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>
                 <Button Grid.Row="3" Grid.Column="2"

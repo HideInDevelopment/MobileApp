@@ -78,6 +78,7 @@ public sealed class WeightGraphicViewModel : ObservableObject
         _selectedMetricOption = MetricOptions[0];
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         ClearDateRangeCommand = new AsyncRelayCommand(ClearDateRangeAsync);
+        SelectMetricCommand = new RelayCommand<string?>(SelectMetric);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
@@ -246,6 +247,8 @@ public sealed class WeightGraphicViewModel : ObservableObject
 
     public IAsyncRelayCommand ClearDateRangeCommand { get; }
 
+    public IRelayCommand<string?> SelectMetricCommand { get; }
+
     public void SelectPoint(WeightGraphicPoint? point)
     {
         if (EqualityComparer<WeightGraphicPoint?>.Default.Equals(_selectedPoint, point))
@@ -333,6 +336,14 @@ public sealed class WeightGraphicViewModel : ObservableObject
         }
 
         await LoadAsync();
+    }
+
+    private void SelectMetric(string? value)
+    {
+        if (Enum.TryParse<MetricKind>(value, ignoreCase: true, out var metric))
+        {
+            SelectedMetric = metric;
+        }
     }
 
     private void ScheduleFilterReload()

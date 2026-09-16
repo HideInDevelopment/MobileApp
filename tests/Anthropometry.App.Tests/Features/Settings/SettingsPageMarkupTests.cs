@@ -3,7 +3,7 @@ namespace Anthropometry.App.Tests.Features.Settings;
 public sealed class SettingsPageMarkupTests
 {
     [Fact]
-    public void Exposes_date_and_unit_selectors()
+    public void Exposes_context_menu_selectors_for_persisted_preferences()
     {
         var path = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory,
@@ -11,11 +11,11 @@ public sealed class SettingsPageMarkupTests
             "src", "Anthropometry.App", "Features", "Settings", "SettingsPage.xaml"));
         var markup = File.ReadAllText(path);
 
-        Assert.Contains("ItemsSource=\"{Binding DateFormats}\"", markup);
-        Assert.Contains("SelectedItem=\"{Binding SelectedDateFormat}\"", markup);
-        Assert.Contains("ItemsSource=\"{Binding MeasurementSystems}\"", markup);
-        Assert.Contains("SelectedItem=\"{Binding SelectedMeasurementSystem}\"", markup);
-        Assert.DoesNotContain("ItemsSource=\"{Binding WeightUnits}\"", markup);
-        Assert.DoesNotContain("ItemsSource=\"{Binding HeightUnits}\"", markup);
+        Assert.DoesNotContain("<Picker", markup);
+        Assert.Contains("OnLanguageSelectorClicked", markup);
+        Assert.Contains("OnThemeSelectorClicked", markup);
+        Assert.Contains("OnDateFormatSelectorClicked", markup);
+        Assert.Contains("OnMeasurementSystemSelectorClicked", markup);
+        Assert.Contains("OnInactivityIntervalSelectorClicked", markup);
     }
 }

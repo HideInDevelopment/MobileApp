@@ -33,8 +33,8 @@ public sealed class DarkThemeMarkupTests
         var markup = ReadFile(Path.Combine("Features", "Settings", "SettingsPage.xaml"));
 
         Assert.Contains("{DynamicResource Theme}", markup);
-        Assert.Contains("ItemsSource=\"{Binding Themes}\"", markup);
-        Assert.Contains("SelectedItem=\"{Binding SelectedTheme}\"", markup);
+        Assert.Contains("Text=\"{Binding SelectedTheme.DisplayName}\"", markup);
+        Assert.Contains("Clicked=\"OnThemeSelectorClicked\"", markup);
     }
 
     [Fact]

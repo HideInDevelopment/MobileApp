@@ -9,9 +9,9 @@
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
                     <Label Grid.Column="0" Text="{DynamicResource ChartMetric}" VerticalOptions="Center" />
                     <Grid Grid.Column="1">
-                        <Picker ItemsSource="{Binding MetricOptions}"
-                                ItemDisplayBinding="{Binding DisplayName}"
-                                SelectedItem="{Binding SelectedMetricOption}" />
+                        <Button Text="{Binding SelectedMetricOption.DisplayName}"
+                                Style="{StaticResource SelectorButton}"
+                                Clicked="OnMetricSelectorClicked" />
                         <Label Style="{StaticResource DropdownArrow}" />
                     </Grid>
                 </Grid>

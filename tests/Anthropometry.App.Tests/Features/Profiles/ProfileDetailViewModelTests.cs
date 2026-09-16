@@ -68,7 +68,7 @@ public sealed class ProfileDetailViewModelTests
     }
 
     [Fact]
-    public async Task Weight_only_measurement_without_previous_extended_measurement_keeps_add_weight_disabled()
+    public async Task Any_previous_measurement_enables_add_weight()
     {
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
@@ -77,7 +77,7 @@ public sealed class ProfileDetailViewModelTests
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
-        Assert.False(viewModel.CanAddWeight);
+        Assert.True(viewModel.CanAddWeight);
     }
 
     [Fact]

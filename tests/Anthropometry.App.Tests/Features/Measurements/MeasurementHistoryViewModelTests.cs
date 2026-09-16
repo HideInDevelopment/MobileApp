@@ -142,6 +142,16 @@ public sealed class MeasurementHistoryViewModelTests
     }
 
     [Fact]
+    public void Measurement_type_selector_command_updates_the_filter()
+    {
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out _, TestData.Profile());
+
+        viewModel.SelectMeasurementTypeCommand.Execute(MeasurementType.WeightOnly.ToString());
+
+        Assert.Equal(MeasurementType.WeightOnly, viewModel.SelectedTypeOption!.Value);
+    }
+
+    [Fact]
     public async Task Selecting_weight_graphic_closes_the_menu_and_opens_the_graphic()
     {
         var profile = TestData.Profile();

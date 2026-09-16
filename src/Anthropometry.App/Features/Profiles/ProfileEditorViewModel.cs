@@ -70,6 +70,8 @@ public sealed class ProfileEditorViewModel : ObservableObject
         SaveCommand = new AsyncRelayCommand(SaveAsync);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
         ShowGuidanceCommand = new AsyncRelayCommand<GuidanceTopic>(_navigation.ShowGuidanceAsync);
+        SelectGenderCommand = new RelayCommand<string?>(SelectGender);
+        SelectActivityLevelCommand = new RelayCommand<string?>(SelectActivityLevel);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
     }
 
@@ -144,6 +146,10 @@ public sealed class ProfileEditorViewModel : ObservableObject
 
     public IAsyncRelayCommand<GuidanceTopic> ShowGuidanceCommand { get; }
 
+    public IRelayCommand<string?> SelectGenderCommand { get; }
+
+    public IRelayCommand<string?> SelectActivityLevelCommand { get; }
+
     private async Task SaveAsync()
     {
         ValidationMessage = null;
@@ -210,6 +216,22 @@ public sealed class ProfileEditorViewModel : ObservableObject
     {
         height = DisplayPreferencesService.ConvertHeightToMetric(enteredHeight, unitCode);
         return height > 0;
+    }
+
+    private void SelectGender(string? value)
+    {
+        if (Enum.TryParse<ProfileGender>(value, ignoreCase: true, out var gender))
+        {
+            SelectedGender = GenderOptions.SingleOrDefault(option => option.Value == gender);
+        }
+    }
+
+    private void SelectActivityLevel(string? value)
+    {
+        if (Enum.TryParse<ActivityLevel>(value, ignoreCase: true, out var activityLevel))
+        {
+            SelectedActivityLevel = ActivityLevels.SingleOrDefault(option => option.Value == activityLevel);
+        }
     }
 
     private static string FormatHeight(decimal heightCm, string unitCode)

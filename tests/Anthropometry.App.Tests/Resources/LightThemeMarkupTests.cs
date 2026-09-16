@@ -31,6 +31,12 @@ public sealed class LightThemeMarkupTests
         Assert.Contains("x:Key=\"DestructiveButton\"", markup);
         Assert.Contains("x:Key=\"CardBorder\"", markup);
         Assert.Contains("MinimumHeightRequest\" Value=\"48\"", markup);
+
+        var primaryButtonStart = markup.IndexOf("x:Key=\"PrimaryButton\"", StringComparison.Ordinal);
+        var primaryButtonEnd = markup.IndexOf("</Style>", primaryButtonStart, StringComparison.Ordinal);
+        var primaryButtonStyle = markup[primaryButtonStart..primaryButtonEnd];
+        Assert.Contains("x:Name=\"Disabled\"", primaryButtonStyle);
+        Assert.Contains("Opacity", primaryButtonStyle);
     }
 
     private static Dictionary<string, string> ReadColors()

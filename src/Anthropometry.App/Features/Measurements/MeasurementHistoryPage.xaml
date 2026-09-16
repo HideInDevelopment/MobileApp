@@ -35,9 +35,9 @@
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
                     <Label Grid.Column="0" Text="{DynamicResource MeasurementType}" VerticalOptions="Center" />
                     <Grid Grid.Column="1">
-                        <Picker ItemsSource="{Binding MeasurementTypeOptions}"
-                                ItemDisplayBinding="{Binding DisplayName}"
-                                SelectedItem="{Binding SelectedTypeOption}" />
+                        <Button Text="{Binding SelectedTypeOption.DisplayName}"
+                                Style="{StaticResource SelectorButton}"
+                                Clicked="OnMeasurementTypeSelectorClicked" />
                         <Label Style="{StaticResource DropdownArrow}" />
                     </Grid>
                 </Grid>

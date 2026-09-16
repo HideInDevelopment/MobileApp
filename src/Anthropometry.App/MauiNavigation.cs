@@ -145,13 +145,12 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     }
 
     public Task ShowResultsAsync(MeasurementDto measurement)
-        => ShowResultsPageAsync(null, measurement);
+        => ShowResultsPageAsync(measurement);
 
     public Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement)
-        => ShowResultsPageAsync(profile, measurement, replaceCurrentPage: true);
+        => ShowResultsPageAsync(measurement, replaceCurrentPage: true);
 
     private Task ShowResultsPageAsync(
-        ProfileDto? profile,
         MeasurementDto measurement,
         bool replaceCurrentPage = false)
     {
@@ -159,9 +158,7 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _services.GetRequiredService<GetCalculationResults>(),
             measurement.Id,
             measurement.Type,
-            _languageService,
-            profile,
-            this));
+            _languageService));
 
         if (!replaceCurrentPage)
         {

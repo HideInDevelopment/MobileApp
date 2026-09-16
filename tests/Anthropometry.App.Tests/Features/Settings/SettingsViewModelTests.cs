@@ -57,6 +57,30 @@ public sealed class SettingsViewModelTests
     }
 
     [Fact]
+    public void Selector_commands_apply_the_selected_preference()
+    {
+        var languageStore = new FakeLanguagePreferenceStore();
+        var languageService = new LanguageService(languageStore);
+        languageService.Initialize();
+        var themeService = new ThemeService(new FakeThemePreferenceStore());
+        themeService.Initialize();
+        var displayPreferences = CreateDisplayPreferences();
+        var viewModel = new SettingsViewModel(languageService, themeService, displayPreferences);
+
+        viewModel.SelectLanguageCommand.Execute("de");
+        viewModel.SelectThemeCommand.Execute("dark");
+        viewModel.SelectDateFormatCommand.Execute(DisplayPreferencesService.MonthDayYearCode);
+        viewModel.SelectMeasurementSystemCommand.Execute(DisplayPreferencesService.ImperialCode);
+        viewModel.SelectInactivityIntervalCommand.Execute("14");
+
+        Assert.Equal("de", viewModel.SelectedLanguage!.Code);
+        Assert.Equal("dark", viewModel.SelectedTheme!.Code);
+        Assert.Equal(DisplayPreferencesService.MonthDayYearCode, viewModel.SelectedDateFormat!.Code);
+        Assert.Equal(DisplayPreferencesService.ImperialCode, viewModel.SelectedMeasurementSystem!.Code);
+        Assert.Equal(14, viewModel.SelectedInactivityInterval!.Days);
+    }
+
+    [Fact]
     public void Exposes_and_persists_date_and_measurement_system_preferences()
     {
         var languageService = new LanguageService(new FakeLanguagePreferenceStore());

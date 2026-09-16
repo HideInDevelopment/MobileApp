@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
 using Anthropometry.App.Localization;
-using Anthropometry.App.Features.Measurements;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,8 +17,6 @@ public sealed class CalculationResultViewModel : ObservableObject
     private readonly MeasurementId _measurementId;
     private readonly MeasurementType _measurementType;
     private readonly LanguageService _languageService;
-    private readonly ProfileDto? _profile;
-    private readonly IMeasurementNavigation? _navigation;
     private readonly ObservableCollection<CalculationResultDisplayItem> _results = [];
     private bool _isLoading;
     private string? _errorMessage;
@@ -28,24 +25,17 @@ public sealed class CalculationResultViewModel : ObservableObject
         GetCalculationResults getResults,
         MeasurementId measurementId,
         MeasurementType measurementType,
-        LanguageService languageService,
-        ProfileDto? profile = null,
-        IMeasurementNavigation? navigation = null)
+        LanguageService languageService)
     {
         _getResults = getResults;
         _measurementId = measurementId;
         _measurementType = measurementType;
         _languageService = languageService;
-        _profile = profile;
-        _navigation = navigation;
         Results = new ReadOnlyObservableCollection<CalculationResultDisplayItem>(_results);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
-        ViewHistoryCommand = new AsyncRelayCommand(ShowHistoryAsync);
     }
 
     public ReadOnlyObservableCollection<CalculationResultDisplayItem> Results { get; }
-
-    public bool CanViewHistory => _profile is not null && _navigation is not null;
 
     public bool ShowWarningIcon => _measurementType == MeasurementType.WeightOnly;
 
@@ -70,8 +60,6 @@ public sealed class CalculationResultViewModel : ObservableObject
     }
 
     public IAsyncRelayCommand LoadCommand { get; }
-
-    public IAsyncRelayCommand ViewHistoryCommand { get; }
 
     private async Task LoadAsync()
     {
@@ -116,11 +104,6 @@ public sealed class CalculationResultViewModel : ObservableObject
                 CalculationType.BodyFatPercentage => _languageService.Get("GuidanceBodyFatBody"),
                 CalculationType.BasalMetabolicRate => _languageService.Get("GuidanceBmrBody"),
                 CalculationType.TotalDailyEnergyExpenditure => _languageService.Get("GuidanceTdeeBody"),
-                _ => string.Empty
-            });
-
-    private Task ShowHistoryAsync()
-        => _profile is null || _navigation is null
-            ? Task.CompletedTask
-            : _navigation.ShowHistoryAsync(_profile);
+            _ => string.Empty
+        });
 }

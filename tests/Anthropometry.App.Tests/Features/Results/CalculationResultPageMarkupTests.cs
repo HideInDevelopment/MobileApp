@@ -3,7 +3,7 @@ namespace Anthropometry.App.Tests.Features.Results;
 public sealed class CalculationResultPageMarkupTests
 {
     [Fact]
-    public void Shows_disclaimer_descriptions_and_history_action()
+    public void Shows_disclaimer_and_descriptions_without_redundant_history_action()
     {
         var path = Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory,
@@ -13,7 +13,7 @@ public sealed class CalculationResultPageMarkupTests
 
         Assert.Contains("Text=\"{DynamicResource ResultsEstimateDisclaimer}\"", markup);
         Assert.Contains("Text=\"{Binding Description}\"", markup);
-        Assert.Contains("Text=\"{DynamicResource ViewHistory}\"", markup);
-        Assert.Contains("Command=\"{Binding ViewHistoryCommand}\"", markup);
+        Assert.DoesNotContain("Text=\"{DynamicResource ViewHistory}\"", markup);
+        Assert.DoesNotContain("Command=\"{Binding ViewHistoryCommand}\"", markup);
     }
 }

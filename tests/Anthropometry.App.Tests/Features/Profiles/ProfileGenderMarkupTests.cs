@@ -17,13 +17,14 @@ public sealed class ProfileGenderMarkupTests
     }
 
     [Fact]
-    public void Profile_editor_exposes_a_gender_picker()
+    public void Profile_editor_exposes_a_gender_context_menu()
     {
         var markup = ReadMarkup("ProfileEditorPage.xaml");
 
         Assert.Contains("{DynamicResource Gender}", markup);
-        Assert.Contains("ItemsSource=\"{Binding GenderOptions}\"", markup);
-        Assert.Contains("SelectedItem=\"{Binding SelectedGender}\"", markup);
+        Assert.DoesNotContain("<Picker", markup);
+        Assert.Contains("OnGenderSelectorClicked", markup);
+        Assert.Contains("OnActivityLevelSelectorClicked", markup);
     }
 
     private static string ReadMarkup(string fileName)

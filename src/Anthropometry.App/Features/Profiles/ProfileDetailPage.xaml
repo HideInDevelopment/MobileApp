@@ -11,8 +11,8 @@
             <Border Style="{StaticResource CardBorder}" Padding="16">
                 <Label Text="{DynamicResource EstimateDisclaimer}" Style="{StaticResource SecondaryText}" />
             </Border>
-            <Button Text="{DynamicResource AddWeight}" Style="{StaticResource PrimaryButton}" Command="{Binding AddWeightCommand}" IsEnabled="{Binding CanAddWeight}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource AddMeasurements}" Style="{StaticResource PrimaryButton}" Command="{Binding AddMeasurementsCommand}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource AddWeight}" Style="{StaticResource PrimaryButton}" Command="{Binding AddWeightCommand}" IsEnabled="{Binding CanAddWeight}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource EditProfile}" Style="{StaticResource SecondaryButton}" Command="{Binding EditCommand}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource History}" Style="{StaticResource SecondaryButton}" Command="{Binding HistoryCommand}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource GenerateSampleData}" Style="{StaticResource SecondaryButton}" Command="{Binding GenerateSampleDataCommand}" IsVisible="{Binding CanGenerateSampleData}" MinimumHeightRequest="48" />

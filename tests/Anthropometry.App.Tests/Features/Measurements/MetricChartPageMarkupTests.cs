@@ -12,8 +12,8 @@ public sealed class MetricChartPageMarkupTests
         var markup = File.ReadAllText(path);
 
         Assert.Contains("Title=\"{DynamicResource MetricChartTitle}\"", markup);
-        Assert.Contains("ItemsSource=\"{Binding MetricOptions}\"", markup);
-        Assert.Contains("SelectedItem=\"{Binding SelectedMetricOption}\"", markup);
+        Assert.DoesNotContain("<Picker", markup);
+        Assert.Contains("OnMetricSelectorClicked", markup);
         Assert.Contains("Date=\"{Binding FromDate}\"", markup);
         Assert.Contains("Date=\"{Binding ToDate}\"", markup);
         Assert.Contains("Command=\"{Binding ClearDateRangeCommand}\"", markup);

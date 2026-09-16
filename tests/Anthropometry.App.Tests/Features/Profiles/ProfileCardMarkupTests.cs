@@ -23,6 +23,17 @@ public sealed class ProfileCardMarkupTests
         Assert.Contains("SemanticProperties.Description=\"{DynamicResource DeleteProfile}\"", markup);
     }
 
+    [Fact]
+    public void Profile_detail_prioritizes_add_measurements_and_exposes_add_weight_state()
+    {
+        var markup = ReadMarkup("ProfileDetailPage.xaml");
+
+        Assert.True(
+            markup.IndexOf("Text=\"{DynamicResource AddMeasurements}\"", StringComparison.Ordinal)
+            < markup.IndexOf("Text=\"{DynamicResource AddWeight}\"", StringComparison.Ordinal));
+        Assert.Contains("IsEnabled=\"{Binding CanAddWeight}\"", markup);
+    }
+
     private static string ReadMarkup(string fileName)
         => File.ReadAllText(Path.GetFullPath(Path.Combine(
             AppContext.BaseDirectory,

@@ -15,7 +15,8 @@ public sealed class MeasurementHistoryFilterTests
         Assert.Contains("IsVisible=\"{Binding IsFilterPanelVisible}\"", markup);
         Assert.Contains("Date=\"{Binding FromDate}\"", markup);
         Assert.Contains("Date=\"{Binding ToDate}\"", markup);
-        Assert.Contains("ItemsSource=\"{Binding MeasurementTypeOptions}\"", markup);
+        Assert.DoesNotContain("<Picker", markup);
+        Assert.Contains("OnMeasurementTypeSelectorClicked", markup);
         Assert.Contains("Command=\"{Binding ClearFiltersCommand}\"", markup);
         Assert.Contains("Text=\"{Binding EmptyStateTitle}\"", markup);
     }

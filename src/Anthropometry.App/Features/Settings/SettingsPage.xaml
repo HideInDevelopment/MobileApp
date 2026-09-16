@@ -8,9 +8,9 @@
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <Label Grid.Column="0" Text="{DynamicResource Language}" VerticalOptions="Center" />
                 <Grid Grid.Column="1" WidthRequest="170">
-                    <Picker ItemsSource="{Binding Languages}"
-                            ItemDisplayBinding="{Binding DisplayName}"
-                            SelectedItem="{Binding SelectedLanguage}"
+                    <Button Text="{Binding SelectedLanguage.DisplayName}"
+                            Style="{StaticResource SelectorButton}"
+                            Clicked="OnLanguageSelectorClicked"
                             SemanticProperties.Description="{DynamicResource Language}" />
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>
@@ -18,9 +18,9 @@
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <Label Grid.Column="0" Text="{DynamicResource Theme}" VerticalOptions="Center" />
                 <Grid Grid.Column="1" WidthRequest="170">
-                    <Picker ItemsSource="{Binding Themes}"
-                            ItemDisplayBinding="{Binding DisplayName}"
-                            SelectedItem="{Binding SelectedTheme}"
+                    <Button Text="{Binding SelectedTheme.DisplayName}"
+                            Style="{StaticResource SelectorButton}"
+                            Clicked="OnThemeSelectorClicked"
                             SemanticProperties.Description="{DynamicResource Theme}" />
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>
@@ -28,9 +28,9 @@
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <Label Grid.Column="0" Text="{DynamicResource DateFormat}" VerticalOptions="Center" />
                 <Grid Grid.Column="1" WidthRequest="170">
-                    <Picker ItemsSource="{Binding DateFormats}"
-                            ItemDisplayBinding="{Binding DisplayName}"
-                            SelectedItem="{Binding SelectedDateFormat}"
+                    <Button Text="{Binding SelectedDateFormat.DisplayName}"
+                            Style="{StaticResource SelectorButton}"
+                            Clicked="OnDateFormatSelectorClicked"
                             SemanticProperties.Description="{DynamicResource DateFormat}" />
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>
@@ -38,9 +38,9 @@
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <Label Grid.Column="0" Text="{DynamicResource MeasurementSystem}" VerticalOptions="Center" />
                 <Grid Grid.Column="1" WidthRequest="170">
-                    <Picker ItemsSource="{Binding MeasurementSystems}"
-                            ItemDisplayBinding="{Binding DisplayName}"
-                            SelectedItem="{Binding SelectedMeasurementSystem}"
+                    <Button Text="{Binding SelectedMeasurementSystem.DisplayName}"
+                            Style="{StaticResource SelectorButton}"
+                            Clicked="OnMeasurementSystemSelectorClicked"
                             SemanticProperties.Description="{DynamicResource MeasurementSystem}" />
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>
@@ -72,9 +72,9 @@
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                         <Label Grid.Column="0" Text="{DynamicResource InactivityReminderInterval}" VerticalOptions="Center" />
                         <Grid Grid.Column="1" WidthRequest="170">
-                            <Picker ItemsSource="{Binding InactivityIntervals}"
-                                    ItemDisplayBinding="{Binding DisplayName}"
-                                    SelectedItem="{Binding SelectedInactivityInterval, Mode=TwoWay}"
+                            <Button Text="{Binding SelectedInactivityInterval.DisplayName}"
+                                    Style="{StaticResource SelectorButton}"
+                                    Clicked="OnInactivityIntervalSelectorClicked"
                                     SemanticProperties.Description="{DynamicResource InactivityReminderInterval}" />
                             <Label Style="{StaticResource DropdownArrow}" />
                         </Grid>

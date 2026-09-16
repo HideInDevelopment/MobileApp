@@ -15,6 +15,6 @@ public sealed class ReminderSettingsMarkupTests
         Assert.Contains("ReminderTime", markup);
         Assert.Contains("InactivityReminder", markup);
         Assert.Contains("SelectedInactivityInterval", markup);
-        Assert.Contains("InactivityIntervals", markup);
+        Assert.Contains("OnInactivityIntervalSelectorClicked", markup);
     }
 }

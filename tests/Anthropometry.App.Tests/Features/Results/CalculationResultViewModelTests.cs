@@ -1,8 +1,5 @@
 using Anthropometry.App.Features.Results;
-using Anthropometry.App.Features.Measurements;
-using Anthropometry.App.Features.Help;
 using Anthropometry.Application.Calculations;
-using Anthropometry.Application.Common;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
@@ -105,61 +102,10 @@ public sealed class CalculationResultViewModelTests
         Assert.True(viewModel.ShowWarningIcon);
     }
 
-    [Fact]
-    public async Task View_history_command_uses_the_current_profile()
-    {
-        var profile = TestData.Profile();
-        var profileDto = new ProfileDto(
-            profile.Id,
-            profile.Name,
-            new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate),
-            profile.CreatedAtUtc,
-            profile.UpdatedAtUtc);
-        var navigation = new NavigationSpy();
-        var viewModel = new CalculationResultViewModel(
-            new GetCalculationResults(new FakeCalculationResultRepository()),
-            Anthropometry.Domain.Measurements.MeasurementId.New(),
-            MeasurementType.WeightAndSizes,
-            TestData.LanguageService(),
-            profileDto,
-            navigation);
-
-        Assert.True(viewModel.CanViewHistory);
-        await viewModel.ViewHistoryCommand.ExecuteAsync(null);
-
-        Assert.Same(profileDto, navigation.HistoryProfile);
-    }
-
     private static string? GetDescription(CalculationResultDisplayItem result)
         => result.GetType().GetProperty("Description")?.GetValue(result) as string;
 
     private static CalculationResult CreateResult(Anthropometry.Domain.Measurements.MeasurementId measurementId, CalculationType type, decimal value, string unit, string formulaId)
         => CalculationResult.Create(measurementId, type, new CalculationResultValue(value, unit, formulaId, "1.0"), DateTimeOffset.UtcNow).Value;
 
-    private sealed class NavigationSpy : IMeasurementNavigation
-    {
-        public ProfileDto? HistoryProfile { get; private set; }
-
-        public Task ShowResultsAsync(MeasurementDto measurement) => Task.CompletedTask;
-
-        public Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement) => Task.CompletedTask;
-
-        public Task EditMeasurementAsync(ProfileDto profile, MeasurementDto measurement) => Task.CompletedTask;
-
-        public Task<bool> ConfirmDeleteAsync(MeasurementDto measurement) => Task.FromResult(false);
-
-        public Task ShowHistoryAsync(ProfileDto profile)
-        {
-            HistoryProfile = profile;
-            return Task.CompletedTask;
-        }
-
-        public Task ShowWeightGraphicAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;
-
-        public Task CloseMeasurementAsync() => Task.CompletedTask;
-
-        public Task CancelAsync() => Task.CompletedTask;
-
-        public Task ShowGuidanceAsync(GuidanceTopic topic) => Task.CompletedTask;
-    }
 }
