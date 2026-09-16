@@ -526,32 +526,32 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - Create: `tests/Anthropometry.App.Tests/Features/Profiles/ProfileCardMarkupTests.cs`
 - Modify: `tests/Anthropometry.App.Tests/ResponsiveLayoutTests.cs`
 
-- [ ] **Step 1: Add failing markup tests for semantic styles and actions**
+- [x] **Step 1: Add failing markup tests for semantic styles and actions**
 
   Assert that profile rows expose name as the primary label, secondary details as secondary content, primary actions have the shared primary style, and delete actions use the shared destructive style with a confirmation path.
 
-- [ ] **Step 2: Run focused markup tests and verify the failure**
+- [x] **Step 2: Run focused markup tests and verify the failure**
 
   ```powershell
   dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release --filter "FullyQualifiedName~Resources|FullyQualifiedName~ProfileCard|FullyQualifiedName~ResponsiveLayout"
   ```
 
-- [ ] **Step 3: Implement the smallest shared visual system**
+- [x] **Step 3: Implement the smallest shared visual system**
 
   Add only colors, spacing, button, border, card, and text resources that are used by at least two screens. Use red only for destructive actions and error text; preserve high contrast in Light and Dark themes. Keep profile cards consistent rather than alternating arbitrary row colors.
 
-- [ ] **Step 4: Verify accessibility and responsive behavior**
+- [x] **Step 4: Verify accessibility and responsive behavior**
 
   Check 48-pixel touch targets, semantic descriptions for icon-only actions, larger text without clipping, keyboard-open form layouts, and small/large Android widths.
 
-- [ ] **Step 5: Run App tests and Android build**
+- [x] **Step 5: Run App tests and Android build**
 
   ```powershell
   dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release
   dotnet build src/Anthropometry.App/Anthropometry.App.csproj -f net10.0-android -c Release -m:1
   ```
 
-- [ ] **Step 6: Commit the visual system**
+- [x] **Step 6: Commit the visual system**
 
   ```powershell
   git add src/Anthropometry.App/Resources/Styles src/Anthropometry.App/Features/Profiles src/Anthropometry.App/Features/Measurements/MeasurementHistoryPage.xaml src/Anthropometry.App/Features/Results/CalculationResultPage.xaml src/Anthropometry.App/Resources/Strings tests/Anthropometry.App.Tests

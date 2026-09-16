@@ -52,6 +52,22 @@ public sealed class ResponsiveLayoutTests
         Assert.NotNull(profileViewModel.CreateCommand);
     }
 
+    [Fact]
+    public void Primary_screens_keep_action_targets_at_least_48_pixels_high()
+    {
+        var root = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Features"));
+        var profileList = File.ReadAllText(Path.Combine(root, "Profiles", "ProfileListPage.xaml"));
+        var detail = File.ReadAllText(Path.Combine(root, "Profiles", "ProfileDetailPage.xaml"));
+        var history = File.ReadAllText(Path.Combine(root, "Measurements", "MeasurementHistoryPage.xaml"));
+
+        Assert.Contains("MinimumHeightRequest=\"48\"", profileList);
+        Assert.Contains("MinimumHeightRequest=\"48\"", detail);
+        Assert.Contains("MinimumHeightRequest=\"48\"", history);
+    }
+
     private sealed class NavigationSpy : IMeasurementNavigation
     {
         public Task ShowResultsAsync(Anthropometry.Application.Common.MeasurementDto measurement) => Task.CompletedTask;

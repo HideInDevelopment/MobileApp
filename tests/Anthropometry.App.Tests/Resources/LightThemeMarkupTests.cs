@@ -18,6 +18,21 @@ public sealed class LightThemeMarkupTests
         Assert.DoesNotContain("#D600AA", colors.Values);
     }
 
+    [Fact]
+    public void Shared_styles_define_semantic_action_and_card_styles()
+    {
+        var markup = File.ReadAllText(Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Resources", "Styles", "Styles.xaml")));
+
+        Assert.Contains("x:Key=\"PrimaryButton\"", markup);
+        Assert.Contains("x:Key=\"SecondaryButton\"", markup);
+        Assert.Contains("x:Key=\"DestructiveButton\"", markup);
+        Assert.Contains("x:Key=\"CardBorder\"", markup);
+        Assert.Contains("MinimumHeightRequest\" Value=\"48\"", markup);
+    }
+
     private static Dictionary<string, string> ReadColors()
     {
         var path = Path.GetFullPath(Path.Combine(

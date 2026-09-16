@@ -16,6 +16,7 @@
     </ContentPage.ToolbarItems>
     <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
         <Border Grid.Row="0"
+                Style="{StaticResource CardBorder}"
                 Padding="12"
                 IsVisible="{Binding IsFilterPanelVisible}"
                 StrokeThickness="1">
@@ -38,6 +39,7 @@
                             SelectedItem="{Binding SelectedTypeOption}" />
                 </Grid>
                 <Button Text="{DynamicResource ClearFilters}"
+                        Style="{StaticResource SecondaryButton}"
                         Command="{Binding ClearFiltersCommand}"
                         IsVisible="{Binding HasActiveFilters}"
                         HorizontalOptions="Start"
@@ -53,7 +55,7 @@
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Border Padding="12" Margin="0,6" StrokeThickness="1" BackgroundColor="{Binding RowBackgroundColor}">
+                    <Border Style="{StaticResource CardBorder}" Padding="12" Margin="0,6" BackgroundColor="{Binding RowBackgroundColor}">
                         <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
                             <Label Grid.Column="0"
                                    Text="⚠"
@@ -70,9 +72,9 @@
                                 <Label Text="{Binding MeasurementTypeText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="2" Spacing="4">
-                                <Button Text="{DynamicResource ViewResults}" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
-                                <Button Text="{DynamicResource EditMeasurement}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
-                                <Button Text="{DynamicResource DeleteMeasurement}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                                <Button Text="{DynamicResource ViewResults}" Style="{StaticResource PrimaryButton}" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" SemanticProperties.Description="{DynamicResource ViewResults}" />
+                                <Button Text="{DynamicResource EditMeasurement}" Style="{StaticResource SecondaryButton}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" SemanticProperties.Description="{DynamicResource EditMeasurement}" />
+                                <Button Text="{DynamicResource DeleteMeasurement}" Style="{StaticResource DestructiveButton}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" SemanticProperties.Description="{DynamicResource DeleteMeasurement}" />
                             </VerticalStackLayout>
                         </Grid>
                     </Border>

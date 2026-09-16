@@ -31,10 +31,10 @@
             <CollectionView ItemsSource="{Binding Profiles}" SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="0,8" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                        <Grid Padding="0,4" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                             <local:ProfileRowView Grid.Column="0" BindingContext="{Binding}" />
-                            <Button Grid.Column="1" Text="{DynamicResource OpenProfile}" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
-                            <Button Grid.Column="2" Text="{DynamicResource DeleteProfile}" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                            <Button Grid.Column="1" Text="{DynamicResource OpenProfile}" Style="{StaticResource SecondaryButton}" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" SemanticProperties.Description="{DynamicResource OpenProfile}" />
+                            <Button Grid.Column="2" Text="{DynamicResource DeleteProfile}" Style="{StaticResource DestructiveButton}" Command="{Binding Source={x:Reference RootPage}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" SemanticProperties.Description="{DynamicResource DeleteProfile}" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -43,8 +43,9 @@
 
         <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" VerticalOptions="End" />
 
-        <Button Grid.Row="2"
+            <Button Grid.Row="2"
                 Text="{DynamicResource AddProfile}"
+                Style="{StaticResource PrimaryButton}"
                 Command="{Binding CreateCommand}"
                 IsVisible="{Binding HasProfiles}"
                 IsEnabled="{Binding CanAddProfile}"

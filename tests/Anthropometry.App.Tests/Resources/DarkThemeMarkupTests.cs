@@ -48,6 +48,16 @@ public sealed class DarkThemeMarkupTests
         Assert.Contains("IconImageSource=\"{AppThemeBinding Light=ruler.svg, Dark=ruler_dark.svg}\"", history);
     }
 
+    [Fact]
+    public void Shared_destructive_style_uses_a_theme_aware_warning_color()
+    {
+        var markup = ReadFile(Path.Combine("Resources", "Styles", "Styles.xaml"));
+
+        Assert.Contains("x:Key=\"DestructiveButton\"", markup);
+        Assert.Contains("{StaticResource Destructive}", markup);
+        Assert.Contains("{StaticResource DestructiveDark}", markup);
+    }
+
     private static Dictionary<string, string> ReadColors()
     {
         var document = XDocument.Parse(ReadFile(Path.Combine("Resources", "Styles", "Colors.xaml")));
