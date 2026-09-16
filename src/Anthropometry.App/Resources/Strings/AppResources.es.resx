@@ -68,6 +68,7 @@
   <data name="NoMeasurements" xml:space="preserve"><value>Aún no hay medidas</value></data>
   <data name="SavedMeasurementsLocal" xml:space="preserve"><value>Las medidas y sus resultados se guardan en este dispositivo.</value></data>
   <data name="ViewResults" xml:space="preserve"><value>Ver resultados</value></data>
+  <data name="ViewHistory" xml:space="preserve"><value>Ver historial</value></data>
   <data name="WeightOnly" xml:space="preserve"><value>Solo peso</value></data>
   <data name="WeightAndSizes" xml:space="preserve"><value>Peso y medidas</value></data>
   <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>Estos resultados reutilizan las medidas corporales anteriores.</value></data>

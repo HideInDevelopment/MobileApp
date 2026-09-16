@@ -170,6 +170,12 @@ public sealed class MeasurementHistoryViewModelTests
             return Task.CompletedTask;
         }
 
+        public Task ShowResultsAsync(Anthropometry.Application.Common.ProfileDto profile, Anthropometry.Application.Common.MeasurementDto measurement)
+        {
+            SelectedMeasurementId = measurement.Id;
+            return Task.CompletedTask;
+        }
+
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
         public Task ShowChartOptionsAsync(Anthropometry.Domain.Profiles.ProfileId profileId)

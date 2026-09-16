@@ -273,11 +273,11 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - Add `Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement)` to `IMeasurementNavigation`.
 - On successful calculation, `MeasurementEditorViewModel` calls `CloseMeasurementAsync` and then `ShowResultsAsync(_profile, recorded.Value)`; it no longer opens History as the first destination.
 
-- [ ] **Step 1: Add failing tests for descriptions and navigation order**
+- [x] **Step 1: Add failing tests for descriptions and navigation order**
 
   Assert that body-fat, BMR, and TDEE items have localized descriptions, that the results page contains the estimate disclaimer, and that the measurement navigation spy records results as the first destination after save.
 
-- [ ] **Step 2: Run the focused tests and verify the failure**
+- [x] **Step 2: Run the focused tests and verify the failure**
 
   ```powershell
   dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release --filter "FullyQualifiedName~CalculationResult|FullyQualifiedName~MeasurementEditor"
@@ -285,15 +285,15 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: FAIL because the descriptions and direct-result navigation are not implemented.
 
-- [ ] **Step 3: Implement the result display model and navigation change**
+- [x] **Step 3: Implement the result display model and navigation change**
 
   Map each `CalculationType` to localized plain-language copy. Keep formulas, units, and formula version in Help; do not duplicate formula logic in the ViewModel. Add an explicit `View history` action that calls the existing History navigation so direct result navigation does not hide the historical record.
 
-- [ ] **Step 4: Run focused tests and verify the complete flow**
+- [x] **Step 4: Run focused tests and verify the complete flow**
 
   Expected: PASS. Manually verify extended and weight-only entries, including the reused-size warning, reach Results directly and still allow navigation back to History.
 
-- [ ] **Step 5: Run Domain, Application, Infrastructure, and App tests**
+- [x] **Step 5: Run Domain, Application, Infrastructure, and App tests**
 
   ```powershell
   dotnet test Anthropometry.sln -f net10.0 --configuration Release --no-restore -m:1
@@ -301,7 +301,7 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: all existing tests and new result tests pass.
 
-- [ ] **Step 6: Commit the result-flow slice**
+- [x] **Step 6: Commit the result-flow slice**
 
   ```powershell
   git add src/Anthropometry.App/Features/Results src/Anthropometry.App/Features/Measurements src/Anthropometry.App/MauiNavigation.cs src/Anthropometry.App/Resources/Strings tests/Anthropometry.App.Tests/Features/Results tests/Anthropometry.App.Tests/Features/Measurements

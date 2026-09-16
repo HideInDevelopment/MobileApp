@@ -45,7 +45,7 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
-    public async Task Weight_only_save_requires_only_weight_and_returns_to_history()
+    public async Task Weight_only_save_requires_only_weight_and_opens_results()
     {
         var profile = TestData.Profile();
         var profiles = new FakeProfileRepository();
@@ -68,8 +68,10 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Null(saved.AbdomenCm);
         Assert.Equal(3, results.Items.Count);
         Assert.Equal(1, navigation.CloseCalls);
-        Assert.Equal(1, navigation.HistoryCalls);
-        Assert.Null(navigation.SavedMeasurement);
+        Assert.Equal(0, navigation.HistoryCalls);
+        Assert.NotNull(navigation.SavedMeasurement);
+        Assert.NotNull(navigation.SavedProfile);
+        Assert.Equal(["close", "results"], navigation.Destinations);
     }
 
     [Fact]
@@ -93,7 +95,7 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
-    public async Task Weight_and_sizes_save_calculates_three_results_and_returns_to_history()
+    public async Task Weight_and_sizes_save_calculates_three_results_and_opens_results()
     {
         var profile = TestData.Profile();
         var profiles = new FakeProfileRepository();
@@ -112,9 +114,11 @@ public sealed class MeasurementEditorViewModelTests
         Assert.True(viewModel.IsCompleted);
         Assert.Single(measurements.Items);
         Assert.Equal(3, results.Items.Count);
-        Assert.Null(navigation.SavedMeasurement);
+        Assert.NotNull(navigation.SavedMeasurement);
+        Assert.NotNull(navigation.SavedProfile);
         Assert.Equal(1, navigation.CloseCalls);
-        Assert.Equal(1, navigation.HistoryCalls);
+        Assert.Equal(0, navigation.HistoryCalls);
+        Assert.Equal(["close", "results"], navigation.Destinations);
     }
 
     [Fact]
@@ -257,7 +261,7 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
-    public async Task Weight_only_save_recalculates_results_from_previous_sizes_and_returns_to_profile()
+    public async Task Weight_only_save_recalculates_results_from_previous_sizes_and_opens_results()
     {
         var profile = TestData.Profile();
         var profiles = new FakeProfileRepository();
@@ -301,9 +305,11 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(3, results.Items.Count(result => result.MeasurementId == measurements.Items[1].Id));
         Assert.Equal(1745m, results.Items.Single(result => result.MeasurementId == measurements.Items[1].Id && result.CalculationType == CalculationType.BasalMetabolicRate).Value);
         Assert.Equal(1745m * 1.55m, results.Items.Single(result => result.MeasurementId == measurements.Items[1].Id && result.CalculationType == CalculationType.TotalDailyEnergyExpenditure).Value);
-        Assert.Null(navigation.SavedMeasurement);
+        Assert.NotNull(navigation.SavedMeasurement);
+        Assert.NotNull(navigation.SavedProfile);
         Assert.Equal(1, navigation.CloseCalls);
-        Assert.Equal(1, navigation.HistoryCalls);
+        Assert.Equal(0, navigation.HistoryCalls);
+        Assert.Equal(["close", "results"], navigation.Destinations);
     }
 
     private static MeasurementEditorViewModel CreateViewModel(
@@ -378,9 +384,13 @@ public sealed class MeasurementEditorViewModelTests
 
     private sealed class NavigationSpy : IMeasurementNavigation
     {
+        public ProfileDto? SavedProfile { get; private set; }
+
         public MeasurementDto? SavedMeasurement { get; private set; }
 
         public List<GuidanceTopic> GuidanceTopics { get; } = [];
+
+        public List<string> Destinations { get; } = [];
 
         public int CloseCalls { get; private set; }
 
@@ -389,18 +399,29 @@ public sealed class MeasurementEditorViewModelTests
         public Task ShowResultsAsync(MeasurementDto measurement)
         {
             SavedMeasurement = measurement;
+            Destinations.Add("results-history");
+            return Task.CompletedTask;
+        }
+
+        public Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement)
+        {
+            SavedProfile = profile;
+            SavedMeasurement = measurement;
+            Destinations.Add("results");
             return Task.CompletedTask;
         }
 
         public Task CloseMeasurementAsync()
         {
             CloseCalls++;
+            Destinations.Add("close");
             return Task.CompletedTask;
         }
 
         public Task ShowHistoryAsync(ProfileDto profile)
         {
             HistoryCalls++;
+            Destinations.Add("history");
             return Task.CompletedTask;
         }
 

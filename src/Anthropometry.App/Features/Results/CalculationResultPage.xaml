@@ -3,30 +3,43 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Results.CalculationResultPage"
              Title="{DynamicResource ResultsTitle}">
-    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
-        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+    <Grid Padding="20" RowDefinitions="Auto,*,Auto" RowSpacing="16">
+        <VerticalStackLayout Grid.Row="0" Spacing="8">
+            <HorizontalStackLayout Spacing="8">
             <Label Text="{DynamicResource EstimatedResults}" FontSize="28" FontAttributes="Bold" />
             <Label Text="⚠"
                    IsVisible="{Binding ShowWarningIcon}"
                    TextColor="Orange"
                    SemanticProperties.Description="{DynamicResource ReusedMeasurementsDescription}" />
-        </HorizontalStackLayout>
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Results}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Border StrokeThickness="1" Padding="16" Margin="0,4">
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="{Binding Title}" FontAttributes="Bold" />
-                            <HorizontalStackLayout Spacing="8">
-                                <Label Text="{Binding Value}" FontSize="24" />
-                                <Label Text="{Binding Unit}" VerticalOptions="End" />
-                            </HorizontalStackLayout>
-                        </VerticalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-        <ActivityIndicator Grid.Row="2" IsRunning="{Binding IsLoading}" />
-        <Label Grid.Row="2" Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+            <Label Text="{DynamicResource ResultsEstimateDisclaimer}"
+                   FontSize="13"
+                   Opacity="0.8" />
+        </VerticalStackLayout>
+        <Grid Grid.Row="1">
+            <CollectionView ItemsSource="{Binding Results}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeThickness="1" Padding="16" Margin="0,4">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                <HorizontalStackLayout Spacing="8">
+                                    <Label Text="{Binding Value}" FontSize="24" />
+                                    <Label Text="{Binding Unit}" VerticalOptions="End" />
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding Description}" FontSize="13" Opacity="0.8" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <ActivityIndicator IsRunning="{Binding IsLoading}" />
+            <Label Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+        <Button Grid.Row="2"
+                Text="{DynamicResource ViewHistory}"
+                Command="{Binding ViewHistoryCommand}"
+                IsVisible="{Binding CanViewHistory}"
+                MinimumHeightRequest="48" />
     </Grid>
 </ContentPage>

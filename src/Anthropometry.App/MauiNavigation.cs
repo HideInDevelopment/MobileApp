@@ -130,11 +130,19 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     }
 
     public Task ShowResultsAsync(MeasurementDto measurement)
+        => ShowResultsPageAsync(null, measurement);
+
+    public Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement)
+        => ShowResultsPageAsync(profile, measurement);
+
+    private Task ShowResultsPageAsync(ProfileDto? profile, MeasurementDto measurement)
         => PushAsync(new CalculationResultPage(new CalculationResultViewModel(
             _services.GetRequiredService<GetCalculationResults>(),
             measurement.Id,
             measurement.Type,
-            _languageService)));
+            _languageService,
+            profile,
+            this)));
 
     public Task CloseMeasurementAsync() => PopAsync();
 

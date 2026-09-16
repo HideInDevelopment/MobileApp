@@ -68,6 +68,7 @@
   <data name="NoMeasurements" xml:space="preserve"><value>No measurements yet</value></data>
   <data name="SavedMeasurementsLocal" xml:space="preserve"><value>Saved measurements and their results stay on this device.</value></data>
   <data name="ViewResults" xml:space="preserve"><value>View results</value></data>
+  <data name="ViewHistory" xml:space="preserve"><value>View history</value></data>
   <data name="WeightOnly" xml:space="preserve"><value>Weight only</value></data>
   <data name="WeightAndSizes" xml:space="preserve"><value>Weight and sizes</value></data>
   <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>These results reuse the previous size measurements.</value></data>

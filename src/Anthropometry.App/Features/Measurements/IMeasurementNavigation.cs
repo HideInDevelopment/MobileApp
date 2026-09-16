@@ -8,6 +8,8 @@ public interface IMeasurementNavigation
 {
     Task ShowResultsAsync(MeasurementDto measurement);
 
+    Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement);
+
     Task ShowHistoryAsync(ProfileDto profile);
 
     Task ShowChartOptionsAsync(ProfileId profileId);
