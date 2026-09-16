@@ -8,9 +8,13 @@ public interface IDisplayPreferenceStore
 
     string? GetHeightUnitCode();
 
+    string? GetMeasurementSystemCode();
+
     void SetDateFormatCode(string code);
 
     void SetWeightUnitCode(string code);
 
     void SetHeightUnitCode(string code);
+
+    void SetMeasurementSystemCode(string code);
 }

@@ -864,17 +864,17 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
-### Post-MVP feature slice: Persisted display preferences
+### Post-MVP feature slice: Persisted display preferences and measurement system
 
 **Status:** Implemented as a Presentation-only preference slice.
 
-**Review boundary:** Settings persists the date order (`dd/mm/yyyy` or `mm/dd/yyyy`), weight unit (kilograms or pounds), and profile-height unit (centimeters or decimal feet). Profile height accepts the selected display unit, while body-circumference inputs remain in centimeters because feet are not a meaningful unit for neck, waist, abdomen, or hip measurements. Domain calculations and SQLite remain in kilograms, centimeters, and UTC. History and the weight graphic use the selected date and units.
+**Review boundary:** Settings persists the date order (`dd/mm/yyyy` or `mm/dd/yyyy`) and one Metric/Imperial measurement-system choice. Metric displays profile height in meters, circumferences in centimeters, and weight in kilograms. Imperial displays profile height in decimal feet, circumferences in inches, and weight in pounds. Profile and measurement inputs convert at the Presentation boundary; Domain calculations and SQLite remain in kilograms, centimeters, and UTC. History and the weight graphic use the selected date and derived units.
 
 **Acceptance criteria:**
 
-- [x] Display preferences default to `dd/mm/yyyy`, kilograms, and centimeters and restore from local Preferences.
-- [x] Settings exposes localized date-format, weight-unit, and height-unit selectors in English, Spanish, and German.
-- [x] Profile height input converts decimal feet or centimeters to canonical centimeters; measurement weight converts pounds or kilograms, and circumference inputs stay in centimeters before Application use cases run.
+- [x] Display preferences default to `dd/mm/yyyy` and Metric (meters/centimeters/kilograms) and restore from local Preferences.
+- [x] Settings exposes localized date-format and Metric/Imperial selectors in English, Spanish, and German.
+- [x] Profile height input converts meters or decimal feet to canonical centimeters; measurement weight converts kilograms or pounds, and circumference inputs convert centimeters or inches before Application use cases run.
 - [x] History formats local dates with the selected order and displays weight/height in the selected units.
 - [x] The weight graphic keeps canonical kilogram points internally but displays selected-unit values, padding, legends, and date labels.
 - [x] Formula inputs, calculation results, SQLite schema, and persisted timestamps remain unchanged.
@@ -882,8 +882,8 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 **Verification:**
 
-- [x] App test suite passed with 94 tests.
-- [x] Full solution test suite passed: 52 Domain, 31 Application, 11 Infrastructure, and 94 App tests.
+- [x] App test suite passed with 96 tests.
+- [x] Full solution test suite passed: 52 Domain, 31 Application, 11 Infrastructure, and 96 App tests.
 - [x] Android Debug build completed with 0 warnings and 0 errors.
 - [x] Android Release source/package build completed with 0 warnings and 0 errors when `PublishTrimmed=false` and `RunAOTCompilation=false` were supplied as environment-only verification overrides.
 - [ ] Default trimmed Android Release packaging remains blocked by the host's `Microsoft.NET.ILLink` task-host failure (`MSB4216`), unrelated to application compilation.

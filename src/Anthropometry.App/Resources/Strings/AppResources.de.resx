@@ -53,6 +53,7 @@
   <data name="Hip" xml:space="preserve"><value>Hüfte</value></data>
   <data name="Kg" xml:space="preserve"><value>kg</value></data>
   <data name="Cm" xml:space="preserve"><value>cm</value></data>
+  <data name="M" xml:space="preserve"><value>m</value></data>
   <data name="SaveWeight" xml:space="preserve"><value>Gewicht speichern</value></data>
   <data name="CalculateResults" xml:space="preserve"><value>Ergebnisse berechnen</value></data>
   <data name="ValidMeasurementExtended" xml:space="preserve"><value>Gib gültige Werte für Gewicht, Hals und Bauch ein.</value></data>
@@ -124,10 +125,16 @@
   <data name="MonthDayYear" xml:space="preserve"><value>mm/dd/yyyy</value></data>
   <data name="WeightUnit" xml:space="preserve"><value>Gewichtseinheit</value></data>
   <data name="HeightUnit" xml:space="preserve"><value>Größeneinheit</value></data>
+  <data name="MeasurementSystem" xml:space="preserve"><value>Maßsystem</value></data>
+  <data name="Metric" xml:space="preserve"><value>Metrisch</value></data>
+  <data name="Imperial" xml:space="preserve"><value>Imperial</value></data>
   <data name="Kilograms" xml:space="preserve"><value>Kilogramm (kg)</value></data>
   <data name="Pounds" xml:space="preserve"><value>Pfund (lb)</value></data>
   <data name="Centimeters" xml:space="preserve"><value>Zentimeter (cm)</value></data>
+  <data name="Meters" xml:space="preserve"><value>Meter (m)</value></data>
   <data name="Feet" xml:space="preserve"><value>Fuß (ft)</value></data>
+  <data name="Inches" xml:space="preserve"><value>Zoll (in)</value></data>
   <data name="Lb" xml:space="preserve"><value>lb</value></data>
   <data name="Ft" xml:space="preserve"><value>ft</value></data>
+  <data name="In" xml:space="preserve"><value>in</value></data>
 </root>

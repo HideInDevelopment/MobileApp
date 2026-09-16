@@ -11,8 +11,8 @@ public sealed class MeasurementEditorPageMarkupTests
             "src", "Anthropometry.App", "Features", "Measurements", "MeasurementEditorPage.xaml"));
         var markup = File.ReadAllText(path);
 
-        Assert.Contains("Text=\"{Binding NeckText}\" Keyboard=\"Text\"", markup);
-        Assert.Contains("Text=\"{Binding AbdomenText}\" Keyboard=\"Text\"", markup);
-        Assert.Contains("Text=\"{Binding HipText}\" Keyboard=\"Text\"", markup);
+        Assert.Contains("Text=\"{Binding NeckText}\" Keyboard=\"Numeric\"", markup);
+        Assert.Contains("Text=\"{Binding AbdomenText}\" Keyboard=\"Numeric\"", markup);
+        Assert.Contains("Text=\"{Binding HipText}\" Keyboard=\"Numeric\"", markup);
     }
 }

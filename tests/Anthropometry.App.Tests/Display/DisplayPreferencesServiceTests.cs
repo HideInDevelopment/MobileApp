@@ -13,9 +13,11 @@ public sealed class DisplayPreferencesServiceTests
 
         service.Initialize();
 
+        Assert.Equal(DisplayPreferencesService.MetricCode, service.MeasurementSystemCode);
         Assert.Equal(DisplayPreferencesService.DayMonthYearCode, service.DateFormatCode);
         Assert.Equal(DisplayPreferencesService.KilogramsCode, service.WeightUnitCode);
-        Assert.Equal(DisplayPreferencesService.CentimetersCode, service.HeightUnitCode);
+        Assert.Equal(DisplayPreferencesService.MetersCode, service.HeightUnitCode);
+        Assert.Equal(DisplayPreferencesService.CentimetersCode, service.CircumferenceUnitCode);
     }
 
     [Fact]
@@ -25,7 +27,7 @@ public sealed class DisplayPreferencesServiceTests
         {
             DateFormatCode = "unknown-date",
             WeightUnitCode = "stone",
-            HeightUnitCode = "foot"
+            MeasurementSystemCode = "foot"
         };
         var service = new DisplayPreferencesService(store);
 
@@ -33,19 +35,26 @@ public sealed class DisplayPreferencesServiceTests
 
         Assert.Equal(DisplayPreferencesService.DayMonthYearCode, service.DateFormatCode);
         Assert.Equal(DisplayPreferencesService.KilogramsCode, service.WeightUnitCode);
-        Assert.Equal(DisplayPreferencesService.CentimetersCode, service.HeightUnitCode);
+        Assert.Equal(DisplayPreferencesService.MetricCode, service.MeasurementSystemCode);
+        Assert.Equal(DisplayPreferencesService.MetersCode, service.HeightUnitCode);
     }
 
     [Fact]
-    public void Initialize_migrates_the_previous_inches_preference_to_feet()
+    public void Initialize_migrates_the_previous_independent_preferences_to_one_system()
     {
-        var store = new InMemoryDisplayPreferenceStore { HeightUnitCode = "in" };
+        var store = new InMemoryDisplayPreferenceStore
+        {
+            HeightUnitCode = "in",
+            WeightUnitCode = "kg"
+        };
         var service = new DisplayPreferencesService(store);
 
         service.Initialize();
 
+        Assert.Equal(DisplayPreferencesService.ImperialCode, service.MeasurementSystemCode);
+        Assert.Equal(DisplayPreferencesService.ImperialCode, store.MeasurementSystemCode);
         Assert.Equal(DisplayPreferencesService.FeetCode, service.HeightUnitCode);
-        Assert.Equal(DisplayPreferencesService.FeetCode, store.HeightUnitCode);
+        Assert.Equal(DisplayPreferencesService.InchesCode, service.CircumferenceUnitCode);
     }
 
     [Fact]
@@ -58,13 +67,12 @@ public sealed class DisplayPreferencesServiceTests
         service.PreferencesChanged += (_, _) => changes++;
 
         service.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
-        service.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        service.SetHeightUnit(DisplayPreferencesService.FeetCode);
+        service.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
 
         Assert.Equal(DisplayPreferencesService.MonthDayYearCode, store.DateFormatCode);
-        Assert.Equal(DisplayPreferencesService.PoundsCode, store.WeightUnitCode);
-        Assert.Equal(DisplayPreferencesService.FeetCode, store.HeightUnitCode);
-        Assert.Equal(3, changes);
+        Assert.Equal(DisplayPreferencesService.PoundsCode, service.WeightUnitCode);
+        Assert.Equal(DisplayPreferencesService.ImperialCode, store.MeasurementSystemCode);
+        Assert.Equal(2, changes);
     }
 
     [Fact]
@@ -72,16 +80,30 @@ public sealed class DisplayPreferencesServiceTests
     {
         var service = new DisplayPreferencesService(new InMemoryDisplayPreferenceStore());
         service.Initialize();
-        service.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        service.SetHeightUnit(DisplayPreferencesService.FeetCode);
+        service.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
 
         var pounds = service.ToDisplayWeight(80m);
         var feet = service.ToDisplayHeight(180m);
+        var inches = service.ToDisplayCircumference(40m);
 
         Assert.Equal(176.369809744m, pounds, 9);
         Assert.Equal(5.905511811m, feet, 9);
+        Assert.Equal(15.748031496m, inches, 9);
         Assert.Equal(80m, service.ToMetricWeight(pounds), 9);
         Assert.Equal(180m, service.ToMetricHeight(feet), 9);
+        Assert.Equal(40m, service.ToMetricCircumference(inches), 9);
+    }
+
+    [Fact]
+    public void Metric_height_is_displayed_in_meters_and_circumference_in_centimeters()
+    {
+        var service = new DisplayPreferencesService(new InMemoryDisplayPreferenceStore());
+        service.Initialize();
+
+        Assert.Equal(1.8m, service.ToDisplayHeight(180m));
+        Assert.Equal(40m, service.ToDisplayCircumference(40m));
+        Assert.Equal(180m, service.ToMetricHeight(1.8m));
+        Assert.Equal(40m, service.ToMetricCircumference(40m));
     }
 
     [Fact]
@@ -125,16 +147,22 @@ public sealed class DisplayPreferencesServiceTests
 
         public string? HeightUnitCode { get; set; }
 
+        public string? MeasurementSystemCode { get; set; }
+
         public string? GetDateFormatCode() => DateFormatCode;
 
         public string? GetWeightUnitCode() => WeightUnitCode;
 
         public string? GetHeightUnitCode() => HeightUnitCode;
 
+        public string? GetMeasurementSystemCode() => MeasurementSystemCode;
+
         public void SetDateFormatCode(string code) => DateFormatCode = code;
 
         public void SetWeightUnitCode(string code) => WeightUnitCode = code;
 
         public void SetHeightUnitCode(string code) => HeightUnitCode = code;
+
+        public void SetMeasurementSystemCode(string code) => MeasurementSystemCode = code;
     }
 }

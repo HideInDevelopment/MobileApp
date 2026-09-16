@@ -148,8 +148,7 @@ public sealed class MeasurementEditorViewModelTests
         var results = new FakeCalculationResultRepository();
         var displayPreferences = new DisplayPreferencesService(new FakeDisplayPreferenceStore
         {
-            WeightUnitCode = DisplayPreferencesService.PoundsCode,
-            HeightUnitCode = DisplayPreferencesService.FeetCode
+            MeasurementSystemCode = DisplayPreferencesService.ImperialCode
         });
         displayPreferences.Initialize();
         var viewModel = CreateViewModel(
@@ -161,11 +160,11 @@ public sealed class MeasurementEditorViewModelTests
             displayPreferences: displayPreferences);
 
         viewModel.WeightText = "176.3698";
-        viewModel.NeckText = "40";
-        viewModel.AbdomenText = "90";
+        viewModel.NeckText = "15.7480";
+        viewModel.AbdomenText = "35.4331";
 
         Assert.Equal("lb", viewModel.WeightUnitText);
-        Assert.Equal("cm", viewModel.LengthUnitText);
+        Assert.Equal("in", viewModel.LengthUnitText);
         await viewModel.SaveCommand.ExecuteAsync(null);
 
         var saved = Assert.Single(measurements.Items);
@@ -189,12 +188,12 @@ public sealed class MeasurementEditorViewModelTests
         viewModel.NeckText = "40";
         viewModel.AbdomenText = "90";
 
-        displayPreferences.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        displayPreferences.SetHeightUnit(DisplayPreferencesService.FeetCode);
+        displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
 
         Assert.Equal("176.37", viewModel.WeightText);
-        Assert.Equal("40", viewModel.NeckText);
-        Assert.Equal("90", viewModel.AbdomenText);
+        Assert.Equal("15.75", viewModel.NeckText);
+        Assert.Equal("35.43", viewModel.AbdomenText);
+        Assert.Equal("in", viewModel.LengthUnitText);
     }
 
     [Fact]
@@ -329,17 +328,23 @@ public sealed class MeasurementEditorViewModelTests
 
         public string? HeightUnitCode { get; set; }
 
+        public string? MeasurementSystemCode { get; set; }
+
         public string? GetDateFormatCode() => DateFormatCode;
 
         public string? GetWeightUnitCode() => WeightUnitCode;
 
         public string? GetHeightUnitCode() => HeightUnitCode;
 
+        public string? GetMeasurementSystemCode() => MeasurementSystemCode;
+
         public void SetDateFormatCode(string code) => DateFormatCode = code;
 
         public void SetWeightUnitCode(string code) => WeightUnitCode = code;
 
         public void SetHeightUnitCode(string code) => HeightUnitCode = code;
+
+        public void SetMeasurementSystemCode(string code) => MeasurementSystemCode = code;
     }
 
     private sealed class NavigationSpy : IMeasurementNavigation

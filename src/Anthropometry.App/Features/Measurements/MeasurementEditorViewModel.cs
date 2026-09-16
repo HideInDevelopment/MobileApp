@@ -31,6 +31,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private string? _validationMessage;
     private string? _errorMessage;
     private string _weightUnitCode;
+    private string _circumferenceUnitCode;
 
     public MeasurementEditorViewModel(
         RecordMeasurement recordMeasurement,
@@ -53,6 +54,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _languageService = languageService;
         _displayPreferences = displayPreferences;
         _weightUnitCode = _displayPreferences.WeightUnitCode;
+        _circumferenceUnitCode = _displayPreferences.CircumferenceUnitCode;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
@@ -75,7 +77,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     public string WeightUnitText => _languageService.Get(
         _displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg");
 
-    public string LengthUnitText => _languageService.Get("Cm");
+    public string LengthUnitText => _languageService.Get(
+        _displayPreferences.CircumferenceUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm");
 
     public string WeightText
     {
@@ -211,8 +214,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                 return false;
             }
 
-            neck = neckValue;
-            abdomen = abdomenValue;
+            neck = _displayPreferences.ToMetricCircumference(neckValue);
+            abdomen = _displayPreferences.ToMetricCircumference(abdomenValue);
             if (neck is < 1m or > 100m || abdomen is < 1m or > 400m)
             {
                 command = null!;
@@ -227,7 +230,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                     return false;
                 }
 
-                hip = hipValue;
+                hip = _displayPreferences.ToMetricCircumference(hipValue);
                 if (hip is < 1m or > 400m)
                 {
                     command = null!;
@@ -271,8 +274,37 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             OnPropertyChanged(nameof(WeightText));
         }
 
+        if (TryParseDecimal(_neckText, out var enteredNeck))
+        {
+            var neckCm = DisplayPreferencesService.ConvertCircumferenceToMetric(enteredNeck, _circumferenceUnitCode);
+            _neckText = DisplayPreferencesService.ConvertCircumferenceToDisplay(
+                neckCm,
+                _displayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(NeckText));
+        }
+
+        if (TryParseDecimal(_abdomenText, out var enteredAbdomen))
+        {
+            var abdomenCm = DisplayPreferencesService.ConvertCircumferenceToMetric(enteredAbdomen, _circumferenceUnitCode);
+            _abdomenText = DisplayPreferencesService.ConvertCircumferenceToDisplay(
+                abdomenCm,
+                _displayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(AbdomenText));
+        }
+
+        if (TryParseDecimal(_hipText, out var enteredHip))
+        {
+            var hipCm = DisplayPreferencesService.ConvertCircumferenceToMetric(enteredHip, _circumferenceUnitCode);
+            _hipText = DisplayPreferencesService.ConvertCircumferenceToDisplay(
+                hipCm,
+                _displayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            OnPropertyChanged(nameof(HipText));
+        }
+
         _weightUnitCode = _displayPreferences.WeightUnitCode;
+        _circumferenceUnitCode = _displayPreferences.CircumferenceUnitCode;
         OnPropertyChanged(nameof(WeightUnitText));
+        OnPropertyChanged(nameof(LengthUnitText));
         OnPropertyChanged(nameof(CanSave));
         SaveCommand.NotifyCanExecuteChanged();
     }

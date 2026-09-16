@@ -13,9 +13,9 @@ public sealed class SettingsPageMarkupTests
 
         Assert.Contains("ItemsSource=\"{Binding DateFormats}\"", markup);
         Assert.Contains("SelectedItem=\"{Binding SelectedDateFormat}\"", markup);
-        Assert.Contains("ItemsSource=\"{Binding WeightUnits}\"", markup);
-        Assert.Contains("SelectedItem=\"{Binding SelectedWeightUnit}\"", markup);
-        Assert.Contains("ItemsSource=\"{Binding HeightUnits}\"", markup);
-        Assert.Contains("SelectedItem=\"{Binding SelectedHeightUnit}\"", markup);
+        Assert.Contains("ItemsSource=\"{Binding MeasurementSystems}\"", markup);
+        Assert.Contains("SelectedItem=\"{Binding SelectedMeasurementSystem}\"", markup);
+        Assert.DoesNotContain("ItemsSource=\"{Binding WeightUnits}\"", markup);
+        Assert.DoesNotContain("ItemsSource=\"{Binding HeightUnits}\"", markup);
     }
 }

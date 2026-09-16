@@ -96,17 +96,23 @@ internal sealed class InMemoryDisplayPreferenceStore : IDisplayPreferenceStore
 
     public string? HeightUnitCode { get; private set; }
 
+    public string? MeasurementSystemCode { get; private set; }
+
     public string? GetDateFormatCode() => DateFormatCode;
 
     public string? GetWeightUnitCode() => WeightUnitCode;
 
     public string? GetHeightUnitCode() => HeightUnitCode;
 
+    public string? GetMeasurementSystemCode() => MeasurementSystemCode;
+
     public void SetDateFormatCode(string code) => DateFormatCode = code;
 
     public void SetWeightUnitCode(string code) => WeightUnitCode = code;
 
     public void SetHeightUnitCode(string code) => HeightUnitCode = code;
+
+    public void SetMeasurementSystemCode(string code) => MeasurementSystemCode = code;
 }
 
 public sealed class FakeMeasurementRepository : IMeasurementRepository

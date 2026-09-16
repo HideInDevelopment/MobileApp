@@ -4,7 +4,7 @@
 
 ## Goal
 
-Allow users to persist a date order, weight unit, and height unit, and apply those choices consistently to settings, profile/measurement forms, history, results-related measurement displays, and the weight graphic.
+Allow users to persist a date order and one Metric/Imperial measurement system, and apply the derived units consistently to settings, profile/measurement forms, history, results-related measurement displays, and the weight graphic.
 
 ## Constraints
 
@@ -12,20 +12,20 @@ Allow users to persist a date order, weight unit, and height unit, and apply tho
 - Domain and Application remain independent of MAUI, Preferences, cultures, and display units.
 - Persist weights as kilograms, lengths as centimeters, and timestamps as UTC.
 - Keep formula calculations and calculation-result units unchanged.
-- Default to `dd/MM/yyyy`, kilograms, and centimeters.
+- Default to `dd/MM/yyyy` and Metric: meters for profile height, centimeters for circumferences, and kilograms for weight.
 
 ## Slice 1: Presentation preference model and persistence
 
-1. Add canonical preference codes and immutable option records for date order, weight unit, and height unit.
+1. Add canonical preference codes and immutable option records for date order and the Metric/Imperial measurement system.
 2. Add a Presentation-owned preference store backed by MAUI Preferences, with one key per setting.
 3. Add a singleton service that loads defaults, validates saved values, exposes current selections, persists changes, and raises one change notification.
-4. Add conversion and formatting helpers for kilograms/pounds, centimeters/decimal feet for profile height, and local date formatting.
+4. Add conversion and formatting helpers for meters/decimal feet, centimeters/inches, kilograms/pounds, and local date formatting.
 5. Add focused tests for defaults, persistence, invalid-value fallback, conversion precision, and both date orders.
 
 ## Slice 2: Settings UI
 
 1. Inject the preference service into `SettingsViewModel` and expose localized option lists and selected values.
-2. Add date, weight, and height selectors to `SettingsPage.xaml`.
+2. Add date-format and measurement-system selectors to `SettingsPage.xaml`.
 3. Add English, Spanish, and German resource keys for setting labels and options.
 4. Refresh selector labels and selected values when language or display preferences change.
 5. Add ViewModel and markup tests for the new settings behavior.
@@ -33,7 +33,7 @@ Allow users to persist a date order, weight unit, and height unit, and apply tho
 ## Slice 3: Profile and measurement input boundaries
 
 1. Inject the preference service into profile and measurement editor view models.
-2. Display existing canonical height in the selected height unit when editing a profile.
+2. Display existing canonical height in meters or decimal feet when editing a profile.
 3. Parse selected-unit height and convert to centimeters before create/update commands.
 4. Parse selected-unit weight and circumference values and convert to kilograms/centimeters before `RecordMeasurement`.
 5. Update form placeholders/labels to show the selected unit and refresh them after a preference change.

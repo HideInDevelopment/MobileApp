@@ -32,11 +32,11 @@
 
 **Steps:**
 
-- [ ] Add failing tests for Metric/Imperial defaults, persistence, legacy `height-unit` migration, and conversion round trips for meters, feet, centimeters, inches, kilograms, and pounds.
-- [ ] Run the focused display-preference tests and confirm the failures are caused by the missing unified system contract.
-- [ ] Add `MetricCode` and `ImperialCode`, derive `WeightUnitCode`, `HeightUnitCode`, and a circumference unit from the selected system, and add explicit height/circumference conversion helpers.
-- [ ] Change the preference store to persist a `measurement-system` code and map existing `cm`, `ft`, `in`, `kg`, and `lb` preferences when the new code is absent.
-- [ ] Run the focused tests and refactor only for clarity while preserving the canonical conversion boundary.
+- [x] Add failing tests for Metric/Imperial defaults, persistence, legacy `height-unit` migration, and conversion round trips for meters, feet, centimeters, inches, kilograms, and pounds.
+- [x] Run the focused display-preference tests and confirm the failures are caused by the missing unified system contract.
+- [x] Add `MetricCode` and `ImperialCode`, derive `WeightUnitCode`, `HeightUnitCode`, and a circumference unit from the selected system, and add explicit height/circumference conversion helpers.
+- [x] Change the preference store to persist a `measurement-system` code and map existing `cm`, `ft`, `in`, `kg`, and `lb` preferences when the new code is absent.
+- [x] Run the focused tests and refactor only for clarity while preserving the canonical conversion boundary.
 
 **Verification:** `dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release --no-restore --filter FullyQualifiedName~DisplayPreferencesServiceTests`
 
@@ -54,11 +54,11 @@
 
 **Steps:**
 
-- [ ] Update tests to require one localized Measurement system selector with Metric and Imperial options and no separate weight/height selectors.
-- [ ] Run the focused settings tests and confirm the expected failures.
-- [ ] Replace independent selector state with the unified selector and persist changes through `DisplayPreferencesService`.
-- [ ] Update XAML bindings and add English, Spanish, and German resource keys for the system and display-unit abbreviations.
-- [ ] Run settings ViewModel, markup, and localization tests.
+- [x] Update tests to require one localized Measurement system selector with Metric and Imperial options and no separate weight/height selectors.
+- [x] Run the focused settings tests and confirm the expected failures.
+- [x] Replace independent selector state with the unified selector and persist changes through `DisplayPreferencesService`.
+- [x] Update XAML bindings and add English, Spanish, and German resource keys for the system and display-unit abbreviations.
+- [x] Run settings ViewModel, markup, and localization tests.
 
 **Verification:** `dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release --no-restore --filter FullyQualifiedName~Settings`
 
@@ -75,11 +75,11 @@
 
 **Steps:**
 
-- [ ] Add failing tests for metric `1.8 m`, imperial `5.1 ft`, metric centimeter circumferences, imperial inch circumferences, decimal weight, and comma decimal input.
-- [ ] Run the focused editor tests and confirm failures before production changes.
-- [ ] Convert profile height as meters/feet to canonical centimeters; convert measurement weight as kilograms/pounds and circumferences as centimeters/inches.
-- [ ] Reformat active editor values when the system changes without losing canonical meaning, and keep decimal keyboard/input support on every measurement, height, and weight field.
-- [ ] Run the focused editor and responsive tests.
+- [x] Add failing tests for metric `1.8 m`, imperial `5.1 ft`, metric centimeter circumferences, imperial inch circumferences, decimal weight, and comma decimal input.
+- [x] Run the focused editor tests and confirm failures before production changes.
+- [x] Convert profile height as meters/feet to canonical centimeters; convert measurement weight as kilograms/pounds and circumferences as centimeters/inches.
+- [x] Reformat active editor values when the system changes without losing canonical meaning, and keep decimal keyboard/input support on every measurement, height, and weight field.
+- [x] Run the focused editor and responsive tests.
 
 **Verification:** `dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release --no-restore --filter "FullyQualifiedName~ProfileEditorViewModelTests|FullyQualifiedName~MeasurementEditorViewModelTests|FullyQualifiedName~ResponsiveLayoutTests"`
 
@@ -93,10 +93,10 @@
 
 **Steps:**
 
-- [ ] Add failing tests for metric history height/weight, imperial history height/weight, imperial weight chart values, and canonical point retention.
-- [ ] Run the focused history/chart tests and confirm failures.
-- [ ] Use the service-derived display units for history and chart labels/values while leaving chart points and results untouched in canonical units.
-- [ ] Run the focused history/chart tests and verify language refreshes remain correct.
+- [x] Add failing tests for metric history height/weight, imperial history height/weight, imperial weight chart values, and canonical point retention.
+- [x] Run the focused history/chart tests and confirm failures.
+- [x] Use the service-derived display units for history and chart labels/values while leaving chart points and results untouched in canonical units.
+- [x] Run the focused history/chart tests and verify language refreshes remain correct.
 
 **Verification:** `dotnet test tests/Anthropometry.App.Tests/Anthropometry.App.Tests.csproj --configuration Release --no-restore --filter "FullyQualifiedName~MeasurementHistoryViewModelTests|FullyQualifiedName~WeightGraphicViewModelTests"`
 
@@ -109,12 +109,12 @@
 
 **Steps:**
 
-- [ ] Update the architecture and active plan to describe the unified Metric/Imperial preference, meter/feet profile height, centimeter/inch circumferences, and canonical kg/cm storage.
-- [ ] Review the complete diff for stale independent-unit references, missing localization keys, unrelated edits, and architecture violations.
-- [ ] Run `dotnet restore`.
-- [ ] Run `dotnet test Anthropometry.sln -f net10.0 --configuration Release`.
-- [ ] Run the Android Debug/Release build with the repository’s SDK/JDK overrides and confirm 0 warnings/errors.
-- [ ] Commit the completed implementation with a focused message.
+- [x] Update the architecture and active plan to describe the unified Metric/Imperial preference, meter/feet profile height, centimeter/inch circumferences, and canonical kg/cm storage.
+- [x] Review the complete diff for stale independent-unit references, missing localization keys, unrelated edits, and architecture violations.
+- [ ] Run `dotnet restore` (host-level .NET workload check exits before project evaluation because Windows reports a pending restart; existing restored assets are valid and the Android build restored successfully).
+- [x] Run `dotnet test Anthropometry.sln -f net10.0 --configuration Release`.
+- [x] Run the Android Debug/Release build with the repository’s SDK/JDK overrides and confirm 0 warnings/errors.
+- [x] Commit the completed implementation with a focused message.
 
 **Verification:**
 

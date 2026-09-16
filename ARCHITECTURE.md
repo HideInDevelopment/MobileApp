@@ -30,7 +30,7 @@ The application will target Android first while keeping a structure that allows 
 | Testing | TDD for domain and application; infrastructure tests and critical UI-flow tests |
 | Network | Out of scope for the MVP; no backend or synchronization |
 | Canonical units | Metric system (kilograms and centimeters) |
-| Display units | Persisted Presentation preference; metric defaults with optional pounds/feet |
+| Display units | Persisted Presentation preference: Metric (m/cm/kg) or Imperial (decimal ft/in/lb) |
 
 .NET MAUI is the evolution of Xamarin.Forms and allows code sharing between Android and iOS while retaining access to native APIs when needed. See the [official .NET MAUI documentation](https://learn.microsoft.com/en-us/dotnet/maui/?view=net-maui-10.0).
 
@@ -246,7 +246,7 @@ bodyFatPercentage =
 
 The UI states that this formula is for men and that the abdomen must be measured at the product-defined location. The formula rejects non-positive inputs and any case where `abdomenInches - neckInches` is not greater than zero.
 
-Profile height may be displayed and entered in decimal feet, but circumference measurements remain in centimeters because feet are not a useful unit for neck, waist, abdomen, or hip measurements.
+The Presentation layer exposes one persisted Metric/Imperial preference. Metric displays profile height in meters, circumferences in centimeters, and weight in kilograms. Imperial displays profile height in decimal feet, circumferences in inches, and weight in pounds. All values are converted back to canonical centimeters or kilograms before they cross into Application, and no feet-and-inches shorthand is used.
 
 The female implementation uses the classic US Navy/Hodgdon-Beckett equation and requires waist, hip, neck, and height. Metric values are converted to inches at the formula boundary:
 
@@ -445,7 +445,7 @@ Minimum states for each flow:
 - recoverable error;
 - operation completed.
 
-The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History formats local dates using the selected `dd/MM/yyyy` or `MM/dd/yyyy` order and displays weight and height using the selected Presentation units. It offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow background because their results reuse the previous neck and abdomen values. History also exposes a ruler toolbar action with a `Weight graphic` option; the graphic plots every persisted weight measurement chronologically as points joined by a line, and tapping a point shows its date and weight legend until another chart location is tapped. The chart uses the selected weight unit and date format for display. Profile detail also exposes a temporary `Generate sample data` action that creates a deterministic 30-day alternating history from the latest size-based measurement, including persisted calculation results. The toolbar uses icon-only Settings and Help actions; Settings opens a Presentation-only settings screen where English, Spanish, and German can be selected, along with the date order and weight/height display units. The selected language, appearance, and display preferences are persisted in local MAUI Preferences and restored before the first feature page is created.
+The profile list shows a centered create action when no profiles exist. Once profiles exist, `Add profile` appears in the top area and remains visible but disabled after four profiles. The profile detail screen enables `Add weight` only after at least one size-based measurement exists and does not show a warning icon. After either measurement save, the editor closes and the app opens the refreshed History view. History formats local dates using the selected `dd/MM/yyyy` or `MM/dd/yyyy` order and displays weight and height using the selected Presentation units. It offers results for both measurement types; weight-only rows show a centered warning icon before the date and a yellow background because their results reuse the previous neck and abdomen values. History also exposes a ruler toolbar action with a `Weight graphic` option; the graphic plots every persisted weight measurement chronologically as points joined by a line, and tapping a point shows its date and weight legend until another chart location is tapped. The chart uses the selected weight unit and date format for display. Profile detail also exposes a temporary `Generate sample data` action that creates a deterministic 30-day alternating history from the latest size-based measurement, including persisted calculation results. The toolbar uses icon-only Settings and Help actions; Settings opens a Presentation-only settings screen where English, Spanish, and German can be selected, along with the date order and the unified Metric/Imperial measurement system. The selected language, appearance, and display preferences are persisted in local MAUI Preferences and restored before the first feature page is created.
 
 The visual style will be minimal and functional:
 
@@ -550,7 +550,6 @@ The design leaves room for these future additions, but they are not part of the 
 
 - more anthropometric equations;
 - profiles with formula-specific sex or parameters;
-- imperial units;
 - additional progress charts beyond the initial weight graphic;
 - CSV or PDF export;
 - local backup;

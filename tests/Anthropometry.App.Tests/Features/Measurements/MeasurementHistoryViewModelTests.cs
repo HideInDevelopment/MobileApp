@@ -70,7 +70,7 @@ public sealed class MeasurementHistoryViewModelTests
 
         Assert.Equal("Solo peso", viewModel.Measurements[0].MeasurementTypeText);
         Assert.Equal("Peso: 80 kg", viewModel.Measurements[0].WeightText);
-        Assert.Equal("Altura: 180 cm", viewModel.Measurements[0].HeightText);
+        Assert.Equal("Altura: 1,8 m", viewModel.Measurements[0].HeightText);
     }
 
     [Fact]
@@ -81,8 +81,7 @@ public sealed class MeasurementHistoryViewModelTests
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, new DateTimeOffset(2026, 9, 8, 12, 0, 0, TimeSpan.Zero)));
         var displayPreferences = TestData.DisplayPreferences();
         displayPreferences.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
-        displayPreferences.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        displayPreferences.SetHeightUnit(DisplayPreferencesService.FeetCode);
+        displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
         var viewModel = CreateViewModel(repository, out _, profile.Id, displayPreferences: displayPreferences);
 
         await viewModel.LoadCommand.ExecuteAsync(null);

@@ -120,7 +120,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
                 "{0}: {1:0.##} {2}",
                 _languageService.Get("Height"),
                 _displayPreferences.ToDisplayHeight(measurement.HeightCm),
-                _languageService.Get(_displayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "Cm")));
+                _languageService.Get(_displayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "M")));
 
     private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
         => RefreshItems();

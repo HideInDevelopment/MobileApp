@@ -43,7 +43,7 @@ public sealed class ProfileEditorViewModelTests
             CreateDisplayPreferences())
         {
             Name = "Manuel",
-            HeightText = "180",
+            HeightText = "1.8",
             AgeText = "35",
             SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.Moderate, "Moderately active")
         };
@@ -68,7 +68,7 @@ public sealed class ProfileEditorViewModelTests
             CreateDisplayPreferences())
         {
             Name = "Manuel",
-            HeightText = "180",
+            HeightText = "1.8",
             AgeText = "35",
             SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.Moderate, "Moderately active")
         };
@@ -118,7 +118,7 @@ public sealed class ProfileEditorViewModelTests
             CreateDisplayPreferences())
         {
             Name = "Updated",
-            HeightText = "181",
+            HeightText = "1.81",
             AgeText = "36",
             SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.High, "Highly active")
         };
@@ -143,7 +143,7 @@ public sealed class ProfileEditorViewModelTests
             CreateDisplayPreferences())
         {
             Name = "Anna",
-            HeightText = "180",
+            HeightText = "1.8",
             AgeText = "35",
             SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.Moderate, "Moderately active"),
             SelectedGender = new GenderOption(ProfileGender.Female, "Female")
@@ -158,7 +158,7 @@ public sealed class ProfileEditorViewModelTests
     public async Task Imperial_decimal_feet_input_for_180_cm_is_saved_as_centimeters()
     {
         var repository = new FakeProfileRepository();
-        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.FeetCode);
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.ImperialCode);
         var viewModel = new ProfileEditorViewModel(
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
@@ -182,7 +182,7 @@ public sealed class ProfileEditorViewModelTests
     public async Task Imperial_decimal_feet_input_is_saved_as_centimeters()
     {
         var repository = new FakeProfileRepository();
-        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.FeetCode);
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.ImperialCode);
         var viewModel = new ProfileEditorViewModel(
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
@@ -207,7 +207,7 @@ public sealed class ProfileEditorViewModelTests
     public void Imperial_decimal_feet_is_shown_when_reopening_profile()
     {
         var profile = TestData.Profile("Anna");
-        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.FeetCode);
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.ImperialCode);
         var viewModel = new ProfileEditorViewModel(
             new CreateProfile(new FakeProfileRepository(), new FakeClock()),
             new UpdateProfile(new FakeProfileRepository(), new FakeClock()),
@@ -238,15 +238,31 @@ public sealed class ProfileEditorViewModelTests
             TestData.LanguageService(),
             displayPreferences);
 
-        displayPreferences.SetHeightUnit(DisplayPreferencesService.FeetCode);
+        displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
 
         Assert.Equal("5.91", viewModel.HeightText);
         Assert.Equal("ft", viewModel.HeightUnitText);
     }
 
-    private static DisplayPreferencesService CreateDisplayPreferences(string? heightUnitCode = null)
+    [Fact]
+    public void Metric_profile_height_is_displayed_in_meters()
     {
-        var service = new DisplayPreferencesService(new FakeDisplayPreferenceStore { HeightUnitCode = heightUnitCode });
+        var profile = TestData.Profile();
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(new FakeProfileRepository(), new FakeClock()),
+            new UpdateProfile(new FakeProfileRepository(), new FakeClock()),
+            new ProfileDto(profile.Id, profile.Name, new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate), profile.CreatedAtUtc, profile.UpdatedAtUtc),
+            new NavigationSpy(),
+            TestData.LanguageService(),
+            CreateDisplayPreferences());
+
+        Assert.Equal("1.8", viewModel.HeightText);
+        Assert.Equal("m", viewModel.HeightUnitText);
+    }
+
+    private static DisplayPreferencesService CreateDisplayPreferences(string? measurementSystemCode = null)
+    {
+        var service = new DisplayPreferencesService(new FakeDisplayPreferenceStore { MeasurementSystemCode = measurementSystemCode });
         service.Initialize();
         return service;
     }
@@ -259,17 +275,23 @@ public sealed class ProfileEditorViewModelTests
 
         public string? HeightUnitCode { get; set; }
 
+        public string? MeasurementSystemCode { get; set; }
+
         public string? GetDateFormatCode() => DateFormatCode;
 
         public string? GetWeightUnitCode() => WeightUnitCode;
 
         public string? GetHeightUnitCode() => HeightUnitCode;
 
+        public string? GetMeasurementSystemCode() => MeasurementSystemCode;
+
         public void SetDateFormatCode(string code) => DateFormatCode = code;
 
         public void SetWeightUnitCode(string code) => WeightUnitCode = code;
 
         public void SetHeightUnitCode(string code) => HeightUnitCode = code;
+
+        public void SetMeasurementSystemCode(string code) => MeasurementSystemCode = code;
     }
 
     private sealed class NavigationSpy : IProfileNavigation

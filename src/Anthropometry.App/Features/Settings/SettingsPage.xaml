@@ -33,22 +33,13 @@
                         SemanticProperties.Description="{DynamicResource DateFormat}" />
             </Grid>
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <Label Grid.Column="0" Text="{DynamicResource WeightUnit}" VerticalOptions="Center" />
+                <Label Grid.Column="0" Text="{DynamicResource MeasurementSystem}" VerticalOptions="Center" />
                 <Picker Grid.Column="1"
-                        ItemsSource="{Binding WeightUnits}"
+                        ItemsSource="{Binding MeasurementSystems}"
                         ItemDisplayBinding="{Binding DisplayName}"
-                        SelectedItem="{Binding SelectedWeightUnit}"
+                        SelectedItem="{Binding SelectedMeasurementSystem}"
                         WidthRequest="170"
-                        SemanticProperties.Description="{DynamicResource WeightUnit}" />
-            </Grid>
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                <Label Grid.Column="0" Text="{DynamicResource HeightUnit}" VerticalOptions="Center" />
-                <Picker Grid.Column="1"
-                        ItemsSource="{Binding HeightUnits}"
-                        ItemDisplayBinding="{Binding DisplayName}"
-                        SelectedItem="{Binding SelectedHeightUnit}"
-                        WidthRequest="170"
-                        SemanticProperties.Description="{DynamicResource HeightUnit}" />
+                        SemanticProperties.Description="{DynamicResource MeasurementSystem}" />
             </Grid>
         </VerticalStackLayout>
     </ScrollView>

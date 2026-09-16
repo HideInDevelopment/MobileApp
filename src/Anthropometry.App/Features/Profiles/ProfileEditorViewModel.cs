@@ -84,7 +84,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     }
 
     public string HeightUnitText => _languageService.Get(
-        _displayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "Cm");
+        _displayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "M");
 
     public string AgeText
     {

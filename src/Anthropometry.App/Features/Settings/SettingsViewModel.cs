@@ -17,8 +17,7 @@ public sealed class SettingsViewModel : ObservableObject
     private LanguageOption? _selectedLanguage;
     private string _selectedThemeCode;
     private string _selectedDateFormatCode;
-    private string _selectedWeightUnitCode;
-    private string _selectedHeightUnitCode;
+    private string _selectedMeasurementSystemCode;
 
     public SettingsViewModel(
         LanguageService languageService,
@@ -32,8 +31,7 @@ public sealed class SettingsViewModel : ObservableObject
         _selectedLanguage = Languages.Single(language => language.Code == _languageService.CurrentLanguageCode);
         _selectedThemeCode = _themeService.CurrentThemeCode;
         _selectedDateFormatCode = _displayPreferences.DateFormatCode;
-        _selectedWeightUnitCode = _displayPreferences.WeightUnitCode;
-        _selectedHeightUnitCode = _displayPreferences.HeightUnitCode;
+        _selectedMeasurementSystemCode = _displayPreferences.MeasurementSystemCode;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
@@ -51,16 +49,10 @@ public sealed class SettingsViewModel : ObservableObject
         new(DisplayPreferencesService.MonthDayYearCode, _languageService.Get("MonthDayYear"))
     ];
 
-    public IReadOnlyList<UnitOption> WeightUnits =>
+    public IReadOnlyList<UnitOption> MeasurementSystems =>
     [
-        new(DisplayPreferencesService.KilogramsCode, _languageService.Get("Kilograms")),
-        new(DisplayPreferencesService.PoundsCode, _languageService.Get("Pounds"))
-    ];
-
-    public IReadOnlyList<UnitOption> HeightUnits =>
-    [
-        new(DisplayPreferencesService.CentimetersCode, _languageService.Get("Centimeters")),
-        new(DisplayPreferencesService.FeetCode, _languageService.Get("Feet"))
+        new(DisplayPreferencesService.MetricCode, _languageService.Get("Metric")),
+        new(DisplayPreferencesService.ImperialCode, _languageService.Get("Imperial"))
     ];
 
     public LanguageOption? SelectedLanguage
@@ -109,35 +101,19 @@ public sealed class SettingsViewModel : ObservableObject
         }
     }
 
-    public UnitOption? SelectedWeightUnit
+    public UnitOption? SelectedMeasurementSystem
     {
-        get => WeightUnits.SingleOrDefault(option => option.Code == _selectedWeightUnitCode);
+        get => MeasurementSystems.SingleOrDefault(option => option.Code == _selectedMeasurementSystemCode);
         set
         {
-            if (value is null || string.Equals(_selectedWeightUnitCode, value.Code, StringComparison.Ordinal))
+            if (value is null || string.Equals(_selectedMeasurementSystemCode, value.Code, StringComparison.Ordinal))
             {
                 return;
             }
 
-            _selectedWeightUnitCode = value.Code;
+            _selectedMeasurementSystemCode = value.Code;
             OnPropertyChanged();
-            _displayPreferences.SetWeightUnit(value.Code);
-        }
-    }
-
-    public UnitOption? SelectedHeightUnit
-    {
-        get => HeightUnits.SingleOrDefault(option => option.Code == _selectedHeightUnitCode);
-        set
-        {
-            if (value is null || string.Equals(_selectedHeightUnitCode, value.Code, StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            _selectedHeightUnitCode = value.Code;
-            OnPropertyChanged();
-            _displayPreferences.SetHeightUnit(value.Code);
+            _displayPreferences.SetMeasurementSystem(value.Code);
         }
     }
 
@@ -147,9 +123,7 @@ public sealed class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedTheme));
         OnPropertyChanged(nameof(DateFormats));
         OnPropertyChanged(nameof(SelectedDateFormat));
-        OnPropertyChanged(nameof(WeightUnits));
-        OnPropertyChanged(nameof(SelectedWeightUnit));
-        OnPropertyChanged(nameof(HeightUnits));
-        OnPropertyChanged(nameof(SelectedHeightUnit));
+        OnPropertyChanged(nameof(MeasurementSystems));
+        OnPropertyChanged(nameof(SelectedMeasurementSystem));
     }
 }

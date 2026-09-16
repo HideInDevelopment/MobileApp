@@ -57,15 +57,14 @@ public sealed class SettingsViewModelTests
     }
 
     [Fact]
-    public void Exposes_and_persists_date_and_unit_preferences()
+    public void Exposes_and_persists_date_and_measurement_system_preferences()
     {
         var languageService = new LanguageService(new FakeLanguagePreferenceStore());
         languageService.Initialize();
         var displayStore = new FakeDisplayPreferenceStore
         {
             DateFormatCode = DisplayPreferencesService.MonthDayYearCode,
-            WeightUnitCode = DisplayPreferencesService.PoundsCode,
-            HeightUnitCode = DisplayPreferencesService.FeetCode
+            MeasurementSystemCode = DisplayPreferencesService.ImperialCode
         };
         var displayPreferences = new DisplayPreferencesService(displayStore);
         displayPreferences.Initialize();
@@ -75,19 +74,15 @@ public sealed class SettingsViewModelTests
         var viewModel = new SettingsViewModel(languageService, themeService, displayPreferences);
 
         Assert.Equal(["dd/MM/yyyy", "MM/dd/yyyy"], viewModel.DateFormats.Select(option => option.Code));
-        Assert.Equal(["kg", "lb"], viewModel.WeightUnits.Select(option => option.Code));
-        Assert.Equal(["cm", "ft"], viewModel.HeightUnits.Select(option => option.Code));
+        Assert.Equal(["metric", "imperial"], viewModel.MeasurementSystems.Select(option => option.Code));
         Assert.Equal("MM/dd/yyyy", viewModel.SelectedDateFormat!.Code);
-        Assert.Equal("lb", viewModel.SelectedWeightUnit!.Code);
-        Assert.Equal("ft", viewModel.SelectedHeightUnit!.Code);
+        Assert.Equal("imperial", viewModel.SelectedMeasurementSystem!.Code);
 
         viewModel.SelectedDateFormat = viewModel.DateFormats[0];
-        viewModel.SelectedWeightUnit = viewModel.WeightUnits[0];
-        viewModel.SelectedHeightUnit = viewModel.HeightUnits[0];
+        viewModel.SelectedMeasurementSystem = viewModel.MeasurementSystems[0];
 
         Assert.Equal("dd/MM/yyyy", displayStore.DateFormatCode);
-        Assert.Equal("kg", displayStore.WeightUnitCode);
-        Assert.Equal("cm", displayStore.HeightUnitCode);
+        Assert.Equal("metric", displayStore.MeasurementSystemCode);
     }
 
     private sealed class FakeLanguagePreferenceStore : ILanguagePreferenceStore
@@ -123,16 +118,22 @@ public sealed class SettingsViewModelTests
 
         public string? HeightUnitCode { get; set; }
 
+        public string? MeasurementSystemCode { get; set; }
+
         public string? GetDateFormatCode() => DateFormatCode;
 
         public string? GetWeightUnitCode() => WeightUnitCode;
 
         public string? GetHeightUnitCode() => HeightUnitCode;
 
+        public string? GetMeasurementSystemCode() => MeasurementSystemCode;
+
         public void SetDateFormatCode(string code) => DateFormatCode = code;
 
         public void SetWeightUnitCode(string code) => WeightUnitCode = code;
 
         public void SetHeightUnitCode(string code) => HeightUnitCode = code;
+
+        public void SetMeasurementSystemCode(string code) => MeasurementSystemCode = code;
     }
 }
