@@ -868,7 +868,7 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 **Status:** Implemented as a Presentation-only preference slice.
 
-**Review boundary:** Settings persists the date order (`dd/mm/yyyy` or `mm/dd/yyyy`), weight unit (kilograms or pounds), and height unit (centimeters or inches). Profile and measurement forms accept the selected display units, while domain calculations and SQLite remain in kilograms, centimeters, and UTC. History and the weight graphic use the selected date and units.
+**Review boundary:** Settings persists the date order (`dd/mm/yyyy` or `mm/dd/yyyy`), weight unit (kilograms or pounds), and height unit (centimeters or inches). Profile and measurement forms accept the selected display units, while domain calculations and SQLite remain in kilograms, centimeters, and UTC. Imperial profile heights accept total inches and the common one-decimal feet/inches shorthand (for example, `5.1` for 5 ft 1 in). History and the weight graphic use the selected date and units.
 
 **Acceptance criteria:**
 
@@ -882,8 +882,8 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 **Verification:**
 
-- [x] App test suite passed with 91 tests.
-- [x] Full solution test suite passed: 52 Domain, 31 Application, 11 Infrastructure, and 91 App tests.
+- [x] App test suite passed with 92 tests.
+- [x] Full solution test suite passed: 52 Domain, 31 Application, 11 Infrastructure, and 92 App tests.
 - [x] Android Debug build completed with 0 warnings and 0 errors.
 - [x] Android Release source/package build completed with 0 warnings and 0 errors when `PublishTrimmed=false` and `RunAOTCompilation=false` were supplied as environment-only verification overrides.
 - [ ] Default trimmed Android Release packaging remains blocked by the host's `Microsoft.NET.ILLink` task-host failure (`MSB4216`), unrelated to application compilation.

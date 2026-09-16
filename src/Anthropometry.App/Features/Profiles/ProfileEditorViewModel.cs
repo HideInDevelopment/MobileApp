@@ -189,7 +189,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     {
         if (!TryParseDecimal(HeightText, out var enteredHeight)
             || !int.TryParse(AgeText, NumberStyles.Integer, CultureInfo.CurrentCulture, out var age)
-            || !TryConvertHeight(enteredHeight, out var height)
+            || !TryConvertHeight(enteredHeight, _displayPreferences.HeightUnitCode, out var height)
             || height is < 50m or > 300m
             || age is < 1 or > 120
             || SelectedActivityLevel is null)
@@ -202,10 +202,31 @@ public sealed class ProfileEditorViewModel : ObservableObject
         return true;
     }
 
-    private bool TryConvertHeight(decimal enteredHeight, out decimal height)
+    private static bool TryConvertHeight(decimal enteredHeight, string unitCode, out decimal height)
     {
-        height = _displayPreferences.ToMetricHeight(enteredHeight);
+        if (unitCode == DisplayPreferencesService.InchesCode
+            && TryParseFeetAndInchesShorthand(enteredHeight, out var totalInches))
+        {
+            height = DisplayPreferencesService.ConvertHeightToMetric(totalInches, DisplayPreferencesService.InchesCode);
+            return true;
+        }
+
+        height = DisplayPreferencesService.ConvertHeightToMetric(enteredHeight, unitCode);
         return height > 0;
+    }
+
+    private static bool TryParseFeetAndInchesShorthand(decimal value, out decimal totalInches)
+    {
+        totalInches = 0;
+        var feet = decimal.Truncate(value);
+        var inches = (value - feet) * 10m;
+        if (feet is < 3m or > 8m || inches < 0m || inches >= 12m || decimal.Truncate(inches) != inches)
+        {
+            return false;
+        }
+
+        totalInches = feet * 12m + inches;
+        return true;
     }
 
     private static bool TryParseDecimal(string value, out decimal result)
@@ -220,9 +241,9 @@ public sealed class ProfileEditorViewModel : ObservableObject
 
     private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
     {
-        if (TryParseDecimal(_heightText, out var enteredHeight))
+        if (TryParseDecimal(_heightText, out var enteredHeight)
+            && TryConvertHeight(enteredHeight, _heightUnitCode, out var heightCm))
         {
-            var heightCm = DisplayPreferencesService.ConvertHeightToMetric(enteredHeight, _heightUnitCode);
             _heightText = _displayPreferences.ToDisplayHeight(heightCm).ToString("0.##", CultureInfo.CurrentCulture);
             OnPropertyChanged(nameof(HeightText));
         }

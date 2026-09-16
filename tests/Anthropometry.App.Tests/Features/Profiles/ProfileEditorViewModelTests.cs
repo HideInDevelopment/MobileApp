@@ -179,6 +179,31 @@ public sealed class ProfileEditorViewModelTests
     }
 
     [Fact]
+    public async Task Imperial_feet_and_inches_shorthand_is_saved_as_centimeters()
+    {
+        var repository = new FakeProfileRepository();
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.InchesCode);
+        var viewModel = new ProfileEditorViewModel(
+            new CreateProfile(repository, new FakeClock()),
+            new UpdateProfile(repository, new FakeClock()),
+            null,
+            new NavigationSpy(),
+            TestData.LanguageService(),
+            displayPreferences)
+        {
+            Name = "Anna",
+            HeightText = "5.1",
+            AgeText = "35",
+            SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.Moderate, "Moderately active"),
+            SelectedGender = new GenderOption(ProfileGender.Female, "Female")
+        };
+
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        Assert.Equal(154.94m, Assert.Single(repository.Items).Settings!.HeightCm, 2);
+    }
+
+    [Fact]
     public void Changing_height_unit_reformats_an_existing_editor_value()
     {
         var profile = TestData.Profile();
