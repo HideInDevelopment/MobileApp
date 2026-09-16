@@ -10,6 +10,10 @@ public interface IMeasurementNavigation
 
     Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement);
 
+    Task EditMeasurementAsync(ProfileDto profile, MeasurementDto measurement);
+
+    Task<bool> ConfirmDeleteAsync(MeasurementDto measurement);
+
     Task ShowHistoryAsync(ProfileDto profile);
 
     Task ShowChartOptionsAsync(ProfileId profileId);

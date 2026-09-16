@@ -312,6 +312,43 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(["close", "results"], navigation.Destinations);
     }
 
+    [Fact]
+    public async Task Editing_a_measurement_preserves_its_id_replaces_results_and_recalculates()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var existing = TestData.Measurement(profile.Id);
+        measurements.Items.Add(existing);
+        var results = new FakeCalculationResultRepository();
+        results.Items.Add(CalculationResult.Create(
+            existing.Id,
+            CalculationType.BasalMetabolicRate,
+            new CalculationResultValue(1755m, "kcal/day", "old-bmr", "1.0"),
+            DateTimeOffset.UtcNow).Value);
+        var navigation = new NavigationSpy();
+        var viewModel = CreateViewModel(
+            profile,
+            MeasurementType.WeightAndSizes,
+            profiles,
+            measurements,
+            results,
+            navigation,
+            existingMeasurement: ToDto(existing));
+
+        Assert.Equal("80", viewModel.WeightText);
+        viewModel.WeightText = "82";
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(measurements.Items);
+        Assert.Equal(existing.Id, saved.Id);
+        Assert.Equal(82m, saved.WeightKg);
+        Assert.Equal(3, results.Items.Count);
+        Assert.Equal(existing.Id, navigation.SavedMeasurement!.Id);
+        Assert.Equal(["close", "results"], navigation.Destinations);
+    }
+
     private static MeasurementEditorViewModel CreateViewModel(
         Profile profile,
         MeasurementType measurementType,
@@ -320,7 +357,8 @@ public sealed class MeasurementEditorViewModelTests
         FakeCalculationResultRepository results,
         NavigationSpy? navigation = null,
         Anthropometry.App.Localization.LanguageService? languageService = null,
-        DisplayPreferencesService? displayPreferences = null)
+        DisplayPreferencesService? displayPreferences = null,
+        MeasurementDto? existingMeasurement = null)
     {
         var catalog = new FormulaCatalog(
             new UsNavyMaleBodyFatFormula(),
@@ -345,7 +383,9 @@ public sealed class MeasurementEditorViewModelTests
             measurementType,
             navigation ?? new NavigationSpy(),
             languageService ?? TestData.LanguageService(),
-            displayPreferences ?? CreateDisplayPreferences());
+            displayPreferences ?? CreateDisplayPreferences(),
+            new UpdateMeasurement(measurements, results),
+            existingMeasurement);
     }
 
     private static DisplayPreferencesService CreateDisplayPreferences()
@@ -354,6 +394,21 @@ public sealed class MeasurementEditorViewModelTests
         service.Initialize();
         return service;
     }
+
+    private static MeasurementDto ToDto(Measurement measurement)
+        => new(
+            measurement.Id,
+            measurement.ProfileId,
+            measurement.Type,
+            measurement.MeasuredAtUtc,
+            measurement.WeightKg,
+            measurement.HeightCm,
+            measurement.NeckCm,
+            measurement.AbdomenCm,
+            measurement.AgeYears,
+            measurement.ActivityLevel,
+            measurement.HipCm,
+            measurement.Gender);
 
     private sealed class FakeDisplayPreferenceStore : IDisplayPreferenceStore
     {
@@ -410,6 +465,10 @@ public sealed class MeasurementEditorViewModelTests
             Destinations.Add("results");
             return Task.CompletedTask;
         }
+
+        public Task EditMeasurementAsync(ProfileDto profile, MeasurementDto measurement) => Task.CompletedTask;
+
+        public Task<bool> ConfirmDeleteAsync(MeasurementDto measurement) => Task.FromResult(false);
 
         public Task CloseMeasurementAsync()
         {

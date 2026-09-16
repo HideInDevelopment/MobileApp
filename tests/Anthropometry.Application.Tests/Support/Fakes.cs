@@ -48,6 +48,24 @@ public sealed class FakeMeasurementRepository : IMeasurementRepository
         return Task.CompletedTask;
     }
 
+    public Task UpdateAsync(Measurement measurement, CancellationToken cancellationToken)
+    {
+        var index = Items.FindIndex(item => item.Id == measurement.Id);
+        if (index < 0)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        Items[index] = measurement;
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteWithResultsAsync(MeasurementId id, CancellationToken cancellationToken)
+    {
+        Items.RemoveAll(measurement => measurement.Id == id);
+        return Task.CompletedTask;
+    }
+
     public Task<Measurement?> GetByIdAsync(MeasurementId id, CancellationToken cancellationToken)
         => Task.FromResult(Items.SingleOrDefault(measurement => measurement.Id == id));
 
@@ -62,6 +80,12 @@ public sealed class FakeCalculationResultRepository : ICalculationResultReposito
     public Task AddAsync(CalculationResult result, CancellationToken cancellationToken)
     {
         Items.Add(result);
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteByMeasurementAsync(MeasurementId measurementId, CancellationToken cancellationToken)
+    {
+        Items.RemoveAll(result => result.MeasurementId == measurementId);
         return Task.CompletedTask;
     }
 

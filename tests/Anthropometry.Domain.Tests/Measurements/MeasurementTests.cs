@@ -224,4 +224,48 @@ public sealed class MeasurementTests
         Assert.False(result.IsSuccess);
         Assert.Equal("measurement.type.invalid", result.Error!.Code);
     }
+
+    [Fact]
+    public void Rehydrate_preserves_the_existing_id_when_editing_valid_values()
+    {
+        var profileId = ProfileId.New();
+        var measurementId = MeasurementId.New();
+        var measuredAt = new DateTimeOffset(2026, 9, 16, 12, 0, 0, TimeSpan.Zero);
+        var input = new MeasurementInput(
+            MeasurementType.WeightAndSizes,
+            82.5m,
+            181.5m,
+            41.25m,
+            91.75m,
+            36,
+            ActivityLevel.High,
+            measuredAt);
+
+        var result = Measurement.Rehydrate(measurementId, profileId, input);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(measurementId, result.Value.Id);
+        Assert.Equal(82.5m, result.Value.WeightKg);
+        Assert.Equal(measuredAt, result.Value.MeasuredAtUtc);
+    }
+
+    [Fact]
+    public void Rehydrate_rejects_an_invalid_female_edit_without_hip()
+    {
+        var input = new MeasurementInput(
+            MeasurementType.WeightAndSizes,
+            80m,
+            180m,
+            40m,
+            90m,
+            35,
+            ActivityLevel.Moderate,
+            DateTimeOffset.UtcNow,
+            Gender: ProfileGender.Female);
+
+        var result = Measurement.Rehydrate(MeasurementId.New(), ProfileId.New(), input);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.hip.required", result.Error!.Code);
+    }
 }

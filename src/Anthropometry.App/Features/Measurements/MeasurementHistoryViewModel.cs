@@ -14,7 +14,8 @@ namespace Anthropometry.App.Features.Measurements;
 public sealed class MeasurementHistoryViewModel : ObservableObject
 {
     private readonly GetMeasurementHistory _getHistory;
-    private readonly ProfileId _profileId;
+    private readonly DeleteMeasurement _deleteMeasurement;
+    private readonly ProfileDto _profile;
     private readonly IMeasurementNavigation _navigation;
     private readonly LanguageService _languageService;
     private readonly DisplayPreferencesService _displayPreferences;
@@ -24,20 +25,24 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
 
     public MeasurementHistoryViewModel(
         GetMeasurementHistory getHistory,
-        ProfileId profileId,
+        DeleteMeasurement deleteMeasurement,
+        ProfileDto profile,
         IMeasurementNavigation navigation,
         LanguageService languageService,
         DisplayPreferencesService displayPreferences)
     {
         _getHistory = getHistory;
-        _profileId = profileId;
+        _deleteMeasurement = deleteMeasurement;
+        _profile = profile;
         _navigation = navigation;
         _languageService = languageService;
         _displayPreferences = displayPreferences;
         Measurements = new ReadOnlyObservableCollection<MeasurementHistoryItem>(_measurements);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SelectCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(SelectAsync);
-        ChartsCommand = new AsyncRelayCommand(() => _navigation.ShowChartOptionsAsync(_profileId));
+        EditCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(EditAsync);
+        DeleteCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(DeleteAsync);
+        ChartsCommand = new AsyncRelayCommand(() => _navigation.ShowChartOptionsAsync(_profile.Id));
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
@@ -68,6 +73,10 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
 
     public IAsyncRelayCommand<MeasurementHistoryItem?> SelectCommand { get; }
 
+    public IAsyncRelayCommand<MeasurementHistoryItem?> EditCommand { get; }
+
+    public IAsyncRelayCommand<MeasurementHistoryItem?> DeleteCommand { get; }
+
     public IAsyncRelayCommand ChartsCommand { get; }
 
     private async Task LoadAsync()
@@ -76,7 +85,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         ErrorMessage = null;
         try
         {
-            var result = await _getHistory.ExecuteAsync(_profileId, CancellationToken.None);
+            var result = await _getHistory.ExecuteAsync(_profile.Id, CancellationToken.None);
             _measurements.Clear();
             if (result.IsSuccess)
             {
@@ -101,6 +110,37 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         => item is null || !item.CanViewResults
             ? Task.CompletedTask
             : _navigation.ShowResultsAsync(item.Measurement);
+
+    private Task EditAsync(MeasurementHistoryItem? item)
+        => item is null
+            ? Task.CompletedTask
+            : _navigation.EditMeasurementAsync(_profile, item.Measurement);
+
+    private async Task DeleteAsync(MeasurementHistoryItem? item)
+    {
+        if (item is null || !await _navigation.ConfirmDeleteAsync(item.Measurement))
+        {
+            return;
+        }
+
+        IsLoading = true;
+        ErrorMessage = null;
+        try
+        {
+            var result = await _deleteMeasurement.ExecuteAsync(_profile.Id, item.Measurement.Id, CancellationToken.None);
+            if (!result.IsSuccess)
+            {
+                ErrorMessage = _languageService.Get("DeleteMeasurementError");
+                return;
+            }
+
+            await LoadAsync();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
     private MeasurementHistoryItem CreateItem(MeasurementDto measurement)
         => new(

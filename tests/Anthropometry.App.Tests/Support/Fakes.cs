@@ -125,6 +125,24 @@ public sealed class FakeMeasurementRepository : IMeasurementRepository
         return Task.CompletedTask;
     }
 
+    public Task UpdateAsync(Measurement measurement, CancellationToken cancellationToken)
+    {
+        var index = Items.FindIndex(item => item.Id == measurement.Id);
+        if (index < 0)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        Items[index] = measurement;
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteWithResultsAsync(MeasurementId id, CancellationToken cancellationToken)
+    {
+        Items.RemoveAll(measurement => measurement.Id == id);
+        return Task.CompletedTask;
+    }
+
     public Task<Measurement?> GetByIdAsync(MeasurementId id, CancellationToken cancellationToken)
         => Task.FromResult(Items.SingleOrDefault(measurement => measurement.Id == id));
 
@@ -135,6 +153,10 @@ public sealed class FakeMeasurementRepository : IMeasurementRepository
 public sealed class ThrowingMeasurementRepository : IMeasurementRepository
 {
     public Task AddAsync(Measurement measurement, CancellationToken cancellationToken) => throw new IOException();
+
+    public Task UpdateAsync(Measurement measurement, CancellationToken cancellationToken) => throw new IOException();
+
+    public Task DeleteWithResultsAsync(MeasurementId id, CancellationToken cancellationToken) => throw new IOException();
 
     public Task<Measurement?> GetByIdAsync(MeasurementId id, CancellationToken cancellationToken) => throw new IOException();
 
@@ -151,6 +173,12 @@ public sealed class FakeCalculationResultRepository : ICalculationResultReposito
         return Task.CompletedTask;
     }
 
+    public Task DeleteByMeasurementAsync(MeasurementId measurementId, CancellationToken cancellationToken)
+    {
+        Items.RemoveAll(result => result.MeasurementId == measurementId);
+        return Task.CompletedTask;
+    }
+
     public Task<IReadOnlyList<CalculationResult>> GetByMeasurementAsync(MeasurementId measurementId, CancellationToken cancellationToken)
         => Task.FromResult<IReadOnlyList<CalculationResult>>(Items.Where(result => result.MeasurementId == measurementId).ToArray());
 }
@@ -158,6 +186,8 @@ public sealed class FakeCalculationResultRepository : ICalculationResultReposito
 public sealed class ThrowingCalculationResultRepository : ICalculationResultRepository
 {
     public Task AddAsync(CalculationResult result, CancellationToken cancellationToken) => throw new IOException();
+
+    public Task DeleteByMeasurementAsync(MeasurementId measurementId, CancellationToken cancellationToken) => throw new IOException();
 
     public Task<IReadOnlyList<CalculationResult>> GetByMeasurementAsync(MeasurementId measurementId, CancellationToken cancellationToken) => throw new IOException();
 }

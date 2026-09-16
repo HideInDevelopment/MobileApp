@@ -69,6 +69,12 @@
   <data name="SavedMeasurementsLocal" xml:space="preserve"><value>Gespeicherte Messungen und Ergebnisse bleiben auf diesem Gerät.</value></data>
   <data name="ViewResults" xml:space="preserve"><value>Ergebnisse anzeigen</value></data>
   <data name="ViewHistory" xml:space="preserve"><value>Verlauf anzeigen</value></data>
+  <data name="EditMeasurement" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="EditMeasurementTitle" xml:space="preserve"><value>Messung bearbeiten</value></data>
+  <data name="DeleteMeasurement" xml:space="preserve"><value>Löschen</value></data>
+  <data name="DeleteMeasurementTitle" xml:space="preserve"><value>Messung löschen?</value></data>
+  <data name="DeleteMeasurementMessage" xml:space="preserve"><value>Messung vom {0} und ihre berechneten Ergebnisse löschen?</value></data>
+  <data name="DeleteMeasurementError" xml:space="preserve"><value>Die Messung konnte nicht gelöscht werden. Bitte versuche es erneut.</value></data>
   <data name="WeightOnly" xml:space="preserve"><value>Nur Gewicht</value></data>
   <data name="WeightAndSizes" xml:space="preserve"><value>Gewicht und Maße</value></data>
   <data name="ReusedMeasurementsDescription" xml:space="preserve"><value>Diese Ergebnisse verwenden die vorherigen Körpermaße erneut.</value></data>

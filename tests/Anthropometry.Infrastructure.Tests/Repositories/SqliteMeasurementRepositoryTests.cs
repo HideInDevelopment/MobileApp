@@ -106,4 +106,61 @@ public sealed class SqliteMeasurementRepositoryTests
         Assert.Equal(ProfileGender.Female, loaded!.Gender);
         Assert.Equal(110.5m, loaded.HipCm);
     }
+
+    [Fact]
+    public async Task Update_preserves_measurement_id_and_replaces_values()
+    {
+        using var database = new TemporaryDatabase();
+        var factory = new SqliteConnectionFactory(database.Path);
+        await new MigrationRunner(factory).InitializeAsync(CancellationToken.None);
+        var profiles = new SqliteProfileRepository(factory);
+        var repository = new SqliteMeasurementRepository(factory);
+        var profile = TestData.Profile();
+        var measurement = TestData.Measurement(profile.Id);
+        var edited = Measurement.Rehydrate(
+            measurement.Id,
+            profile.Id,
+            new MeasurementInput(
+                MeasurementType.WeightAndSizes,
+                82.5m,
+                181.5m,
+                41.25m,
+                91.75m,
+                36,
+                ActivityLevel.High,
+                new DateTimeOffset(2026, 9, 16, 12, 0, 0, TimeSpan.Zero))).Value;
+
+        await profiles.AddAsync(profile, CancellationToken.None);
+        await repository.AddAsync(measurement, CancellationToken.None);
+        await repository.UpdateAsync(edited, CancellationToken.None);
+
+        var loaded = await repository.GetByIdAsync(measurement.Id, CancellationToken.None);
+
+        Assert.Equal(measurement.Id, loaded!.Id);
+        Assert.Equal(82.5m, loaded.WeightKg);
+        Assert.Equal(181.5m, loaded.HeightCm);
+        Assert.Equal(41.25m, loaded.NeckCm);
+        Assert.Equal(new DateTimeOffset(2026, 9, 16, 12, 0, 0, TimeSpan.Zero), loaded.MeasuredAtUtc);
+    }
+
+    [Fact]
+    public async Task Delete_with_results_removes_measurement_and_results_transactionally()
+    {
+        using var database = new TemporaryDatabase();
+        var factory = new SqliteConnectionFactory(database.Path);
+        await new MigrationRunner(factory).InitializeAsync(CancellationToken.None);
+        var profiles = new SqliteProfileRepository(factory);
+        var repository = new SqliteMeasurementRepository(factory);
+        var results = new SqliteCalculationResultRepository(factory);
+        var profile = TestData.Profile();
+        var measurement = TestData.Measurement(profile.Id);
+
+        await profiles.AddAsync(profile, CancellationToken.None);
+        await repository.AddAsync(measurement, CancellationToken.None);
+        await results.AddAsync(TestData.CalculationResult(measurement.Id), CancellationToken.None);
+        await repository.DeleteWithResultsAsync(measurement.Id, CancellationToken.None);
+
+        Assert.Null(await repository.GetByIdAsync(measurement.Id, CancellationToken.None));
+        Assert.Empty(await results.GetByMeasurementAsync(measurement.Id, CancellationToken.None));
+    }
 }

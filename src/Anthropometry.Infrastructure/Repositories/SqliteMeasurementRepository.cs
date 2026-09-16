@@ -36,6 +36,43 @@ public sealed class SqliteMeasurementRepository : IMeasurementRepository
                 (int)measurement.ActivityLevel);
         }, cancellationToken);
 
+    public Task UpdateAsync(Measurement measurement, CancellationToken cancellationToken)
+        => Task.Run(() =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            using var connection = _connectionFactory.Create();
+            var changes = connection.Execute(
+                "UPDATE Measurements SET ProfileId = ?, MeasuredAtUtc = ?, MeasurementType = ?, WeightKg = ?, HeightCm = ?, NeckCm = ?, AbdomenCm = ?, HipCm = ?, Gender = ?, AgeYears = ?, ActivityLevel = ? WHERE Id = ?",
+                measurement.ProfileId.ToString(),
+                SqliteValueConverter.ToUtcString(measurement.MeasuredAtUtc),
+                (int)measurement.Type,
+                measurement.WeightKg,
+                measurement.HeightCm,
+                measurement.NeckCm,
+                measurement.AbdomenCm,
+                measurement.HipCm,
+                (int)measurement.Gender,
+                measurement.AgeYears,
+                (int)measurement.ActivityLevel,
+                measurement.Id.ToString());
+            if (changes == 0)
+            {
+                throw new KeyNotFoundException($"Measurement {measurement.Id} was not found.");
+            }
+        }, cancellationToken);
+
+    public Task DeleteWithResultsAsync(MeasurementId id, CancellationToken cancellationToken)
+        => Task.Run(() =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            using var connection = _connectionFactory.Create();
+            connection.RunInTransaction(() =>
+            {
+                connection.Execute("DELETE FROM CalculationResults WHERE MeasurementId = ?", id.ToString());
+                connection.Execute("DELETE FROM Measurements WHERE Id = ?", id.ToString());
+            });
+        }, cancellationToken);
+
     public Task<Measurement?> GetByIdAsync(MeasurementId id, CancellationToken cancellationToken)
         => Task.Run(() =>
         {

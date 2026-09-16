@@ -58,6 +58,10 @@ public sealed class ResponsiveLayoutTests
 
         public Task ShowResultsAsync(Anthropometry.Application.Common.ProfileDto profile, Anthropometry.Application.Common.MeasurementDto measurement) => Task.CompletedTask;
 
+        public Task EditMeasurementAsync(Anthropometry.Application.Common.ProfileDto profile, Anthropometry.Application.Common.MeasurementDto measurement) => Task.CompletedTask;
+
+        public Task<bool> ConfirmDeleteAsync(Anthropometry.Application.Common.MeasurementDto measurement) => Task.FromResult(false);
+
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
         public Task ShowChartOptionsAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;

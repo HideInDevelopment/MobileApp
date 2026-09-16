@@ -36,7 +36,11 @@
                                 <Label Text="{Binding HeightText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
                                 <Label Text="{Binding MeasurementTypeText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
                             </VerticalStackLayout>
-                            <Button Grid.Column="2" Text="{DynamicResource ViewResults}" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                            <VerticalStackLayout Grid.Column="2" Spacing="4">
+                                <Button Text="{DynamicResource ViewResults}" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                                <Button Text="{DynamicResource EditMeasurement}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                                <Button Text="{DynamicResource DeleteMeasurement}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" />
+                            </VerticalStackLayout>
                         </Grid>
                     </Border>
                 </DataTemplate>

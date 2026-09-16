@@ -66,6 +66,8 @@ public static class MauiProgram
         builder.Services.AddTransient<DeleteProfile>();
         builder.Services.AddTransient<GetProfiles>();
         builder.Services.AddTransient<RecordMeasurement>();
+        builder.Services.AddTransient<UpdateMeasurement>();
+        builder.Services.AddTransient<DeleteMeasurement>();
         builder.Services.AddTransient<GetMeasurementHistory>();
         builder.Services.AddTransient<GenerateSampleMeasurementHistory>();
         builder.Services.AddTransient<CalculateBodyFat>();

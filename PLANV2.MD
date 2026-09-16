@@ -342,15 +342,15 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - `DeleteMeasurement` verifies ownership through the repository and returns `ApplicationErrors.MeasurementNotFound` when appropriate.
 - `MeasurementHistoryViewModel` exposes `EditCommand` and `DeleteCommand` with a confirmation callback supplied by `IMeasurementNavigation`.
 
-- [ ] **Step 1: Add failing Domain tests for same-ID rehydration and invalid edits**
+- [x] **Step 1: Add failing Domain tests for same-ID rehydration and invalid edits**
 
   Cover valid edits that preserve `MeasurementId`, invalid size combinations, female hip requirements, and UTC date validation.
 
-- [ ] **Step 2: Add failing Application and Infrastructure tests**
+- [x] **Step 2: Add failing Application and Infrastructure tests**
 
   Cover update persistence, delete-with-results transaction behavior, missing measurement errors, and rollback when the SQLite delete fails.
 
-- [ ] **Step 3: Run focused tests and verify meaningful failures**
+- [x] **Step 3: Run focused tests and verify meaningful failures**
 
   ```powershell
   dotnet test tests/Anthropometry.Domain.Tests/Anthropometry.Domain.Tests.csproj --configuration Release --filter "FullyQualifiedName~MeasurementTests"
@@ -360,15 +360,15 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: FAIL because the update/delete ports and use cases do not exist.
 
-- [ ] **Step 4: Implement the minimum Domain, Application, and SQLite behavior**
+- [x] **Step 4: Implement the minimum Domain, Application, and SQLite behavior**
 
   Keep calculation replacement explicit: delete existing results for an edited measurement, persist the edited measurement, then run the existing calculation use cases and add new versioned results. Use one SQLite transaction for measurement/result deletion. Do not add cascade behavior that changes profile deletion semantics.
 
-- [ ] **Step 5: Add edit/delete actions to History**
+- [x] **Step 5: Add edit/delete actions to History**
 
   Reuse the existing measurement editor with an optional measurement argument. Add a red/destructive delete action only to the confirmation surface and use localized, specific copy. After edit or delete, reload History and preserve the empty/loading/error states.
 
-- [ ] **Step 6: Run all tests and Android build**
+- [x] **Step 6: Run all tests and Android build**
 
   ```powershell
   dotnet test Anthropometry.sln -f net10.0 --configuration Release --no-restore -m:1
@@ -377,7 +377,7 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Expected: all tests pass and the Android build has 0 warnings and 0 errors.
 
-- [ ] **Step 7: Commit measurement correction support**
+- [x] **Step 7: Commit measurement correction support**
 
   ```powershell
   git add src/Anthropometry.Domain/Measurements src/Anthropometry.Application src/Anthropometry.Infrastructure/Repositories/SqliteMeasurementRepository.cs src/Anthropometry.App/Features/Measurements src/Anthropometry.App/MauiNavigation.cs src/Anthropometry.App/MauiProgram.cs src/Anthropometry.App/Resources/Strings tests

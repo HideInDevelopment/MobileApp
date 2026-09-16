@@ -84,17 +84,43 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             type,
             this,
             _languageService,
-            _displayPreferences));
+            _displayPreferences,
+            _services.GetRequiredService<UpdateMeasurement>()));
         return PushAsync(page);
     }
 
     public Task ShowHistoryAsync(ProfileDto profile)
         => PushAsync(new MeasurementHistoryPage(new MeasurementHistoryViewModel(
             _services.GetRequiredService<GetMeasurementHistory>(),
-            profile.Id,
+            _services.GetRequiredService<DeleteMeasurement>(),
+            profile,
             this,
             _languageService,
             _displayPreferences)));
+
+    public Task EditMeasurementAsync(ProfileDto profile, MeasurementDto measurement)
+        => PushAsync(new MeasurementEditorPage(new MeasurementEditorViewModel(
+            _services.GetRequiredService<RecordMeasurement>(),
+            _services.GetRequiredService<CalculateBodyFat>(),
+            _services.GetRequiredService<CalculateBasalMetabolicRate>(),
+            _services.GetRequiredService<CalculateTotalDailyEnergyExpenditure>(),
+            profile,
+            measurement.Type,
+            this,
+            _languageService,
+            _displayPreferences,
+            _services.GetRequiredService<UpdateMeasurement>(),
+            measurement)));
+
+    public Task<bool> ConfirmDeleteAsync(MeasurementDto measurement)
+        => Shell.Current.DisplayAlertAsync(
+            _languageService.Get("DeleteMeasurementTitle"),
+            string.Format(
+                CultureInfo.CurrentCulture,
+                _languageService.Get("DeleteMeasurementMessage"),
+                _displayPreferences.FormatDate(measurement.MeasuredAtUtc)),
+            _languageService.Get("DeleteMeasurement"),
+            _languageService.Get("Cancel"));
 
     public async Task ShowChartOptionsAsync(ProfileId profileId)
     {

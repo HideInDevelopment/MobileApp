@@ -5,6 +5,7 @@ using Anthropometry.Application.Measurements;
 using Anthropometry.App.Display;
 using Anthropometry.App.Features.Help;
 using Anthropometry.App.Localization;
+using Anthropometry.Domain.Common;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -15,6 +16,7 @@ namespace Anthropometry.App.Features.Measurements;
 public sealed class MeasurementEditorViewModel : ObservableObject
 {
     private readonly RecordMeasurement _recordMeasurement;
+    private readonly UpdateMeasurement? _updateMeasurement;
     private readonly CalculateBodyFat _calculateBodyFat;
     private readonly CalculateBasalMetabolicRate _calculateBmr;
     private readonly CalculateTotalDailyEnergyExpenditure _calculateTdee;
@@ -23,6 +25,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private readonly IMeasurementNavigation _navigation;
     private readonly LanguageService _languageService;
     private readonly DisplayPreferencesService _displayPreferences;
+    private readonly MeasurementDto? _existingMeasurement;
     private string _weightText = string.Empty;
     private string _neckText = string.Empty;
     private string _abdomenText = string.Empty;
@@ -43,9 +46,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         MeasurementType measurementType,
         IMeasurementNavigation navigation,
         LanguageService languageService,
-        DisplayPreferencesService displayPreferences)
+        DisplayPreferencesService displayPreferences,
+        UpdateMeasurement? updateMeasurement = null,
+        MeasurementDto? existingMeasurement = null)
     {
         _recordMeasurement = recordMeasurement;
+        _updateMeasurement = updateMeasurement;
         _calculateBodyFat = calculateBodyFat;
         _calculateBmr = calculateBmr;
         _calculateTdee = calculateTdee;
@@ -54,17 +60,21 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _navigation = navigation;
         _languageService = languageService;
         _displayPreferences = displayPreferences;
+        _existingMeasurement = existingMeasurement;
         _weightUnitCode = _displayPreferences.WeightUnitCode;
         _circumferenceUnitCode = _displayPreferences.CircumferenceUnitCode;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
         ShowGuidanceCommand = new AsyncRelayCommand<GuidanceTopic>(_navigation.ShowGuidanceAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
+        LoadExistingMeasurement();
     }
 
-    public string Title => _measurementType == MeasurementType.WeightOnly
-        ? _languageService.Get("AddWeight")
-        : _languageService.Get("AddMeasurements");
+    public string Title => _existingMeasurement is not null
+        ? _languageService.Get("EditMeasurementTitle")
+        : _measurementType == MeasurementType.WeightOnly
+            ? _languageService.Get("AddWeight")
+            : _languageService.Get("AddMeasurements");
 
     public string SaveButtonText => _measurementType == MeasurementType.WeightOnly
         ? _languageService.Get("SaveWeight")
@@ -162,7 +172,9 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            var recorded = await _recordMeasurement.ExecuteAsync(command, CancellationToken.None);
+            var recorded = _existingMeasurement is null
+                ? await _recordMeasurement.ExecuteAsync(command, CancellationToken.None)
+                : await UpdateExistingMeasurementAsync(command);
             if (!recorded.IsSuccess)
             {
                 ValidationMessage = recorded.Error!.Code.StartsWith("measurement.", StringComparison.Ordinal)
@@ -249,6 +261,32 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         return true;
     }
 
+    private Task<Result<MeasurementDto>> UpdateExistingMeasurementAsync(RecordMeasurementCommand command)
+    {
+        if (_updateMeasurement is null || _profile.Settings is null || _existingMeasurement is null)
+        {
+            return Task.FromResult(Result.Failure<MeasurementDto>(new DomainError(
+                "measurement.update.unavailable",
+                "Errors.PersistenceUnavailable")));
+        }
+
+        return _updateMeasurement.ExecuteAsync(
+            new UpdateMeasurementCommand(
+                _existingMeasurement.Id,
+                command.ProfileId,
+                command.Type,
+                command.WeightKg,
+                _profile.Settings.HeightCm,
+                command.NeckCm,
+                command.AbdomenCm,
+                _profile.Settings.AgeYears,
+                _profile.Settings.ActivityLevel,
+                _existingMeasurement.MeasuredAtUtc,
+                command.HipCm,
+                _profile.Gender),
+            CancellationToken.None);
+    }
+
     private bool HasValidInput()
         => TryCreateCommand(out _);
 
@@ -269,6 +307,29 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             OnPropertyChanged(nameof(CanSave));
             SaveCommand.NotifyCanExecuteChanged();
         }
+    }
+
+    private void LoadExistingMeasurement()
+    {
+        if (_existingMeasurement is null)
+        {
+            return;
+        }
+
+        _weightText = _displayPreferences.ToDisplayWeight(_existingMeasurement.WeightKg).ToString("0.##", CultureInfo.CurrentCulture);
+        _neckText = _existingMeasurement.NeckCm.HasValue
+            ? _displayPreferences.ToDisplayCircumference(_existingMeasurement.NeckCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
+            : string.Empty;
+        _abdomenText = _existingMeasurement.AbdomenCm.HasValue
+            ? _displayPreferences.ToDisplayCircumference(_existingMeasurement.AbdomenCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
+            : string.Empty;
+        _hipText = _existingMeasurement.HipCm.HasValue
+            ? _displayPreferences.ToDisplayCircumference(_existingMeasurement.HipCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
+            : string.Empty;
+        OnPropertyChanged(nameof(WeightText));
+        OnPropertyChanged(nameof(NeckText));
+        OnPropertyChanged(nameof(AbdomenText));
+        OnPropertyChanged(nameof(HipText));
     }
 
     private void OnDisplayPreferencesChanged(object? sender, EventArgs e)

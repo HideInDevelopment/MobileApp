@@ -144,6 +144,10 @@ public sealed class CalculationResultViewModelTests
 
         public Task ShowResultsAsync(ProfileDto profile, MeasurementDto measurement) => Task.CompletedTask;
 
+        public Task EditMeasurementAsync(ProfileDto profile, MeasurementDto measurement) => Task.CompletedTask;
+
+        public Task<bool> ConfirmDeleteAsync(MeasurementDto measurement) => Task.FromResult(false);
+
         public Task ShowHistoryAsync(ProfileDto profile)
         {
             HistoryProfile = profile;

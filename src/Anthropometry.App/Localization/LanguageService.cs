@@ -33,7 +33,7 @@ public sealed class LanguageService
         "Kg", "Cm", "SaveWeight", "CalculateResults", "ValidMeasurementExtended", "ValidWeight",
         "ValidMeasurementExtendedFemale",
         "MeasurementValuesError", "CompleteProfileDetails", "SaveMeasurementError", "CalculationError",
-        "MeasurementHistory", "NoMeasurements", "SavedMeasurementsLocal", "ViewResults", "ViewHistory", "WeightOnly", "LoadHistoryError",
+        "MeasurementHistory", "NoMeasurements", "SavedMeasurementsLocal", "ViewResults", "ViewHistory", "EditMeasurement", "EditMeasurementTitle", "DeleteMeasurement", "DeleteMeasurementTitle", "DeleteMeasurementMessage", "DeleteMeasurementError", "WeightOnly", "LoadHistoryError",
         "WeightAndSizes", "ReusedMeasurementsDescription", "EstimatedResults", "ResultsTitle",
         "BodyFatPercentage", "BasalMetabolicRate", "TotalDailyEnergyExpenditure", "ResultsLoadError",
         "Language", "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",

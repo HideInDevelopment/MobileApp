@@ -31,6 +31,14 @@ public sealed class SqliteCalculationResultRepository : ICalculationResultReposi
                 SqliteValueConverter.ToUtcString(result.CalculatedAtUtc));
         }, cancellationToken);
 
+    public Task DeleteByMeasurementAsync(MeasurementId measurementId, CancellationToken cancellationToken)
+        => Task.Run(() =>
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            using var connection = _connectionFactory.Create();
+            connection.Execute("DELETE FROM CalculationResults WHERE MeasurementId = ?", measurementId.ToString());
+        }, cancellationToken);
+
     public Task<IReadOnlyList<CalculationResult>> GetByMeasurementAsync(MeasurementId measurementId, CancellationToken cancellationToken)
         => Task.Run<IReadOnlyList<CalculationResult>>(() =>
         {

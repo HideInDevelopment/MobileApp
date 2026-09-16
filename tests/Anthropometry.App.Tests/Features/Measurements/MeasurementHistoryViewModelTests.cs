@@ -1,6 +1,7 @@
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Display;
 using Anthropometry.Application.Measurements;
+using Anthropometry.Application.Common;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Measurements;
 using Xunit;
@@ -12,7 +13,8 @@ public sealed class MeasurementHistoryViewModelTests
     [Fact]
     public async Task Load_shows_empty_state_when_no_measurements_exist()
     {
-        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out _, TestData.Profile().Id);
+        var profile = TestData.Profile();
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out _, profile);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -28,7 +30,7 @@ public sealed class MeasurementHistoryViewModelTests
         var repository = new FakeMeasurementRepository();
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, new DateTimeOffset(2026, 9, 7, 18, 30, 0, TimeSpan.Zero)));
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, new DateTimeOffset(2026, 9, 8, 8, 15, 0, TimeSpan.Zero)));
-        var viewModel = CreateViewModel(repository, out _, profile.Id);
+        var viewModel = CreateViewModel(repository, out _, profile);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -48,7 +50,7 @@ public sealed class MeasurementHistoryViewModelTests
         var repository = new FakeMeasurementRepository();
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, new DateTimeOffset(2026, 9, 7, 18, 30, 0, TimeSpan.Zero)));
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, new DateTimeOffset(2026, 9, 8, 8, 15, 0, TimeSpan.Zero)));
-        var viewModel = CreateViewModel(repository, out _, profile.Id);
+        var viewModel = CreateViewModel(repository, out _, profile);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -64,7 +66,7 @@ public sealed class MeasurementHistoryViewModelTests
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, DateTimeOffset.UtcNow));
         var languageService = TestData.LanguageService();
         languageService.SetLanguage("es");
-        var viewModel = CreateViewModel(repository, out _, profile.Id, languageService);
+        var viewModel = CreateViewModel(repository, out _, profile, languageService);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -82,7 +84,7 @@ public sealed class MeasurementHistoryViewModelTests
         var displayPreferences = TestData.DisplayPreferences();
         displayPreferences.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
         displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
-        var viewModel = CreateViewModel(repository, out _, profile.Id, displayPreferences: displayPreferences);
+        var viewModel = CreateViewModel(repository, out _, profile, displayPreferences: displayPreferences);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -97,7 +99,7 @@ public sealed class MeasurementHistoryViewModelTests
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, DateTimeOffset.UtcNow));
-        var viewModel = CreateViewModel(repository, out var navigation, profile.Id);
+        var viewModel = CreateViewModel(repository, out var navigation, profile);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
         await viewModel.SelectCommand.ExecuteAsync(viewModel.Measurements[0]);
@@ -113,7 +115,7 @@ public sealed class MeasurementHistoryViewModelTests
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
         repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, DateTimeOffset.UtcNow));
-        var viewModel = CreateViewModel(repository, out var navigation, profile.Id);
+        var viewModel = CreateViewModel(repository, out var navigation, profile);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
         await viewModel.SelectCommand.ExecuteAsync(viewModel.Measurements[0]);
@@ -127,24 +129,80 @@ public sealed class MeasurementHistoryViewModelTests
     public async Task Charts_command_opens_chart_options_for_the_current_profile()
     {
         var profile = TestData.Profile();
-        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out var navigation, profile.Id);
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out var navigation, profile);
 
         await viewModel.ChartsCommand.ExecuteAsync(null);
 
         Assert.Equal(profile.Id, navigation.ChartOptionsProfileId);
     }
 
+    [Fact]
+    public async Task Edit_command_delegates_the_profile_and_measurement()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, DateTimeOffset.UtcNow));
+        var viewModel = CreateViewModel(repository, out var navigation, profile);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        await viewModel.EditCommand.ExecuteAsync(viewModel.Measurements[0]);
+
+        Assert.Equal(profile.Id, navigation.EditProfileId);
+        Assert.Equal(viewModel.Measurements[0].Measurement.Id, navigation.EditMeasurementId);
+    }
+
+    [Fact]
+    public async Task Delete_command_confirms_then_removes_the_row_and_reloads_history()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, DateTimeOffset.UtcNow));
+        var viewModel = CreateViewModel(repository, out var navigation, profile);
+        navigation.ConfirmDeleteResult = true;
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        await viewModel.DeleteCommand.ExecuteAsync(viewModel.Measurements[0]);
+
+        Assert.True(navigation.ConfirmDeleteCalled);
+        Assert.Empty(repository.Items);
+        Assert.Empty(viewModel.Measurements);
+        Assert.True(viewModel.IsEmpty);
+    }
+
+    [Fact]
+    public async Task Delete_command_does_not_remove_the_row_when_cancelled()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, DateTimeOffset.UtcNow));
+        var viewModel = CreateViewModel(repository, out var navigation, profile);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+        await viewModel.DeleteCommand.ExecuteAsync(viewModel.Measurements[0]);
+
+        Assert.True(navigation.ConfirmDeleteCalled);
+        Assert.Single(repository.Items);
+        Assert.Single(viewModel.Measurements);
+    }
+
     private static MeasurementHistoryViewModel CreateViewModel(
         FakeMeasurementRepository repository,
         out NavigationSpy navigation,
-        Anthropometry.Domain.Profiles.ProfileId profileId,
+        Anthropometry.Domain.Profiles.Profile profile,
         Anthropometry.App.Localization.LanguageService? languageService = null,
         DisplayPreferencesService? displayPreferences = null)
     {
         navigation = new NavigationSpy();
         return new MeasurementHistoryViewModel(
             new GetMeasurementHistory(repository),
-            profileId,
+            new DeleteMeasurement(repository),
+            new ProfileDto(
+                profile.Id,
+                profile.Name,
+                new ProfileSettingsDto(180m, 35, Anthropometry.Domain.Calculations.ActivityLevel.Moderate),
+                profile.CreatedAtUtc,
+                profile.UpdatedAtUtc,
+                profile.Gender),
             navigation,
             languageService ?? TestData.LanguageService(),
             displayPreferences ?? TestData.DisplayPreferences());
@@ -164,6 +222,14 @@ public sealed class MeasurementHistoryViewModelTests
 
         public Anthropometry.Domain.Profiles.ProfileId? ChartOptionsProfileId { get; private set; }
 
+        public Anthropometry.Domain.Profiles.ProfileId? EditProfileId { get; private set; }
+
+        public Anthropometry.Domain.Measurements.MeasurementId? EditMeasurementId { get; private set; }
+
+        public bool ConfirmDeleteResult { get; set; }
+
+        public bool ConfirmDeleteCalled { get; private set; }
+
         public Task ShowResultsAsync(Anthropometry.Application.Common.MeasurementDto measurement)
         {
             SelectedMeasurementId = measurement.Id;
@@ -174,6 +240,19 @@ public sealed class MeasurementHistoryViewModelTests
         {
             SelectedMeasurementId = measurement.Id;
             return Task.CompletedTask;
+        }
+
+        public Task EditMeasurementAsync(Anthropometry.Application.Common.ProfileDto profile, Anthropometry.Application.Common.MeasurementDto measurement)
+        {
+            EditProfileId = profile.Id;
+            EditMeasurementId = measurement.Id;
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> ConfirmDeleteAsync(Anthropometry.Application.Common.MeasurementDto measurement)
+        {
+            ConfirmDeleteCalled = true;
+            return Task.FromResult(ConfirmDeleteResult);
         }
 
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
