@@ -14,7 +14,6 @@ try {
     & dotnet build $project `
         -t:Run `
         -f net10.0-android `
-        -p:TargetFrameworks=net10.0-android `
         -c Debug `
         -m:1 `
         -p:AndroidSdkDirectory="$env:ANDROID_HOME" `
