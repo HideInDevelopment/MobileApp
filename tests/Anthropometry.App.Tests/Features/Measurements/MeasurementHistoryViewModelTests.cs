@@ -126,14 +126,32 @@ public sealed class MeasurementHistoryViewModelTests
     }
 
     [Fact]
-    public async Task Charts_command_opens_chart_options_for_the_current_profile()
+    public void Charts_command_toggles_the_chart_options_menu()
     {
         var profile = TestData.Profile();
         var viewModel = CreateViewModel(new FakeMeasurementRepository(), out var navigation, profile);
 
-        await viewModel.ChartsCommand.ExecuteAsync(null);
+        viewModel.ChartsCommand.Execute(null);
 
-        Assert.Equal(profile.Id, navigation.ChartOptionsProfileId);
+        Assert.True(viewModel.IsChartMenuVisible);
+        Assert.Null(navigation.WeightGraphicProfileId);
+
+        viewModel.ChartsCommand.Execute(null);
+
+        Assert.False(viewModel.IsChartMenuVisible);
+    }
+
+    [Fact]
+    public async Task Selecting_weight_graphic_closes_the_menu_and_opens_the_graphic()
+    {
+        var profile = TestData.Profile();
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out var navigation, profile);
+
+        viewModel.ChartsCommand.Execute(null);
+        await viewModel.WeightGraphicCommand.ExecuteAsync(null);
+
+        Assert.False(viewModel.IsChartMenuVisible);
+        Assert.Equal(profile.Id, navigation.WeightGraphicProfileId);
     }
 
     [Fact]
@@ -275,7 +293,7 @@ public sealed class MeasurementHistoryViewModelTests
     {
         public Anthropometry.Domain.Measurements.MeasurementId? SelectedMeasurementId { get; private set; }
 
-        public Anthropometry.Domain.Profiles.ProfileId? ChartOptionsProfileId { get; private set; }
+        public Anthropometry.Domain.Profiles.ProfileId? WeightGraphicProfileId { get; private set; }
 
         public Anthropometry.Domain.Profiles.ProfileId? EditProfileId { get; private set; }
 
@@ -312,9 +330,9 @@ public sealed class MeasurementHistoryViewModelTests
 
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
-        public Task ShowChartOptionsAsync(Anthropometry.Domain.Profiles.ProfileId profileId)
+        public Task ShowWeightGraphicAsync(Anthropometry.Domain.Profiles.ProfileId profileId)
         {
-            ChartOptionsProfileId = profileId;
+            WeightGraphicProfileId = profileId;
             return Task.CompletedTask;
         }
 

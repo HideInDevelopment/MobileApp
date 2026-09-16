@@ -80,7 +80,7 @@ public sealed class ResponsiveLayoutTests
 
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
-        public Task ShowChartOptionsAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;
+        public Task ShowWeightGraphicAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;
 
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 

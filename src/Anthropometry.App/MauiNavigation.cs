@@ -122,24 +122,12 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _languageService.Get("DeleteMeasurement"),
             _languageService.Get("Cancel"));
 
-    public async Task ShowChartOptionsAsync(ProfileId profileId)
-    {
-        var metricChartLabel = _languageService.Get("MetricChart");
-        var selection = await Shell.Current.DisplayActionSheetAsync(
-            _languageService.Get("Charts"),
-            _languageService.Get("Cancel"),
-            null,
-            metricChartLabel);
-
-        if (string.Equals(selection, metricChartLabel, StringComparison.Ordinal))
-        {
-            await PushAsync(new WeightGraphicPage(new WeightGraphicViewModel(
-                _services.GetRequiredService<GetMetricHistory>(),
-                profileId,
-                _languageService,
-                _displayPreferences)));
-        }
-    }
+    public Task ShowWeightGraphicAsync(ProfileId profileId)
+        => PushAsync(new WeightGraphicPage(new WeightGraphicViewModel(
+            _services.GetRequiredService<GetMetricHistory>(),
+            profileId,
+            _languageService,
+            _displayPreferences)));
 
     public Task ShowSettingsAsync()
         => PushAsync(new SettingsPage(new SettingsViewModel(

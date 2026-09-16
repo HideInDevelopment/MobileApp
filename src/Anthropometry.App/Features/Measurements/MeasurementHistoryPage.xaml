@@ -14,7 +14,8 @@
                      Order="Secondary"
                      SemanticProperties.Description="{DynamicResource Filter}" />
     </ContentPage.ToolbarItems>
-    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
+    <Grid>
+        <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
         <Border Grid.Row="0"
                 Style="{StaticResource CardBorder}"
                 Padding="12"
@@ -85,5 +86,39 @@
         </CollectionView>
         <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsLoading}" />
         <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+        <Grid IsVisible="{Binding IsChartMenuVisible}"
+              BackgroundColor="Transparent"
+              ZIndex="10">
+            <BoxView BackgroundColor="Transparent">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding DismissChartMenuCommand}" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <Border Style="{StaticResource CardBorder}"
+                    WidthRequest="220"
+                    Padding="8"
+                    Margin="0,8,8,0"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start">
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Opacity="0.3"
+                            Radius="12"
+                            Offset="0,4" />
+                </Border.Shadow>
+                <Button Text="{DynamicResource MetricChart}"
+                        ImageSource="{AppThemeBinding Light=ruler.svg, Dark=ruler_dark.svg}"
+                        ContentLayout="Left,8"
+                        Command="{Binding WeightGraphicCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}"
+                        HorizontalOptions="Fill"
+                        MinimumHeightRequest="48"
+                        Padding="12,8"
+                        CornerRadius="6"
+                        SemanticProperties.Description="{DynamicResource MetricChart}" />
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

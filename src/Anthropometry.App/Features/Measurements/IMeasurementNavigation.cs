@@ -16,7 +16,7 @@ public interface IMeasurementNavigation
 
     Task ShowHistoryAsync(ProfileDto profile);
 
-    Task ShowChartOptionsAsync(ProfileId profileId);
+    Task ShowWeightGraphicAsync(ProfileId profileId);
 
     Task CloseMeasurementAsync();
 

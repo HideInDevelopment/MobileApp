@@ -30,6 +30,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     private MeasurementType? _selectedType;
     private MeasurementTypeFilterOption? _selectedTypeOption;
     private bool _suppressFilterReload;
+    private bool _isChartMenuVisible;
 
     public MeasurementHistoryViewModel(
         GetMeasurementHistory getHistory,
@@ -52,7 +53,9 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         SelectCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(SelectAsync);
         EditCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(EditAsync);
         DeleteCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(DeleteAsync);
-        ChartsCommand = new AsyncRelayCommand(() => _navigation.ShowChartOptionsAsync(_profile.Id));
+        ChartsCommand = new RelayCommand(ToggleChartMenu);
+        WeightGraphicCommand = new AsyncRelayCommand(ShowWeightGraphicAsync);
+        DismissChartMenuCommand = new RelayCommand(() => IsChartMenuVisible = false);
         ToggleFiltersCommand = new RelayCommand(() => IsFilterPanelVisible = !IsFilterPanelVisible);
         ClearFiltersCommand = new AsyncRelayCommand(ClearFiltersAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
@@ -73,6 +76,12 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     {
         get => _isFilterPanelVisible;
         set => SetProperty(ref _isFilterPanelVisible, value);
+    }
+
+    public bool IsChartMenuVisible
+    {
+        get => _isChartMenuVisible;
+        private set => SetProperty(ref _isChartMenuVisible, value);
     }
 
     public bool UseFromDate
@@ -189,7 +198,11 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
 
     public IAsyncRelayCommand<MeasurementHistoryItem?> DeleteCommand { get; }
 
-    public IAsyncRelayCommand ChartsCommand { get; }
+    public IRelayCommand ChartsCommand { get; }
+
+    public IAsyncRelayCommand WeightGraphicCommand { get; }
+
+    public IRelayCommand DismissChartMenuCommand { get; }
 
     public IRelayCommand ToggleFiltersCommand { get; }
 
@@ -247,6 +260,15 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         => item is null || !item.CanViewResults
             ? Task.CompletedTask
             : _navigation.ShowResultsAsync(item.Measurement);
+
+    private void ToggleChartMenu()
+        => IsChartMenuVisible = !IsChartMenuVisible;
+
+    private async Task ShowWeightGraphicAsync()
+    {
+        IsChartMenuVisible = false;
+        await _navigation.ShowWeightGraphicAsync(_profile.Id);
+    }
 
     private Task EditAsync(MeasurementHistoryItem? item)
         => item is null

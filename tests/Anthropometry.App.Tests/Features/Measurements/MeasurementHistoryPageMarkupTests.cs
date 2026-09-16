@@ -16,4 +16,19 @@ public sealed class MeasurementHistoryPageMarkupTests
         Assert.Contains("Path=BindingContext.EditCommand", markup);
         Assert.Contains("Path=BindingContext.DeleteCommand", markup);
     }
+
+    [Fact]
+    public void Exposes_chart_options_as_a_dismissible_dropdown_menu()
+    {
+        var path = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Features", "Measurements", "MeasurementHistoryPage.xaml"));
+        var markup = File.ReadAllText(path);
+
+        Assert.Contains("IsVisible=\"{Binding IsChartMenuVisible}\"", markup);
+        Assert.Contains("Text=\"{DynamicResource MetricChart}\"", markup);
+        Assert.Contains("Command=\"{Binding WeightGraphicCommand}\"", markup);
+        Assert.Contains("Command=\"{Binding DismissChartMenuCommand}\"", markup);
+    }
 }
