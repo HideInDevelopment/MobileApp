@@ -127,7 +127,7 @@
   <data name="Kilograms" xml:space="preserve"><value>Kilograms (kg)</value></data>
   <data name="Pounds" xml:space="preserve"><value>Pounds (lb)</value></data>
   <data name="Centimeters" xml:space="preserve"><value>Centimeters (cm)</value></data>
-  <data name="Inches" xml:space="preserve"><value>Inches (in)</value></data>
+  <data name="Feet" xml:space="preserve"><value>Feet (ft)</value></data>
   <data name="Lb" xml:space="preserve"><value>lb</value></data>
-  <data name="In" xml:space="preserve"><value>in</value></data>
+  <data name="Ft" xml:space="preserve"><value>ft</value></data>
 </root>

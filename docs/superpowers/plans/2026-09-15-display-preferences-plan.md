@@ -19,7 +19,7 @@ Allow users to persist a date order, weight unit, and height unit, and apply tho
 1. Add canonical preference codes and immutable option records for date order, weight unit, and height unit.
 2. Add a Presentation-owned preference store backed by MAUI Preferences, with one key per setting.
 3. Add a singleton service that loads defaults, validates saved values, exposes current selections, persists changes, and raises one change notification.
-4. Add conversion and formatting helpers for kilograms/pounds, centimeters/inches, and local date formatting.
+4. Add conversion and formatting helpers for kilograms/pounds, centimeters/decimal feet for profile height, and local date formatting.
 5. Add focused tests for defaults, persistence, invalid-value fallback, conversion precision, and both date orders.
 
 ## Slice 2: Settings UI

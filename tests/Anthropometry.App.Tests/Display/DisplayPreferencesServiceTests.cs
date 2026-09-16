@@ -37,6 +37,18 @@ public sealed class DisplayPreferencesServiceTests
     }
 
     [Fact]
+    public void Initialize_migrates_the_previous_inches_preference_to_feet()
+    {
+        var store = new InMemoryDisplayPreferenceStore { HeightUnitCode = "in" };
+        var service = new DisplayPreferencesService(store);
+
+        service.Initialize();
+
+        Assert.Equal(DisplayPreferencesService.FeetCode, service.HeightUnitCode);
+        Assert.Equal(DisplayPreferencesService.FeetCode, store.HeightUnitCode);
+    }
+
+    [Fact]
     public void Set_preferences_persists_values_and_notifies_once_per_changed_value()
     {
         var store = new InMemoryDisplayPreferenceStore();
@@ -47,11 +59,11 @@ public sealed class DisplayPreferencesServiceTests
 
         service.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
         service.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        service.SetHeightUnit(DisplayPreferencesService.InchesCode);
+        service.SetHeightUnit(DisplayPreferencesService.FeetCode);
 
         Assert.Equal(DisplayPreferencesService.MonthDayYearCode, store.DateFormatCode);
         Assert.Equal(DisplayPreferencesService.PoundsCode, store.WeightUnitCode);
-        Assert.Equal(DisplayPreferencesService.InchesCode, store.HeightUnitCode);
+        Assert.Equal(DisplayPreferencesService.FeetCode, store.HeightUnitCode);
         Assert.Equal(3, changes);
     }
 
@@ -61,15 +73,15 @@ public sealed class DisplayPreferencesServiceTests
         var service = new DisplayPreferencesService(new InMemoryDisplayPreferenceStore());
         service.Initialize();
         service.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        service.SetHeightUnit(DisplayPreferencesService.InchesCode);
+        service.SetHeightUnit(DisplayPreferencesService.FeetCode);
 
         var pounds = service.ToDisplayWeight(80m);
-        var inches = service.ToDisplayHeight(180m);
+        var feet = service.ToDisplayHeight(180m);
 
         Assert.Equal(176.369809744m, pounds, 9);
-        Assert.Equal(70.8661417323m, inches, 9);
+        Assert.Equal(5.905511811m, feet, 9);
         Assert.Equal(80m, service.ToMetricWeight(pounds), 9);
-        Assert.Equal(180m, service.ToMetricHeight(inches), 9);
+        Assert.Equal(180m, service.ToMetricHeight(feet), 9);
     }
 
     [Fact]

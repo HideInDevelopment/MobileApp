@@ -84,7 +84,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     }
 
     public string HeightUnitText => _languageService.Get(
-        _displayPreferences.HeightUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm");
+        _displayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "Cm");
 
     public string AgeText
     {
@@ -204,44 +204,13 @@ public sealed class ProfileEditorViewModel : ObservableObject
 
     private static bool TryConvertHeight(decimal enteredHeight, string unitCode, out decimal height)
     {
-        if (unitCode == DisplayPreferencesService.InchesCode
-            && TryParseFeetAndInchesShorthand(enteredHeight, out var totalInches))
-        {
-            height = DisplayPreferencesService.ConvertHeightToMetric(totalInches, DisplayPreferencesService.InchesCode);
-            return true;
-        }
-
         height = DisplayPreferencesService.ConvertHeightToMetric(enteredHeight, unitCode);
         return height > 0;
-    }
-
-    private static bool TryParseFeetAndInchesShorthand(decimal value, out decimal totalInches)
-    {
-        totalInches = 0;
-        var feet = decimal.Truncate(value);
-        var inches = (value - feet) * 10m;
-        if (feet is < 3m or > 8m || inches < 0m || inches >= 12m || decimal.Truncate(inches) != inches)
-        {
-            return false;
-        }
-
-        totalInches = feet * 12m + inches;
-        return true;
     }
 
     private static string FormatHeight(decimal heightCm, string unitCode)
     {
         var displayHeight = DisplayPreferencesService.ConvertHeightToDisplay(heightCm, unitCode);
-        if (unitCode == DisplayPreferencesService.InchesCode
-            && decimal.Truncate(displayHeight) == displayHeight
-            && displayHeight >= 36m
-            && displayHeight <= 107m)
-        {
-            var feet = decimal.Truncate(displayHeight / 12m);
-            var inches = displayHeight - feet * 12m;
-            return $"{feet:0}.{inches:0}";
-        }
-
         return displayHeight.ToString("0.##", CultureInfo.CurrentCulture);
     }
 

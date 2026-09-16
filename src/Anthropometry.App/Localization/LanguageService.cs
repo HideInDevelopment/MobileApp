@@ -47,7 +47,7 @@ public sealed class LanguageService
         "HelpTdeeTitle", "HelpTdeeDescription", "HelpTdeeFormula",
         "HelpActivityFactors", "HelpUnits", "Theme", "LightTheme", "DarkTheme",
         "DateFormat", "DayMonthYear", "MonthDayYear", "WeightUnit", "HeightUnit",
-        "Kilograms", "Pounds", "Centimeters", "Inches", "Lb", "In"
+        "Kilograms", "Pounds", "Centimeters", "Feet", "Lb", "Ft"
     ];
 
     private readonly ILanguagePreferenceStore _preferences;

@@ -155,10 +155,10 @@ public sealed class ProfileEditorViewModelTests
     }
 
     [Fact]
-    public async Task Imperial_height_input_is_saved_as_centimeters()
+    public async Task Imperial_decimal_feet_input_for_180_cm_is_saved_as_centimeters()
     {
         var repository = new FakeProfileRepository();
-        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.InchesCode);
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.FeetCode);
         var viewModel = new ProfileEditorViewModel(
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
@@ -168,7 +168,7 @@ public sealed class ProfileEditorViewModelTests
             displayPreferences)
         {
             Name = "Manuel",
-            HeightText = "70.8661417",
+            HeightText = "5.9055118",
             AgeText = "35",
             SelectedActivityLevel = new ActivityLevelOption(ActivityLevel.Moderate, "Moderately active")
         };
@@ -179,10 +179,10 @@ public sealed class ProfileEditorViewModelTests
     }
 
     [Fact]
-    public async Task Imperial_feet_and_inches_shorthand_is_saved_as_centimeters()
+    public async Task Imperial_decimal_feet_input_is_saved_as_centimeters()
     {
         var repository = new FakeProfileRepository();
-        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.InchesCode);
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.FeetCode);
         var viewModel = new ProfileEditorViewModel(
             new CreateProfile(repository, new FakeClock()),
             new UpdateProfile(repository, new FakeClock()),
@@ -200,21 +200,21 @@ public sealed class ProfileEditorViewModelTests
 
         await viewModel.SaveCommand.ExecuteAsync(null);
 
-        Assert.Equal(154.94m, Assert.Single(repository.Items).Settings!.HeightCm, 2);
+        Assert.Equal(155.448m, Assert.Single(repository.Items).Settings!.HeightCm, 3);
     }
 
     [Fact]
-    public void Imperial_feet_and_inches_shorthand_is_shown_when_reopening_profile()
+    public void Imperial_decimal_feet_is_shown_when_reopening_profile()
     {
         var profile = TestData.Profile("Anna");
-        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.InchesCode);
+        var displayPreferences = CreateDisplayPreferences(DisplayPreferencesService.FeetCode);
         var viewModel = new ProfileEditorViewModel(
             new CreateProfile(new FakeProfileRepository(), new FakeClock()),
             new UpdateProfile(new FakeProfileRepository(), new FakeClock()),
             new ProfileDto(
                 profile.Id,
                 profile.Name,
-                new ProfileSettingsDto(154.94m, 35, ActivityLevel.Moderate),
+                new ProfileSettingsDto(155.448m, 35, ActivityLevel.Moderate),
                 profile.CreatedAtUtc,
                 profile.UpdatedAtUtc,
                 ProfileGender.Female),
@@ -238,10 +238,10 @@ public sealed class ProfileEditorViewModelTests
             TestData.LanguageService(),
             displayPreferences);
 
-        displayPreferences.SetHeightUnit(DisplayPreferencesService.InchesCode);
+        displayPreferences.SetHeightUnit(DisplayPreferencesService.FeetCode);
 
-        Assert.Equal("70.87", viewModel.HeightText);
-        Assert.Equal("in", viewModel.HeightUnitText);
+        Assert.Equal("5.91", viewModel.HeightText);
+        Assert.Equal("ft", viewModel.HeightUnitText);
     }
 
     private static DisplayPreferencesService CreateDisplayPreferences(string? heightUnitCode = null)

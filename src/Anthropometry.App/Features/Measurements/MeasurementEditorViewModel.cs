@@ -31,7 +31,6 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private string? _validationMessage;
     private string? _errorMessage;
     private string _weightUnitCode;
-    private string _lengthUnitCode;
 
     public MeasurementEditorViewModel(
         RecordMeasurement recordMeasurement,
@@ -54,7 +53,6 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _languageService = languageService;
         _displayPreferences = displayPreferences;
         _weightUnitCode = _displayPreferences.WeightUnitCode;
-        _lengthUnitCode = _displayPreferences.HeightUnitCode;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
@@ -77,8 +75,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     public string WeightUnitText => _languageService.Get(
         _displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg");
 
-    public string LengthUnitText => _languageService.Get(
-        _displayPreferences.HeightUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm");
+    public string LengthUnitText => _languageService.Get("Cm");
 
     public string WeightText
     {
@@ -214,8 +211,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                 return false;
             }
 
-            neck = _displayPreferences.ToMetricHeight(neckValue);
-            abdomen = _displayPreferences.ToMetricHeight(abdomenValue);
+            neck = neckValue;
+            abdomen = abdomenValue;
             if (neck is < 1m or > 100m || abdomen is < 1m or > 400m)
             {
                 command = null!;
@@ -230,7 +227,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                     return false;
                 }
 
-                hip = _displayPreferences.ToMetricHeight(hipValue);
+                hip = hipValue;
                 if (hip is < 1m or > 400m)
                 {
                     command = null!;
@@ -274,31 +271,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             OnPropertyChanged(nameof(WeightText));
         }
 
-        if (TryParseDecimal(_neckText, out var enteredNeck))
-        {
-            var neckCm = DisplayPreferencesService.ConvertHeightToMetric(enteredNeck, _lengthUnitCode);
-            _neckText = DisplayPreferencesService.ConvertHeightToDisplay(neckCm, _displayPreferences.HeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
-            OnPropertyChanged(nameof(NeckText));
-        }
-
-        if (TryParseDecimal(_abdomenText, out var enteredAbdomen))
-        {
-            var abdomenCm = DisplayPreferencesService.ConvertHeightToMetric(enteredAbdomen, _lengthUnitCode);
-            _abdomenText = DisplayPreferencesService.ConvertHeightToDisplay(abdomenCm, _displayPreferences.HeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
-            OnPropertyChanged(nameof(AbdomenText));
-        }
-
-        if (TryParseDecimal(_hipText, out var enteredHip))
-        {
-            var hipCm = DisplayPreferencesService.ConvertHeightToMetric(enteredHip, _lengthUnitCode);
-            _hipText = DisplayPreferencesService.ConvertHeightToDisplay(hipCm, _displayPreferences.HeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
-            OnPropertyChanged(nameof(HipText));
-        }
-
         _weightUnitCode = _displayPreferences.WeightUnitCode;
-        _lengthUnitCode = _displayPreferences.HeightUnitCode;
         OnPropertyChanged(nameof(WeightUnitText));
-        OnPropertyChanged(nameof(LengthUnitText));
         OnPropertyChanged(nameof(CanSave));
         SaveCommand.NotifyCanExecuteChanged();
     }

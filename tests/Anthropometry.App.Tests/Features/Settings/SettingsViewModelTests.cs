@@ -65,7 +65,7 @@ public sealed class SettingsViewModelTests
         {
             DateFormatCode = DisplayPreferencesService.MonthDayYearCode,
             WeightUnitCode = DisplayPreferencesService.PoundsCode,
-            HeightUnitCode = DisplayPreferencesService.InchesCode
+            HeightUnitCode = DisplayPreferencesService.FeetCode
         };
         var displayPreferences = new DisplayPreferencesService(displayStore);
         displayPreferences.Initialize();
@@ -76,10 +76,10 @@ public sealed class SettingsViewModelTests
 
         Assert.Equal(["dd/MM/yyyy", "MM/dd/yyyy"], viewModel.DateFormats.Select(option => option.Code));
         Assert.Equal(["kg", "lb"], viewModel.WeightUnits.Select(option => option.Code));
-        Assert.Equal(["cm", "in"], viewModel.HeightUnits.Select(option => option.Code));
+        Assert.Equal(["cm", "ft"], viewModel.HeightUnits.Select(option => option.Code));
         Assert.Equal("MM/dd/yyyy", viewModel.SelectedDateFormat!.Code);
         Assert.Equal("lb", viewModel.SelectedWeightUnit!.Code);
-        Assert.Equal("in", viewModel.SelectedHeightUnit!.Code);
+        Assert.Equal("ft", viewModel.SelectedHeightUnit!.Code);
 
         viewModel.SelectedDateFormat = viewModel.DateFormats[0];
         viewModel.SelectedWeightUnit = viewModel.WeightUnits[0];

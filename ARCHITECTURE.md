@@ -30,7 +30,7 @@ The application will target Android first while keeping a structure that allows 
 | Testing | TDD for domain and application; infrastructure tests and critical UI-flow tests |
 | Network | Out of scope for the MVP; no backend or synchronization |
 | Canonical units | Metric system (kilograms and centimeters) |
-| Display units | Persisted Presentation preference; metric defaults with optional pounds/inches |
+| Display units | Persisted Presentation preference; metric defaults with optional pounds/feet |
 
 .NET MAUI is the evolution of Xamarin.Forms and allows code sharing between Android and iOS while retaining access to native APIs when needed. See the [official .NET MAUI documentation](https://learn.microsoft.com/en-us/dotnet/maui/?view=net-maui-10.0).
 
@@ -245,6 +245,8 @@ bodyFatPercentage =
 ```
 
 The UI states that this formula is for men and that the abdomen must be measured at the product-defined location. The formula rejects non-positive inputs and any case where `abdomenInches - neckInches` is not greater than zero.
+
+Profile height may be displayed and entered in decimal feet, but circumference measurements remain in centimeters because feet are not a useful unit for neck, waist, abdomen, or hip measurements.
 
 The female implementation uses the classic US Navy/Hodgdon-Beckett equation and requires waist, hip, neck, and height. Metric values are converted to inches at the formula boundary:
 

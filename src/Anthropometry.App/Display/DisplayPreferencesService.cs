@@ -9,10 +9,11 @@ public sealed class DisplayPreferencesService
     public const string KilogramsCode = "kg";
     public const string PoundsCode = "lb";
     public const string CentimetersCode = "cm";
-    public const string InchesCode = "in";
+    public const string FeetCode = "ft";
 
     private const decimal PoundsPerKilogram = 2.2046226218m;
-    private const decimal CentimetersPerInch = 2.54m;
+    private const decimal CentimetersPerFoot = 30.48m;
+    private const string LegacyInchesCode = "in";
 
     private readonly IDisplayPreferenceStore _preferences;
 
@@ -37,9 +38,16 @@ public sealed class DisplayPreferencesService
         WeightUnitCode = IsWeightUnitSupported(_preferences.GetWeightUnitCode())
             ? _preferences.GetWeightUnitCode()!
             : KilogramsCode;
-        HeightUnitCode = IsHeightUnitSupported(_preferences.GetHeightUnitCode())
-            ? _preferences.GetHeightUnitCode()!
-            : CentimetersCode;
+        var savedHeightUnitCode = _preferences.GetHeightUnitCode();
+        HeightUnitCode = savedHeightUnitCode == LegacyInchesCode
+            ? FeetCode
+            : IsHeightUnitSupported(savedHeightUnitCode)
+                ? savedHeightUnitCode!
+                : CentimetersCode;
+        if (savedHeightUnitCode == LegacyInchesCode)
+        {
+            _preferences.SetHeightUnitCode(FeetCode);
+        }
     }
 
     public void SetDateFormat(string code)
@@ -112,10 +120,10 @@ public sealed class DisplayPreferencesService
         => unitCode == PoundsCode ? weight / PoundsPerKilogram : weight;
 
     public static decimal ConvertHeightToDisplay(decimal heightCm, string unitCode)
-        => unitCode == InchesCode ? heightCm / CentimetersPerInch : heightCm;
+        => unitCode == FeetCode ? heightCm / CentimetersPerFoot : heightCm;
 
     public static decimal ConvertHeightToMetric(decimal height, string unitCode)
-        => unitCode == InchesCode ? height * CentimetersPerInch : height;
+        => unitCode == FeetCode ? height * CentimetersPerFoot : height;
 
     public string FormatDate(DateTimeOffset measuredAtUtc)
         => measuredAtUtc.ToLocalTime().ToString(DateFormatCode, CultureInfo.InvariantCulture);
@@ -132,5 +140,5 @@ public sealed class DisplayPreferencesService
         => code is KilogramsCode or PoundsCode;
 
     private static bool IsHeightUnitSupported(string? code)
-        => code is CentimetersCode or InchesCode;
+        => code is CentimetersCode or FeetCode;
 }

@@ -82,14 +82,14 @@ public sealed class MeasurementHistoryViewModelTests
         var displayPreferences = TestData.DisplayPreferences();
         displayPreferences.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
         displayPreferences.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        displayPreferences.SetHeightUnit(DisplayPreferencesService.InchesCode);
+        displayPreferences.SetHeightUnit(DisplayPreferencesService.FeetCode);
         var viewModel = CreateViewModel(repository, out _, profile.Id, displayPreferences: displayPreferences);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
         Assert.Equal("09/08/2026", viewModel.Measurements[0].DateText);
         Assert.Equal("Weight: 176.37 lb", viewModel.Measurements[0].WeightText);
-        Assert.Equal("Height: 70.87 in", viewModel.Measurements[0].HeightText);
+        Assert.Equal("Height: 5.91 ft", viewModel.Measurements[0].HeightText);
     }
 
     [Fact]

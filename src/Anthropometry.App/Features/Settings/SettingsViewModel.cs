@@ -60,7 +60,7 @@ public sealed class SettingsViewModel : ObservableObject
     public IReadOnlyList<UnitOption> HeightUnits =>
     [
         new(DisplayPreferencesService.CentimetersCode, _languageService.Get("Centimeters")),
-        new(DisplayPreferencesService.InchesCode, _languageService.Get("Inches"))
+        new(DisplayPreferencesService.FeetCode, _languageService.Get("Feet"))
     ];
 
     public LanguageOption? SelectedLanguage

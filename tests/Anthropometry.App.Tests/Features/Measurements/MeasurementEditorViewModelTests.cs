@@ -149,7 +149,7 @@ public sealed class MeasurementEditorViewModelTests
         var displayPreferences = new DisplayPreferencesService(new FakeDisplayPreferenceStore
         {
             WeightUnitCode = DisplayPreferencesService.PoundsCode,
-            HeightUnitCode = DisplayPreferencesService.InchesCode
+            HeightUnitCode = DisplayPreferencesService.FeetCode
         });
         displayPreferences.Initialize();
         var viewModel = CreateViewModel(
@@ -161,11 +161,11 @@ public sealed class MeasurementEditorViewModelTests
             displayPreferences: displayPreferences);
 
         viewModel.WeightText = "176.3698";
-        viewModel.NeckText = "15.7480";
-        viewModel.AbdomenText = "35.4331";
+        viewModel.NeckText = "40";
+        viewModel.AbdomenText = "90";
 
         Assert.Equal("lb", viewModel.WeightUnitText);
-        Assert.Equal("in", viewModel.LengthUnitText);
+        Assert.Equal("cm", viewModel.LengthUnitText);
         await viewModel.SaveCommand.ExecuteAsync(null);
 
         var saved = Assert.Single(measurements.Items);
@@ -190,11 +190,11 @@ public sealed class MeasurementEditorViewModelTests
         viewModel.AbdomenText = "90";
 
         displayPreferences.SetWeightUnit(DisplayPreferencesService.PoundsCode);
-        displayPreferences.SetHeightUnit(DisplayPreferencesService.InchesCode);
+        displayPreferences.SetHeightUnit(DisplayPreferencesService.FeetCode);
 
         Assert.Equal("176.37", viewModel.WeightText);
-        Assert.Equal("15.75", viewModel.NeckText);
-        Assert.Equal("35.43", viewModel.AbdomenText);
+        Assert.Equal("40", viewModel.NeckText);
+        Assert.Equal("90", viewModel.AbdomenText);
     }
 
     [Fact]
