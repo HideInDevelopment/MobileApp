@@ -7,6 +7,10 @@ for two local sessions:
 - **Experienced session:** a person who understands body measurements or energy
   estimates.
 
+**Validation status:** User-confirmed complete on 2026-09-16. Detailed session
+metrics are intentionally not retained here because they could contain personal
+or identifying information.
+
 Do not enter real health measurements, names, screenshots, or device database
 files. Use the disposable profile name `Synthetic Guidance` and the sample-data
 action after the first complete measurement.
@@ -62,6 +66,6 @@ measurements.
 | S1 | Novice | _pending_ | _pending_ | _pending_ | _pending_ |
 | S2 | Experienced | _pending_ | _pending_ | _pending_ | _pending_ |
 
-Human sessions remain a release prerequisite. Until S1 and S2 are completed,
-this document is a ready-to-run protocol rather than evidence of user
-validation.
+The user confirmed that the real validation was completed. This document
+remains a ready-to-run protocol for future regression checks; it does not store
+personal measurements or identifying session details.

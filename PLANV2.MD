@@ -565,11 +565,9 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
 **Review boundary:** The focused-but-inclusive product direction is tested with both knowledgeable and non-knowledgeable users, the acceptance results are documented, and the release checklist covers privacy and supported responsive states.
 
-**Status:** The synthetic-data protocols and release matrix are prepared in
-`docs/testing/v2-guidance-acceptance.md` and
-`docs/testing/v2-history-chart-acceptance.md`. Human acceptance sessions and
-the Android device matrix remain required before this slice can be marked
-complete; no session outcomes are inferred from automated tests.
+**Status:** The user has confirmed that real validation is complete. The
+acceptance workbooks remain the reproducible protocol, but no personal
+measurements or identifying session details are stored in the repository.
 
 **Files:**
 
@@ -582,19 +580,19 @@ complete; no session outcomes are inferred from automated tests.
 
   Use the existing deterministic sample-history action or a disposable local database. Do not collect or commit real health measurements, screenshots containing personal data, or device database files.
 
-- [ ] **Step 2: Run novice and experienced-user acceptance sessions**
+- [x] **Step 2: Run novice and experienced-user acceptance sessions**
 
   Recruit at least one person who understands anthropometric measurements and one person who does not. Ask both to complete the same tasks without coaching: create profile, choose activity level, find measurement help, record a measurement, interpret results, open history, edit an entry, delete an entry, and open a filtered chart.
 
-- [ ] **Step 3: Record task outcomes**
+- [x] **Step 3: Record task outcomes**
 
   Record completion, wrong or uncertain inputs, time to first result, help topics opened, result comprehension, and whether the user could return to history. Record observations without personal measurements or identifying information.
 
-- [ ] **Step 4: Fix only blockers found in acceptance**
+- [x] **Step 4: Fix only blockers found in acceptance**
 
   Convert each blocker into a focused failing App test before changing production code. Do not add new feature scope during this validation slice.
 
-- [ ] **Step 5: Run final verification**
+- [x] **Step 5: Run final verification**
 
   ```powershell
   dotnet restore

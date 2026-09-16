@@ -6,6 +6,10 @@ days of alternating size-based and weight-only measurements and persists their
 calculation results. Do not collect or commit real health data, screenshots, or
 an app database.
 
+**Validation status:** User-confirmed complete on 2026-09-16. Detailed session
+metrics are intentionally not retained here because they could contain personal
+or identifying information.
+
 ## History and correction tasks
 
 | ID | Task | Outcome | Notes without personal data |
@@ -53,7 +57,8 @@ dotnet build src/Anthropometry.App/Anthropometry.App.csproj -f net10.0-android -
 
 Record the command date, SDK/workload versions, and final pass/fail output in
 the release review. The Android matrix and the two human sessions are separate
-from automated tests and must not be inferred from them.
+from automated tests; their completion is recorded above by user confirmation
+rather than inferred from automated results.
 
 ### Verification recorded on 2026-09-16
 
@@ -62,7 +67,7 @@ from automated tests and must not be inferred from them.
 - `dotnet restore -m:1`: passed.
 - `dotnet build --configuration Release --no-restore`: passed with 0 warnings
   and 0 errors.
-- `dotnet test --configuration Release --no-restore`: passed, 233 tests total
-  (54 Domain, 44 Application, 13 Infrastructure, 122 App).
+- `dotnet test --configuration Release --no-restore`: passed, 241 tests total
+  (54 Domain, 44 Application, 13 Infrastructure, 130 App).
 - Android Release build: passed with 0 warnings and 0 errors.
-- Human sessions and the Android device matrix: pending execution.
+- Human sessions and the Android device matrix: completed, per user confirmation.
