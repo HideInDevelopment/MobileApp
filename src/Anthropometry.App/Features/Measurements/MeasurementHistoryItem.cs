@@ -16,3 +16,5 @@ public sealed record MeasurementHistoryItem(
 
     public string RowBackgroundColor => ShowWarningIcon ? "#FFF2CC" : "Transparent";
 }
+
+public sealed record MeasurementTypeFilterOption(MeasurementType? Value, string DisplayName);

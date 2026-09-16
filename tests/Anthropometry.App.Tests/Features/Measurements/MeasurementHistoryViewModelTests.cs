@@ -185,6 +185,61 @@ public sealed class MeasurementHistoryViewModelTests
         Assert.Single(viewModel.Measurements);
     }
 
+    [Fact]
+    public async Task Filters_reload_history_and_keep_edit_delete_actions_available()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, DateTimeOffset.UtcNow.AddDays(-1)));
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightOnly, DateTimeOffset.UtcNow));
+        var viewModel = CreateViewModel(repository, out _, profile);
+
+        viewModel.SelectedType = MeasurementType.WeightOnly;
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        var item = Assert.Single(viewModel.Measurements);
+        Assert.Equal(MeasurementType.WeightOnly, item.Measurement.Type);
+        Assert.NotNull(viewModel.EditCommand);
+        Assert.NotNull(viewModel.DeleteCommand);
+        Assert.True(viewModel.HasActiveFilters);
+    }
+
+    [Fact]
+    public async Task Reversed_dates_show_a_recoverable_validation_message()
+    {
+        var profile = TestData.Profile();
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), out _, profile);
+        viewModel.UseFromDate = true;
+        viewModel.UseToDate = true;
+        viewModel.FromDate = new DateTime(2026, 9, 10);
+        viewModel.ToDate = new DateTime(2026, 9, 9);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.Equal("Choose a start date on or before the end date.", viewModel.ErrorMessage);
+        Assert.False(viewModel.IsNoMatch);
+    }
+
+    [Fact]
+    public async Task Clear_filters_restores_the_unfiltered_history_and_empty_copy_is_distinct()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, MeasurementType.WeightAndSizes, DateTimeOffset.UtcNow));
+        var viewModel = CreateViewModel(repository, out _, profile);
+        viewModel.SelectedType = MeasurementType.WeightOnly;
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        Assert.True(viewModel.IsNoMatch);
+        Assert.Equal("No matching measurements", viewModel.EmptyStateTitle);
+
+        await viewModel.ClearFiltersCommand.ExecuteAsync(null);
+
+        Assert.False(viewModel.HasActiveFilters);
+        Assert.False(viewModel.IsNoMatch);
+        Assert.Single(viewModel.Measurements);
+    }
+
     private static MeasurementHistoryViewModel CreateViewModel(
         FakeMeasurementRepository repository,
         out NavigationSpy navigation,

@@ -411,23 +411,23 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 - Filtering is performed in Application after repository retrieval for this slice; it must compare UTC timestamps and return newest first. No SQL query API is added until measured history size requires it.
 - `MeasurementHistoryViewModel` exposes `FromDate`, `ToDate`, `SelectedType`, `ClearFiltersCommand`, and reloads when filters change.
 
-- [ ] **Step 1: Add failing Application tests for date and type filtering**
+- [x] **Step 1: Add failing Application tests for date and type filtering**
 
   Cover inclusive UTC date boundaries, type filtering, no-filter equivalence, reversed-date validation, and empty filtered results.
 
-- [ ] **Step 2: Add failing ViewModel tests for filter state**
+- [x] **Step 2: Add failing ViewModel tests for filter state**
 
   Cover filter labels, clearing filters, recoverable invalid-range messaging, and preservation of edit/delete actions on filtered rows.
 
-- [ ] **Step 3: Implement query and Presentation filter controls**
+- [x] **Step 3: Implement query and Presentation filter controls**
 
   Use platform date pickers and a compact measurement-type selector. Keep the default screen clear by placing filters behind a single `Filter` action. Add a result count or an explicit “No matching measurements” message without implying data was deleted.
 
-- [ ] **Step 4: Replace stacked history content with a consistent card layout**
+- [x] **Step 4: Replace stacked history content with a consistent card layout**
 
   Keep date, weight, height, measurement type, warning state, view-results, edit, and delete actions aligned. Use dynamic resources and existing theme colors; do not add a table package.
 
-- [ ] **Step 5: Run all tests and check responsive states**
+- [x] **Step 5: Run all tests and check responsive states**
 
   ```powershell
   dotnet test Anthropometry.sln -f net10.0 --configuration Release --no-restore -m:1
@@ -436,7 +436,7 @@ The implementation should reuse existing feature folders and avoid a new cross-c
 
   Manually verify empty, no-match, loading, error, one-row, and large-history states on a small Android screen with the keyboard closed.
 
-- [ ] **Step 6: Commit structured history**
+- [x] **Step 6: Commit structured history**
 
   ```powershell
   git add src/Anthropometry.Application/Measurements src/Anthropometry.App/Features/Measurements src/Anthropometry.App/Resources/Strings tests

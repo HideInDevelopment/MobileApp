@@ -9,13 +9,46 @@
                      Command="{Binding ChartsCommand}"
                      Order="Primary"
                      SemanticProperties.Description="{DynamicResource Charts}" />
+        <ToolbarItem Text="{DynamicResource Filter}"
+                     Command="{Binding ToggleFiltersCommand}"
+                     Order="Secondary"
+                     SemanticProperties.Description="{DynamicResource Filter}" />
     </ContentPage.ToolbarItems>
-    <Grid Padding="20" RowDefinitions="*" RowSpacing="16">
-        <CollectionView Grid.Row="0" ItemsSource="{Binding Measurements}">
+    <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
+        <Border Grid.Row="0"
+                Padding="12"
+                IsVisible="{Binding IsFilterPanelVisible}"
+                StrokeThickness="1">
+            <VerticalStackLayout Spacing="10">
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <CheckBox Grid.Column="0" IsChecked="{Binding UseFromDate}" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{DynamicResource FromDate}" VerticalOptions="Center" />
+                    <DatePicker Grid.Column="2" Date="{Binding FromDate}" IsEnabled="{Binding UseFromDate}" />
+                </Grid>
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <CheckBox Grid.Column="0" IsChecked="{Binding UseToDate}" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="{DynamicResource ToDate}" VerticalOptions="Center" />
+                    <DatePicker Grid.Column="2" Date="{Binding ToDate}" IsEnabled="{Binding UseToDate}" />
+                </Grid>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <Label Grid.Column="0" Text="{DynamicResource MeasurementType}" VerticalOptions="Center" />
+                    <Picker Grid.Column="1"
+                            ItemsSource="{Binding MeasurementTypeOptions}"
+                            ItemDisplayBinding="{Binding DisplayName}"
+                            SelectedItem="{Binding SelectedTypeOption}" />
+                </Grid>
+                <Button Text="{DynamicResource ClearFilters}"
+                        Command="{Binding ClearFiltersCommand}"
+                        IsVisible="{Binding HasActiveFilters}"
+                        HorizontalOptions="Start"
+                        MinimumHeightRequest="48" />
+            </VerticalStackLayout>
+        </Border>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Measurements}">
             <CollectionView.EmptyView>
                 <VerticalStackLayout Spacing="12" VerticalOptions="Center">
-                    <Label Text="{DynamicResource NoMeasurements}" FontSize="20" HorizontalOptions="Center" />
-                    <Label Text="{DynamicResource SavedMeasurementsLocal}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                    <Label Text="{Binding EmptyStateTitle}" FontSize="20" HorizontalOptions="Center" />
+                    <Label Text="{Binding EmptyStateDescription}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
@@ -46,7 +79,7 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-        <ActivityIndicator Grid.Row="0" IsRunning="{Binding IsLoading}" />
-        <Label Grid.Row="0" Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
+        <ActivityIndicator Grid.Row="1" IsRunning="{Binding IsLoading}" />
+        <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" HorizontalOptions="Center" VerticalOptions="Center" />
     </Grid>
 </ContentPage>

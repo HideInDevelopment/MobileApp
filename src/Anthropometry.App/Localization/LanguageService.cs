@@ -34,6 +34,7 @@ public sealed class LanguageService
         "ValidMeasurementExtendedFemale",
         "MeasurementValuesError", "CompleteProfileDetails", "SaveMeasurementError", "CalculationError",
         "MeasurementHistory", "NoMeasurements", "SavedMeasurementsLocal", "ViewResults", "ViewHistory", "EditMeasurement", "EditMeasurementTitle", "DeleteMeasurement", "DeleteMeasurementTitle", "DeleteMeasurementMessage", "DeleteMeasurementError", "WeightOnly", "LoadHistoryError",
+        "Filter", "ClearFilters", "FromDate", "ToDate", "MeasurementType", "AllMeasurements", "NoMatchingMeasurements", "NoMatchingMeasurementsDescription", "InvalidHistoryDateRange",
         "WeightAndSizes", "ReusedMeasurementsDescription", "EstimatedResults", "ResultsTitle",
         "BodyFatPercentage", "BasalMetabolicRate", "TotalDailyEnergyExpenditure", "ResultsLoadError",
         "Language", "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",

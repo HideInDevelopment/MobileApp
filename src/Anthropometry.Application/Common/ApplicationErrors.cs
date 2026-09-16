@@ -16,5 +16,7 @@ internal static class ApplicationErrors
 
     public static DomainError MeasurementNotFound => new("measurement.notFound", "Errors.MeasurementNotFound");
 
+    public static DomainError MeasurementHistoryDateRangeInvalid => new("measurementHistory.dateRange.invalid", "Errors.MeasurementHistoryDateRangeInvalid");
+
     public static DomainError PersistenceUnavailable => new("persistence.unavailable", "Errors.PersistenceUnavailable");
 }

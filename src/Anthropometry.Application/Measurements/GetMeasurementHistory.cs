@@ -14,12 +14,26 @@ public sealed class GetMeasurementHistory
         _repository = repository;
     }
 
-    public async Task<Result<IReadOnlyList<MeasurementDto>>> ExecuteAsync(ProfileId profileId, CancellationToken cancellationToken)
+    public Task<Result<IReadOnlyList<MeasurementDto>>> ExecuteAsync(ProfileId profileId, CancellationToken cancellationToken)
+        => ExecuteAsync(new MeasurementHistoryQuery(profileId, null, null, null), cancellationToken);
+
+    public async Task<Result<IReadOnlyList<MeasurementDto>>> ExecuteAsync(MeasurementHistoryQuery query, CancellationToken cancellationToken)
     {
         try
         {
-            var measurements = await _repository.GetByProfileAsync(profileId, cancellationToken);
-            return Result.Success<IReadOnlyList<MeasurementDto>>(measurements.OrderByDescending(measurement => measurement.MeasuredAtUtc).Select(ApplicationModels.ToDto).ToArray());
+            if (query.FromUtc.HasValue && query.ToUtc.HasValue && query.FromUtc > query.ToUtc)
+            {
+                return Result.Failure<IReadOnlyList<MeasurementDto>>(ApplicationErrors.MeasurementHistoryDateRangeInvalid);
+            }
+
+            var measurements = await _repository.GetByProfileAsync(query.ProfileId, cancellationToken);
+            return Result.Success<IReadOnlyList<MeasurementDto>>(
+                measurements
+                    .Where(measurement => !query.FromUtc.HasValue || measurement.MeasuredAtUtc >= query.FromUtc.Value)
+                    .Where(measurement => !query.ToUtc.HasValue || measurement.MeasuredAtUtc <= query.ToUtc.Value)
+                    .Where(measurement => !query.Type.HasValue || measurement.Type == query.Type.Value)
+                    .OrderByDescending(measurement => measurement.MeasuredAtUtc)
+                    .Select(ApplicationModels.ToDto).ToArray());
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

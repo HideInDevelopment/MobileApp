@@ -64,6 +64,15 @@
   <data name="SaveMeasurementError" xml:space="preserve"><value>No se pudo guardar la medida. Inténtalo de nuevo.</value></data>
   <data name="CalculationError" xml:space="preserve"><value>No se pudieron calcular los resultados. Inténtalo de nuevo.</value></data>
   <data name="LoadHistoryError" xml:space="preserve"><value>No se pudo cargar el historial. Inténtalo de nuevo.</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrar</value></data>
+  <data name="ClearFilters" xml:space="preserve"><value>Borrar filtros</value></data>
+  <data name="FromDate" xml:space="preserve"><value>Desde</value></data>
+  <data name="ToDate" xml:space="preserve"><value>Hasta</value></data>
+  <data name="MeasurementType" xml:space="preserve"><value>Tipo de medida</value></data>
+  <data name="AllMeasurements" xml:space="preserve"><value>Todas las medidas</value></data>
+  <data name="NoMatchingMeasurements" xml:space="preserve"><value>No hay medidas coincidentes</value></data>
+  <data name="NoMatchingMeasurementsDescription" xml:space="preserve"><value>Ninguna medida coincide con estos filtros. Tus datos guardados no han cambiado.</value></data>
+  <data name="InvalidHistoryDateRange" xml:space="preserve"><value>Elige una fecha inicial anterior o igual a la fecha final.</value></data>
   <data name="MeasurementHistory" xml:space="preserve"><value>Historial de medidas</value></data>
   <data name="NoMeasurements" xml:space="preserve"><value>Aún no hay medidas</value></data>
   <data name="SavedMeasurementsLocal" xml:space="preserve"><value>Las medidas y sus resultados se guardan en este dispositivo.</value></data>

@@ -22,6 +22,14 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     private readonly ObservableCollection<MeasurementHistoryItem> _measurements = [];
     private bool _isLoading;
     private string? _errorMessage;
+    private bool _isFilterPanelVisible;
+    private bool _useFromDate;
+    private bool _useToDate;
+    private DateTime _fromDate = DateTime.Today;
+    private DateTime _toDate = DateTime.Today;
+    private MeasurementType? _selectedType;
+    private MeasurementTypeFilterOption? _selectedTypeOption;
+    private bool _suppressFilterReload;
 
     public MeasurementHistoryViewModel(
         GetMeasurementHistory getHistory,
@@ -38,16 +46,22 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         _languageService = languageService;
         _displayPreferences = displayPreferences;
         Measurements = new ReadOnlyObservableCollection<MeasurementHistoryItem>(_measurements);
+        MeasurementTypeOptions = CreateMeasurementTypeOptions();
+        _selectedTypeOption = MeasurementTypeOptions[0];
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         SelectCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(SelectAsync);
         EditCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(EditAsync);
         DeleteCommand = new AsyncRelayCommand<MeasurementHistoryItem?>(DeleteAsync);
         ChartsCommand = new AsyncRelayCommand(() => _navigation.ShowChartOptionsAsync(_profile.Id));
+        ToggleFiltersCommand = new RelayCommand(() => IsFilterPanelVisible = !IsFilterPanelVisible);
+        ClearFiltersCommand = new AsyncRelayCommand(ClearFiltersAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
     public ReadOnlyObservableCollection<MeasurementHistoryItem> Measurements { get; }
+
+    public IReadOnlyList<MeasurementTypeFilterOption> MeasurementTypeOptions { get; private set; }
 
     public bool IsLoading
     {
@@ -55,7 +69,105 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         private set => SetProperty(ref _isLoading, value);
     }
 
-    public bool IsEmpty => !IsLoading && Measurements.Count == 0 && ErrorMessage is null;
+    public bool IsFilterPanelVisible
+    {
+        get => _isFilterPanelVisible;
+        set => SetProperty(ref _isFilterPanelVisible, value);
+    }
+
+    public bool UseFromDate
+    {
+        get => _useFromDate;
+        set
+        {
+            if (SetProperty(ref _useFromDate, value))
+            {
+                FilterChanged();
+            }
+        }
+    }
+
+    public bool UseToDate
+    {
+        get => _useToDate;
+        set
+        {
+            if (SetProperty(ref _useToDate, value))
+            {
+                FilterChanged();
+            }
+        }
+    }
+
+    public DateTime FromDate
+    {
+        get => _fromDate;
+        set
+        {
+            if (SetProperty(ref _fromDate, value.Date))
+            {
+                FilterChanged();
+            }
+        }
+    }
+
+    public DateTime ToDate
+    {
+        get => _toDate;
+        set
+        {
+            if (SetProperty(ref _toDate, value.Date))
+            {
+                FilterChanged();
+            }
+        }
+    }
+
+    public MeasurementType? SelectedType
+    {
+        get => _selectedType;
+        set
+        {
+            if (!SetProperty(ref _selectedType, value))
+            {
+                return;
+            }
+
+            _selectedTypeOption = MeasurementTypeOptions.First(option => option.Value == value);
+            OnPropertyChanged(nameof(SelectedTypeOption));
+            FilterChanged();
+        }
+    }
+
+    public MeasurementTypeFilterOption? SelectedTypeOption
+    {
+        get => _selectedTypeOption;
+        set
+        {
+            if (!SetProperty(ref _selectedTypeOption, value))
+            {
+                return;
+            }
+
+            if (_selectedType != value?.Value)
+            {
+                _selectedType = value?.Value;
+                OnPropertyChanged(nameof(SelectedType));
+            }
+
+            FilterChanged();
+        }
+    }
+
+    public bool HasActiveFilters => UseFromDate || UseToDate || SelectedType.HasValue;
+
+    public bool IsEmpty => !IsLoading && Measurements.Count == 0 && ErrorMessage is null && !HasActiveFilters;
+
+    public bool IsNoMatch => !IsLoading && Measurements.Count == 0 && ErrorMessage is null && HasActiveFilters;
+
+    public string EmptyStateTitle => _languageService.Get(HasActiveFilters ? "NoMatchingMeasurements" : "NoMeasurements");
+
+    public string EmptyStateDescription => _languageService.Get(HasActiveFilters ? "NoMatchingMeasurementsDescription" : "SavedMeasurementsLocal");
 
     public string? ErrorMessage
     {
@@ -64,7 +176,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         {
             if (SetProperty(ref _errorMessage, value))
             {
-                OnPropertyChanged(nameof(IsEmpty));
+                NotifyEmptyStateChanged();
             }
         }
     }
@@ -79,13 +191,17 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
 
     public IAsyncRelayCommand ChartsCommand { get; }
 
+    public IRelayCommand ToggleFiltersCommand { get; }
+
+    public IAsyncRelayCommand ClearFiltersCommand { get; }
+
     private async Task LoadAsync()
     {
         IsLoading = true;
         ErrorMessage = null;
         try
         {
-            var result = await _getHistory.ExecuteAsync(_profile.Id, CancellationToken.None);
+            var result = await _getHistory.ExecuteAsync(BuildQuery(), CancellationToken.None);
             _measurements.Clear();
             if (result.IsSuccess)
             {
@@ -96,14 +212,35 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
             }
             else
             {
-                ErrorMessage = _languageService.Get("LoadHistoryError");
+                ErrorMessage = result.Error!.Code == "measurementHistory.dateRange.invalid"
+                    ? _languageService.Get("InvalidHistoryDateRange")
+                    : _languageService.Get("LoadHistoryError");
             }
         }
         finally
         {
             IsLoading = false;
-            OnPropertyChanged(nameof(IsEmpty));
+            NotifyEmptyStateChanged();
         }
+    }
+
+    private MeasurementHistoryQuery BuildQuery()
+        => new(
+            _profile.Id,
+            UseFromDate ? ToUtcStart(FromDate) : null,
+            UseToDate ? ToUtcEnd(ToDate) : null,
+            SelectedType);
+
+    private static DateTimeOffset ToUtcStart(DateTime date)
+    {
+        var local = DateTime.SpecifyKind(date.Date, DateTimeKind.Unspecified);
+        return new DateTimeOffset(local, TimeZoneInfo.Local.GetUtcOffset(local)).ToUniversalTime();
+    }
+
+    private static DateTimeOffset ToUtcEnd(DateTime date)
+    {
+        var local = DateTime.SpecifyKind(date.Date.AddDays(1).AddTicks(-1), DateTimeKind.Unspecified);
+        return new DateTimeOffset(local, TimeZoneInfo.Local.GetUtcOffset(local)).ToUniversalTime();
     }
 
     private Task SelectAsync(MeasurementHistoryItem? item)
@@ -142,6 +279,41 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         }
     }
 
+    private async Task ClearFiltersAsync()
+    {
+        _suppressFilterReload = true;
+        try
+        {
+            UseFromDate = false;
+            UseToDate = false;
+            SelectedTypeOption = MeasurementTypeOptions[0];
+        }
+        finally
+        {
+            _suppressFilterReload = false;
+        }
+
+        await LoadAsync();
+    }
+
+    private void FilterChanged()
+    {
+        OnPropertyChanged(nameof(HasActiveFilters));
+        NotifyEmptyStateChanged();
+        if (!_suppressFilterReload)
+        {
+            _ = LoadAsync();
+        }
+    }
+
+    private IReadOnlyList<MeasurementTypeFilterOption> CreateMeasurementTypeOptions()
+        =>
+        [
+            new(null, _languageService.Get("AllMeasurements")),
+            new(MeasurementType.WeightAndSizes, _languageService.Get("WeightAndSizes")),
+            new(MeasurementType.WeightOnly, _languageService.Get("WeightOnly"))
+        ];
+
     private MeasurementHistoryItem CreateItem(MeasurementDto measurement)
         => new(
             measurement,
@@ -166,12 +338,21 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         => RefreshItems();
 
     private void OnLanguageChanged(object? sender, EventArgs e)
-        => RefreshItems();
+    {
+        var selectedType = SelectedType;
+        MeasurementTypeOptions = CreateMeasurementTypeOptions();
+        _selectedTypeOption = MeasurementTypeOptions.First(option => option.Value == selectedType);
+        OnPropertyChanged(nameof(MeasurementTypeOptions));
+        OnPropertyChanged(nameof(SelectedTypeOption));
+        NotifyEmptyStateChanged();
+        RefreshItems();
+    }
 
     private void RefreshItems()
     {
         if (_measurements.Count == 0)
         {
+            NotifyEmptyStateChanged();
             return;
         }
 
@@ -181,5 +362,13 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         {
             _measurements.Add(CreateItem(measurement));
         }
+    }
+
+    private void NotifyEmptyStateChanged()
+    {
+        OnPropertyChanged(nameof(IsEmpty));
+        OnPropertyChanged(nameof(IsNoMatch));
+        OnPropertyChanged(nameof(EmptyStateTitle));
+        OnPropertyChanged(nameof(EmptyStateDescription));
     }
 }
