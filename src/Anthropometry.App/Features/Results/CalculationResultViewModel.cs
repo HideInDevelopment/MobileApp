@@ -15,7 +15,6 @@ public sealed class CalculationResultViewModel : ObservableObject
 {
     private readonly GetCalculationResults _getResults;
     private readonly MeasurementId _measurementId;
-    private readonly MeasurementType _measurementType;
     private readonly LanguageService _languageService;
     private readonly ObservableCollection<CalculationResultDisplayItem> _results = [];
     private bool _isLoading;
@@ -24,20 +23,16 @@ public sealed class CalculationResultViewModel : ObservableObject
     public CalculationResultViewModel(
         GetCalculationResults getResults,
         MeasurementId measurementId,
-        MeasurementType measurementType,
         LanguageService languageService)
     {
         _getResults = getResults;
         _measurementId = measurementId;
-        _measurementType = measurementType;
         _languageService = languageService;
         Results = new ReadOnlyObservableCollection<CalculationResultDisplayItem>(_results);
         LoadCommand = new AsyncRelayCommand(LoadAsync);
     }
 
     public ReadOnlyObservableCollection<CalculationResultDisplayItem> Results { get; }
-
-    public bool ShowWarningIcon => _measurementType == MeasurementType.WeightOnly;
 
     public bool IsLoading
     {

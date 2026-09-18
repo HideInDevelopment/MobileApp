@@ -102,7 +102,34 @@ public sealed class ProfileDetailViewModelTests
         Assert.Equal("♀ Anna", viewModel.Title);
     }
 
-    private static ProfileDetailViewModel CreateViewModel(Anthropometry.Domain.Profiles.Profile profile, FakeMeasurementRepository repository)
+    [Fact]
+    public async Task Applying_profile_update_changes_profile_context_used_by_history()
+    {
+        var profile = TestData.Profile();
+        var navigation = new NavigationSpy();
+        var viewModel = CreateViewModel(profile, new FakeMeasurementRepository(), navigation);
+        var updatedProfile = new ProfileDto(
+            profile.Id,
+            profile.Name,
+            new ProfileSettingsDto(180m, 35, ActivityLevel.High),
+            profile.CreatedAtUtc,
+            profile.UpdatedAtUtc,
+            profile.Gender);
+
+        var method = typeof(ProfileDetailViewModel).GetMethod("ApplyProfileUpdate");
+        Assert.NotNull(method);
+        method!.Invoke(viewModel, [updatedProfile]);
+
+        await viewModel.HistoryCommand.ExecuteAsync(null);
+
+        Assert.NotNull(navigation.LastHistoryProfile);
+        Assert.Equal(ActivityLevel.High, navigation.LastHistoryProfile!.Settings!.ActivityLevel);
+    }
+
+    private static ProfileDetailViewModel CreateViewModel(
+        Anthropometry.Domain.Profiles.Profile profile,
+        FakeMeasurementRepository repository,
+        NavigationSpy? navigation = null)
         => new(
             new ProfileDto(
                 profile.Id,
@@ -112,7 +139,7 @@ public sealed class ProfileDetailViewModelTests
                 profile.UpdatedAtUtc),
             new GetMeasurementHistory(repository),
             CreateGenerator(),
-            new NavigationSpy(),
+            navigation ?? new NavigationSpy(),
             TestData.LanguageService());
 
     private static GenerateSampleMeasurementHistory CreateGenerator()
@@ -145,6 +172,8 @@ public sealed class ProfileDetailViewModelTests
 
     private sealed class NavigationSpy : IProfileNavigation
     {
+        public ProfileDto? LastHistoryProfile { get; private set; }
+
         public Task CreateProfileAsync() => Task.CompletedTask;
 
         public Task RenameProfileAsync(ProfileDto profile) => Task.CompletedTask;
@@ -159,7 +188,11 @@ public sealed class ProfileDetailViewModelTests
 
         public Task CancelAsync() => Task.CompletedTask;
 
-        public Task ShowHistoryAsync(ProfileDto profile) => Task.CompletedTask;
+        public Task ShowHistoryAsync(ProfileDto profile)
+        {
+            LastHistoryProfile = profile;
+            return Task.CompletedTask;
+        }
 
         public Task ShowSettingsAsync() => Task.CompletedTask;
 

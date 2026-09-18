@@ -17,7 +17,7 @@ public sealed class CalculationResultViewModelTests
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.BodyFatPercentage, 18.456m, "%", "us-navy-male-body-fat"));
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.BasalMetabolicRate, 1755m, "kcal/day", "mifflin-st-jeor-male-bmr"));
         repository.Items.Add(CreateResult(measurement.Id, CalculationType.TotalDailyEnergyExpenditure, 2720.256m, "kcal/day", "tdee-activity-multiplier"));
-        var viewModel = new CalculationResultViewModel(new GetCalculationResults(repository), measurement.Id, MeasurementType.WeightAndSizes, TestData.LanguageService());
+        var viewModel = new CalculationResultViewModel(new GetCalculationResults(repository), measurement.Id, TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -51,14 +51,13 @@ public sealed class CalculationResultViewModelTests
                     GetDescription(result));
             });
         Assert.False(viewModel.IsLoading);
-        Assert.False(viewModel.ShowWarningIcon);
     }
 
     [Fact]
     public async Task Load_shows_recoverable_error_when_results_cannot_be_read()
     {
         var measurementId = Anthropometry.Domain.Measurements.MeasurementId.New();
-        var viewModel = new CalculationResultViewModel(new GetCalculationResults(new ThrowingCalculationResultRepository()), measurementId, MeasurementType.WeightAndSizes, TestData.LanguageService());
+        var viewModel = new CalculationResultViewModel(new GetCalculationResults(new ThrowingCalculationResultRepository()), measurementId, TestData.LanguageService());
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -78,7 +77,6 @@ public sealed class CalculationResultViewModelTests
         var viewModel = new CalculationResultViewModel(
             new GetCalculationResults(repository),
             measurement.Id,
-            MeasurementType.WeightAndSizes,
             languageService);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
@@ -88,18 +86,6 @@ public sealed class CalculationResultViewModelTests
         Assert.Equal(
             "Estima qué proporción de tu peso corporal corresponde a grasa usando tu altura y tus medidas corporales.",
             GetDescription(result));
-    }
-
-    [Fact]
-    public void Weight_only_results_show_warning()
-    {
-        var viewModel = new CalculationResultViewModel(
-            new GetCalculationResults(new FakeCalculationResultRepository()),
-            Anthropometry.Domain.Measurements.MeasurementId.New(),
-            MeasurementType.WeightOnly,
-            TestData.LanguageService());
-
-        Assert.True(viewModel.ShowWarningIcon);
     }
 
     private static string? GetDescription(CalculationResultDisplayItem result)

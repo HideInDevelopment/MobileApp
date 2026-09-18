@@ -5,13 +5,7 @@
              Title="{DynamicResource ResultsTitle}">
     <Grid Padding="20" RowDefinitions="Auto,*" RowSpacing="16">
         <VerticalStackLayout Grid.Row="0" Spacing="8">
-            <HorizontalStackLayout Spacing="8">
             <Label Text="{DynamicResource EstimatedResults}" FontSize="28" FontAttributes="Bold" />
-            <Label Text="⚠"
-                   IsVisible="{Binding ShowWarningIcon}"
-                   TextColor="Orange"
-                   SemanticProperties.Description="{DynamicResource ReusedMeasurementsDescription}" />
-            </HorizontalStackLayout>
             <Label Text="{DynamicResource ResultsEstimateDisclaimer}"
                    Style="{StaticResource SecondaryText}" />
         </VerticalStackLayout>

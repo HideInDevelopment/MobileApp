@@ -41,9 +41,21 @@ public sealed class ProfileDetailViewModel : ObservableObject
         GenerateSampleDataCommand = new AsyncRelayCommand(GenerateSampleDataAsync, () => CanGenerateSampleData);
     }
 
-    public ProfileDto Profile { get; }
+    public ProfileDto Profile { get; private set; }
 
     public string Title => $"{GenderPresentation.GetIcon(Profile.Gender)} {Profile.Name}";
+
+    public void ApplyProfileUpdate(ProfileDto profile)
+    {
+        if (profile.Id != Profile.Id)
+        {
+            return;
+        }
+
+        Profile = profile;
+        OnPropertyChanged(nameof(Profile));
+        OnPropertyChanged(nameof(Title));
+    }
 
     public bool IsLoading
     {

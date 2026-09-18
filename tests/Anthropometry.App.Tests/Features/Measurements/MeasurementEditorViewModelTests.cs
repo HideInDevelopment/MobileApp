@@ -349,6 +349,40 @@ public sealed class MeasurementEditorViewModelTests
         Assert.Equal(["results"], navigation.Destinations);
     }
 
+    [Fact]
+    public async Task Editing_measurement_after_profile_activity_change_recalculates_with_new_activity()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var existing = TestData.Measurement(profile.Id);
+        measurements.Items.Add(existing);
+        var results = new FakeCalculationResultRepository();
+        results.Items.Add(CalculationResult.Create(
+            existing.Id,
+            CalculationType.TotalDailyEnergyExpenditure,
+            new CalculationResultValue(2720.25m, "kcal/day", "old-tdee", "1.0"),
+            DateTimeOffset.UtcNow).Value);
+        var viewModel = CreateViewModel(
+            profile,
+            MeasurementType.WeightAndSizes,
+            profiles,
+            measurements,
+            results,
+            existingMeasurement: ToDto(existing),
+            activityLevel: ActivityLevel.High);
+
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(measurements.Items);
+        Assert.Equal(ActivityLevel.High, saved.ActivityLevel);
+        Assert.Equal(3, results.Items.Count);
+        Assert.Equal(
+            1755m * 1.725m,
+            results.Items.Single(result => result.CalculationType == CalculationType.TotalDailyEnergyExpenditure).Value);
+    }
+
     private static MeasurementEditorViewModel CreateViewModel(
         Profile profile,
         MeasurementType measurementType,
@@ -358,7 +392,8 @@ public sealed class MeasurementEditorViewModelTests
         NavigationSpy? navigation = null,
         Anthropometry.App.Localization.LanguageService? languageService = null,
         DisplayPreferencesService? displayPreferences = null,
-        MeasurementDto? existingMeasurement = null)
+        MeasurementDto? existingMeasurement = null,
+        ActivityLevel activityLevel = ActivityLevel.Moderate)
     {
         var catalog = new FormulaCatalog(
             new UsNavyMaleBodyFatFormula(),
@@ -370,7 +405,7 @@ public sealed class MeasurementEditorViewModelTests
         var profileDto = new ProfileDto(
             profile.Id,
             profile.Name,
-            new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate),
+            new ProfileSettingsDto(180m, 35, activityLevel),
             profile.CreatedAtUtc,
             profile.UpdatedAtUtc,
             profile.Gender);

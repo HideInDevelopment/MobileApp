@@ -71,7 +71,19 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _languageService.Get("DeleteAction"),
             _languageService.Get("Cancel"));
 
-    public Task CloseEditorAsync(ProfileDto profile) => PopAsync();
+    public Task CloseEditorAsync(ProfileDto profile)
+    {
+        var navigationStack = Shell.Current.Navigation.NavigationStack;
+        var previousPage = navigationStack.Count < 2
+            ? null
+            : navigationStack[navigationStack.Count - 2];
+        if (previousPage?.BindingContext is ProfileDetailViewModel viewModel)
+        {
+            viewModel.ApplyProfileUpdate(profile);
+        }
+
+        return PopAsync();
+    }
 
     public Task CreateMeasurementAsync(ProfileDto profile, MeasurementType type)
     {
@@ -157,7 +169,6 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         var page = new CalculationResultPage(new CalculationResultViewModel(
             _services.GetRequiredService<GetCalculationResults>(),
             measurement.Id,
-            measurement.Type,
             _languageService));
 
         if (!replaceCurrentPage)
