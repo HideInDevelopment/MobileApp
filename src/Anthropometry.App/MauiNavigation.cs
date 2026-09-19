@@ -48,7 +48,6 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         => PushAsync(new ProfileDetailPage(
             profile,
             _services.GetRequiredService<GetMeasurementHistory>(),
-            _services.GetRequiredService<GenerateSampleMeasurementHistory>(),
             this,
             _languageService));
 

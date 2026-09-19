@@ -39,7 +39,6 @@ public sealed class LanguageService
         "BodyFatPercentage", "BasalMetabolicRate", "TotalDailyEnergyExpenditure", "ResultsLoadError",
         "Language", "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",
         "DeleteProfileTitle", "DeleteProfileMessage", "DeleteAction",
-        "GenerateSampleData", "SampleDataGenerated", "SampleDataRequiresMeasurement", "SampleDataError",
         "Charts", "MetricChart", "MetricChartTitle", "MetricChartNoMeasurements", "MetricChartLoadError", "InvalidMetricChartDateRange", "ChartMetric", "WeightGraphic", "WeightGraphicTitle", "WeightGraphicNoMeasurements", "WeightGraphicLoadError", "Date",
         "HelpAboutTitle", "HelpDisclaimer", "HelpMeasurementConsistency", "HelpEquationsTitle",
         "HelpBodyFatTitle", "HelpBodyFatDescription", "HelpBodyFatFormula", "HelpFemaleBodyFatTitle",

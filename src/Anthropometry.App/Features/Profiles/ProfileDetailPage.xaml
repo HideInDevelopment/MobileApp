@@ -6,7 +6,6 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
             <Label Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
-            <Label Text="{Binding StatusMessage}" TextColor="Green" IsVisible="{Binding StatusMessage, Converter={StaticResource StringNotEmptyConverter}}" />
             <ActivityIndicator IsRunning="{Binding IsLoading}" />
             <Border Style="{StaticResource CardBorder}" Padding="16">
                 <Label Text="{DynamicResource EstimateDisclaimer}" Style="{StaticResource SecondaryText}" />
@@ -15,7 +14,6 @@
             <Button Text="{DynamicResource AddWeight}" Style="{StaticResource PrimaryButton}" Command="{Binding AddWeightCommand}" IsEnabled="{Binding CanAddWeight}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource EditProfile}" Style="{StaticResource SecondaryButton}" Command="{Binding EditCommand}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource History}" Style="{StaticResource SecondaryButton}" Command="{Binding HistoryCommand}" MinimumHeightRequest="48" />
-            <Button Text="{DynamicResource GenerateSampleData}" Style="{StaticResource SecondaryButton}" Command="{Binding GenerateSampleDataCommand}" IsVisible="{Binding CanGenerateSampleData}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

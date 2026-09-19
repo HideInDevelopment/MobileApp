@@ -11,26 +11,19 @@ public sealed class ProfileDetailViewModel : ObservableObject
 {
     private readonly IProfileNavigation _navigation;
     private readonly GetMeasurementHistory _getHistory;
-    private readonly GenerateSampleMeasurementHistory _generateSampleData;
     private readonly LanguageService _languageService;
     private bool _isLoading;
     private string? _errorMessage;
-    private string? _statusMessage;
     private bool _canAddWeight;
-    private bool _canGenerateSampleData;
-    private bool _hasSizeMeasurement;
-    private int _measurementCount;
 
     public ProfileDetailViewModel(
         ProfileDto profile,
         GetMeasurementHistory getHistory,
-        GenerateSampleMeasurementHistory generateSampleData,
         IProfileNavigation navigation,
         LanguageService languageService)
     {
         Profile = profile;
         _getHistory = getHistory;
-        _generateSampleData = generateSampleData;
         _navigation = navigation;
         _languageService = languageService;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
@@ -38,7 +31,6 @@ public sealed class ProfileDetailViewModel : ObservableObject
         AddMeasurementsCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightAndSizes));
         HistoryCommand = new AsyncRelayCommand(() => _navigation.ShowHistoryAsync(Profile));
         EditCommand = new AsyncRelayCommand(() => _navigation.RenameProfileAsync(Profile));
-        GenerateSampleDataCommand = new AsyncRelayCommand(GenerateSampleDataAsync, () => CanGenerateSampleData);
     }
 
     public ProfileDto Profile { get; private set; }
@@ -69,12 +61,6 @@ public sealed class ProfileDetailViewModel : ObservableObject
         private set => SetProperty(ref _errorMessage, value);
     }
 
-    public string? StatusMessage
-    {
-        get => _statusMessage;
-        private set => SetProperty(ref _statusMessage, value);
-    }
-
     public bool CanAddWeight
     {
         get => _canAddWeight;
@@ -83,19 +69,6 @@ public sealed class ProfileDetailViewModel : ObservableObject
             if (SetProperty(ref _canAddWeight, value))
             {
                 AddWeightCommand.NotifyCanExecuteChanged();
-                RefreshSampleDataAvailability();
-            }
-        }
-    }
-
-    public bool CanGenerateSampleData
-    {
-        get => _canGenerateSampleData;
-        private set
-        {
-            if (SetProperty(ref _canGenerateSampleData, value))
-            {
-                GenerateSampleDataCommand.NotifyCanExecuteChanged();
             }
         }
     }
@@ -110,62 +83,21 @@ public sealed class ProfileDetailViewModel : ObservableObject
 
     public IAsyncRelayCommand EditCommand { get; }
 
-    public IAsyncRelayCommand GenerateSampleDataCommand { get; }
-
     private async Task LoadAsync()
     {
         IsLoading = true;
         ErrorMessage = null;
-        StatusMessage = null;
-        _measurementCount = 0;
-        _hasSizeMeasurement = false;
-        RefreshSampleDataAvailability();
         try
         {
             var result = await _getHistory.ExecuteAsync(Profile.Id, CancellationToken.None);
             if (result.IsSuccess)
             {
-                _measurementCount = result.Value.Count;
-                _hasSizeMeasurement = result.Value.Any(measurement => measurement.Type == MeasurementType.WeightAndSizes);
-                CanAddWeight = _measurementCount > 0;
-                RefreshSampleDataAvailability();
+                CanAddWeight = result.Value.Count > 0;
             }
             else
             {
                 ErrorMessage = _languageService.Get("ProfileDetailsError");
             }
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    private void RefreshSampleDataAvailability()
-    {
-        CanGenerateSampleData = _hasSizeMeasurement && _measurementCount < 30;
-    }
-
-    private async Task GenerateSampleDataAsync()
-    {
-        IsLoading = true;
-        ErrorMessage = null;
-        StatusMessage = null;
-        try
-        {
-            var result = await _generateSampleData.ExecuteAsync(
-                new GenerateSampleMeasurementHistoryCommand(Profile.Id),
-                CancellationToken.None);
-            if (!result.IsSuccess)
-            {
-                ErrorMessage = result.Error?.Code == "sampleData.sizeMeasurement.required"
-                    ? _languageService.Get("SampleDataRequiresMeasurement")
-                    : _languageService.Get("SampleDataError");
-                return;
-            }
-
-            await LoadAsync();
-            StatusMessage = _languageService.Get("SampleDataGenerated");
         }
         finally
         {
