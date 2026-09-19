@@ -31,6 +31,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
         AddMeasurementsCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightAndSizes));
         HistoryCommand = new AsyncRelayCommand(() => _navigation.ShowHistoryAsync(Profile));
         EditCommand = new AsyncRelayCommand(() => _navigation.RenameProfileAsync(Profile));
+        ExportCommand = new AsyncRelayCommand(() => _navigation.ExportProfileAsync(Profile));
     }
 
     public ProfileDto Profile { get; private set; }
@@ -82,6 +83,8 @@ public sealed class ProfileDetailViewModel : ObservableObject
     public IAsyncRelayCommand HistoryCommand { get; }
 
     public IAsyncRelayCommand EditCommand { get; }
+
+    public IAsyncRelayCommand ExportCommand { get; }
 
     private async Task LoadAsync()
     {

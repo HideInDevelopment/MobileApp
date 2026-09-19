@@ -43,13 +43,20 @@
 
         <Label Grid.Row="1" Text="{Binding ErrorMessage}" TextColor="Red" IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" VerticalOptions="End" />
 
-            <Button Grid.Row="2"
-                Text="{DynamicResource AddProfile}"
-                Style="{StaticResource PrimaryButton}"
-                Command="{Binding CreateCommand}"
-                IsVisible="{Binding HasProfiles}"
-                IsEnabled="{Binding CanAddProfile}"
-                HorizontalOptions="Fill"
-                MinimumHeightRequest="48" />
+            <VerticalStackLayout Grid.Row="2" Spacing="8">
+                <Button Text="{DynamicResource AddProfile}"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding CreateCommand}"
+                    IsVisible="{Binding HasProfiles}"
+                    IsEnabled="{Binding CanAddProfile}"
+                    HorizontalOptions="Fill"
+                    MinimumHeightRequest="48" />
+                <Button Text="{DynamicResource ImportProfile}"
+                    Style="{StaticResource SecondaryButton}"
+                    Command="{Binding ImportCommand}"
+                    IsEnabled="{Binding CanImportProfile}"
+                    HorizontalOptions="Fill"
+                    MinimumHeightRequest="48" />
+            </VerticalStackLayout>
     </Grid>
 </ContentPage>

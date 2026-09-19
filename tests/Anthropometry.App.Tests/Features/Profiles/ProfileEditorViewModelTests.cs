@@ -370,6 +370,10 @@ public sealed class ProfileEditorViewModelTests
             LastGuidanceTopic = topic;
             return Task.CompletedTask;
         }
+
+        public Task ExportProfileAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
+
+        public Task ImportProfileAsync() => Task.CompletedTask;
     }
 
 }

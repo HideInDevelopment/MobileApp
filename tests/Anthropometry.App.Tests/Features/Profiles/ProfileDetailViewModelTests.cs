@@ -160,5 +160,9 @@ public sealed class ProfileDetailViewModelTests
         public Task ShowHelpAsync() => Task.CompletedTask;
 
         public Task ShowGuidanceAsync(Anthropometry.App.Features.Help.GuidanceTopic topic) => Task.CompletedTask;
+
+        public Task ExportProfileAsync(ProfileDto profile) => Task.CompletedTask;
+
+        public Task ImportProfileAsync() => Task.CompletedTask;
     }
 }

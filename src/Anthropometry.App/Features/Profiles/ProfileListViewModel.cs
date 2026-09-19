@@ -34,6 +34,7 @@ public sealed class ProfileListViewModel : ObservableObject
         HelpCommand = new AsyncRelayCommand(_navigation.ShowHelpAsync);
         SelectCommand = new AsyncRelayCommand<ProfileDto?>(SelectAsync);
         DeleteCommand = new AsyncRelayCommand<ProfileDto?>(DeleteAsync);
+        ImportCommand = new AsyncRelayCommand(ImportAsync, () => CanImportProfile);
     }
 
     public ReadOnlyObservableCollection<ProfileDto> Profiles { get; }
@@ -47,6 +48,8 @@ public sealed class ProfileListViewModel : ObservableObject
     public bool HasProfiles => _profiles.Count > 0;
 
     public bool CanAddProfile => _profiles.Count < 4;
+
+    public bool CanImportProfile => _profiles.Count < 4;
 
     public bool IsEmpty => !IsLoading && !HasProfiles && ErrorMessage is null;
 
@@ -73,6 +76,8 @@ public sealed class ProfileListViewModel : ObservableObject
     public IAsyncRelayCommand<ProfileDto?> SelectCommand { get; }
 
     public IAsyncRelayCommand<ProfileDto?> DeleteCommand { get; }
+
+    public IAsyncRelayCommand ImportCommand { get; }
 
     private async Task LoadAsync()
     {
@@ -127,11 +132,19 @@ public sealed class ProfileListViewModel : ObservableObject
         await LoadAsync();
     }
 
+    private async Task ImportAsync()
+    {
+        await _navigation.ImportProfileAsync();
+        await LoadAsync();
+    }
+
     private void NotifyProfileStateChanged()
     {
         OnPropertyChanged(nameof(HasProfiles));
         OnPropertyChanged(nameof(CanAddProfile));
+        OnPropertyChanged(nameof(CanImportProfile));
         OnPropertyChanged(nameof(IsEmpty));
         CreateCommand.NotifyCanExecuteChanged();
+        ImportCommand.NotifyCanExecuteChanged();
     }
 }

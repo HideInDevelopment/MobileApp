@@ -44,6 +44,18 @@
   <data name="AddMeasurements" xml:space="preserve"><value>Añadir medidas</value></data>
   <data name="EditProfile" xml:space="preserve"><value>Editar perfil</value></data>
   <data name="History" xml:space="preserve"><value>Historial</value></data>
+  <data name="ExportProfile" xml:space="preserve"><value>Exportar perfil</value></data>
+  <data name="ImportProfile" xml:space="preserve"><value>Importar perfil</value></data>
+  <data name="ExportProfileTitle" xml:space="preserve"><value>Exportar perfil</value></data>
+  <data name="ImportProfileTitle" xml:space="preserve"><value>Importar perfil</value></data>
+  <data name="ProfileTransferPrivacyWarning" xml:space="preserve"><value>Este archivo contiene datos personales de salud. Compártelo solo con personas o servicios de confianza.</value></data>
+  <data name="ProfileTransferConfirmation" xml:space="preserve"><value>¿Importar «{0}» con {1} mediciones y {2} resultados guardados?</value></data>
+  <data name="ProfileTransferSuccess" xml:space="preserve"><value>El perfil se importó correctamente.</value></data>
+  <data name="ProfileTransferExportError" xml:space="preserve"><value>No se pudo preparar este perfil para compartirlo. Inténtalo de nuevo.</value></data>
+  <data name="ProfileTransferImportError" xml:space="preserve"><value>No se pudo importar este perfil. Inténtalo de nuevo.</value></data>
+  <data name="ProfileTransferInvalidFile" xml:space="preserve"><value>Este archivo no es una exportación válida de un perfil de Anthropometry.</value></data>
+  <data name="ProfileTransferUnsupportedFormat" xml:space="preserve"><value>Este formato de exportación de perfil no es compatible.</value></data>
+  <data name="ProfileTransferLimitReached" xml:space="preserve"><value>Ya tienes 4 perfiles. Elimina uno antes de importar otro.</value></data>
   <data name="EstimateDisclaimer" xml:space="preserve"><value>Las medidas y los resultados son estimaciones, no diagnósticos médicos.</value></data>
   <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Los resultados son estimaciones, no diagnósticos médicos.</value></data>
   <data name="Weight" xml:space="preserve"><value>Peso</value></data>

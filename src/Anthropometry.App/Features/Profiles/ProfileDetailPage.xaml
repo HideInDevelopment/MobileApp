@@ -14,6 +14,7 @@
             <Button Text="{DynamicResource AddWeight}" Style="{StaticResource PrimaryButton}" Command="{Binding AddWeightCommand}" IsEnabled="{Binding CanAddWeight}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource EditProfile}" Style="{StaticResource SecondaryButton}" Command="{Binding EditCommand}" MinimumHeightRequest="48" />
             <Button Text="{DynamicResource History}" Style="{StaticResource SecondaryButton}" Command="{Binding HistoryCommand}" MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource ExportProfile}" Style="{StaticResource SecondaryButton}" Command="{Binding ExportCommand}" MinimumHeightRequest="48" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

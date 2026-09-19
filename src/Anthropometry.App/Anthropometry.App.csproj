@@ -69,7 +69,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-		<Compile Remove="MauiProgram.cs;MauiNavigation.cs;Common\Converters.cs;App.xaml.cs;AppShell.xaml.cs;MainPage.xaml.cs;Platforms\**\*.cs;Localization\PreferencesLanguagePreferenceStore.cs;Theme\PreferencesThemePreferenceStore.cs;Display\PreferencesDisplayPreferenceStore.cs;Features\Settings\PreferencesReminderSettingsStore.cs;Features\**\*.xaml.cs;Features\Measurements\WeightGraphicDrawable.cs" />
+		<Compile Remove="MauiProgram.cs;MauiNavigation.cs;Common\Converters.cs;App.xaml.cs;AppShell.xaml.cs;MainPage.xaml.cs;Platforms\**\*.cs;Localization\PreferencesLanguagePreferenceStore.cs;Theme\PreferencesThemePreferenceStore.cs;Display\PreferencesDisplayPreferenceStore.cs;Features\Settings\PreferencesReminderSettingsStore.cs;Features\Profiles\MauiProfileTransferFileService.cs;Features\**\*.xaml.cs;Features\Measurements\WeightGraphicDrawable.cs" />
 		<None Remove="App.xaml;AppShell.xaml;MainPage.xaml;Features\**\*.xaml" />
 	</ItemGroup>
 

@@ -147,6 +147,130 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _displayPreferences,
             _services.GetRequiredService<ReminderCoordinator>())));
 
+    public async Task ExportProfileAsync(ProfileDto profile)
+    {
+        var exported = await _services.GetRequiredService<ExportProfile>().ExecuteAsync(
+            new ExportProfileCommand(profile.Id),
+            CancellationToken.None);
+        if (!exported.IsSuccess)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                _languageService.Get("ExportProfileTitle"),
+                _languageService.Get("ProfileTransferExportError"),
+                _languageService.Get("Close"));
+            return;
+        }
+
+        var confirmed = await Shell.Current.DisplayAlertAsync(
+            _languageService.Get("ExportProfileTitle"),
+            _languageService.Get("ProfileTransferPrivacyWarning"),
+            _languageService.Get("ExportProfile"),
+            _languageService.Get("Cancel"));
+        if (!confirmed)
+        {
+            return;
+        }
+
+        try
+        {
+            await _services.GetRequiredService<IProfileTransferFileService>().ShareAsync(
+                exported.Value,
+                _languageService.Get("ExportProfileTitle"),
+                CancellationToken.None);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                _languageService.Get("ExportProfileTitle"),
+                _languageService.Get("ProfileTransferExportError"),
+                _languageService.Get("Close"));
+        }
+    }
+
+    public async Task ImportProfileAsync()
+    {
+        Stream? content;
+        try
+        {
+            content = await _services.GetRequiredService<IProfileTransferFileService>().PickCsvAsync(
+                _languageService.Get("ImportProfileTitle"),
+                CancellationToken.None);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        catch (Exception)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                _languageService.Get("ImportProfileTitle"),
+                _languageService.Get("ProfileTransferInvalidFile"),
+                _languageService.Get("Close"));
+            return;
+        }
+
+        if (content is null)
+        {
+            return;
+        }
+
+        await using (content)
+        {
+            var useCase = _services.GetRequiredService<ImportProfile>();
+            var preview = await useCase.PreviewAsync(content, CancellationToken.None);
+            if (!preview.IsSuccess)
+            {
+                await ShowImportErrorAsync(preview.Error!.Code);
+                return;
+            }
+
+            var confirmation = string.Format(
+                CultureInfo.CurrentCulture,
+                _languageService.Get("ProfileTransferConfirmation"),
+                preview.Value.Name,
+                preview.Value.MeasurementCount,
+                preview.Value.CalculationResultCount);
+            var confirmed = await Shell.Current.DisplayAlertAsync(
+                _languageService.Get("ImportProfileTitle"),
+                confirmation,
+                _languageService.Get("ImportProfile"),
+                _languageService.Get("Cancel"));
+            if (!confirmed)
+            {
+                return;
+            }
+
+            var imported = await useCase.ExecuteAsync(preview.Value, CancellationToken.None);
+            if (!imported.IsSuccess)
+            {
+                await ShowImportErrorAsync(imported.Error!.Code);
+                return;
+            }
+
+            await Shell.Current.DisplayAlertAsync(
+                _languageService.Get("ImportProfileTitle"),
+                _languageService.Get("ProfileTransferSuccess"),
+                _languageService.Get("Close"));
+        }
+    }
+
+    private Task ShowImportErrorAsync(string code)
+    {
+        var key = code switch
+        {
+            "profile.transfer.format.unsupported" => "ProfileTransferUnsupportedFormat",
+            "profile.limit.reached" => "ProfileTransferLimitReached",
+            _ => "ProfileTransferImportError"
+        };
+        return Shell.Current.DisplayAlertAsync(
+            _languageService.Get("ImportProfileTitle"),
+            _languageService.Get(key),
+            _languageService.Get("Close"));
+    }
+
     public Task ShowHelpAsync() => PushAsync(new HelpPage());
 
     public Task ShowGuidanceAsync(GuidanceTopic topic)

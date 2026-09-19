@@ -44,6 +44,18 @@
   <data name="AddMeasurements" xml:space="preserve"><value>Maße hinzufügen</value></data>
   <data name="EditProfile" xml:space="preserve"><value>Profil bearbeiten</value></data>
   <data name="History" xml:space="preserve"><value>Verlauf</value></data>
+  <data name="ExportProfile" xml:space="preserve"><value>Profil exportieren</value></data>
+  <data name="ImportProfile" xml:space="preserve"><value>Profil importieren</value></data>
+  <data name="ExportProfileTitle" xml:space="preserve"><value>Profil exportieren</value></data>
+  <data name="ImportProfileTitle" xml:space="preserve"><value>Profil importieren</value></data>
+  <data name="ProfileTransferPrivacyWarning" xml:space="preserve"><value>Diese Datei enthält persönliche Gesundheitsdaten. Teile sie nur mit Personen oder Diensten, denen du vertraust.</value></data>
+  <data name="ProfileTransferConfirmation" xml:space="preserve"><value>„{0}“ mit {1} Messungen und {2} gespeicherten Ergebnissen importieren?</value></data>
+  <data name="ProfileTransferSuccess" xml:space="preserve"><value>Das Profil wurde erfolgreich importiert.</value></data>
+  <data name="ProfileTransferExportError" xml:space="preserve"><value>Das Profil konnte nicht zum Teilen vorbereitet werden. Bitte versuche es erneut.</value></data>
+  <data name="ProfileTransferImportError" xml:space="preserve"><value>Das Profil konnte nicht importiert werden. Bitte versuche es erneut.</value></data>
+  <data name="ProfileTransferInvalidFile" xml:space="preserve"><value>Diese Datei ist kein gültiger Anthropometry-Profil-Export.</value></data>
+  <data name="ProfileTransferUnsupportedFormat" xml:space="preserve"><value>Dieses Profil-Exportformat wird nicht unterstützt.</value></data>
+  <data name="ProfileTransferLimitReached" xml:space="preserve"><value>Du hast bereits 4 Profile. Lösche eines, bevor du ein weiteres importierst.</value></data>
   <data name="EstimateDisclaimer" xml:space="preserve"><value>Messungen und Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
   <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
   <data name="Weight" xml:space="preserve"><value>Gewicht</value></data>

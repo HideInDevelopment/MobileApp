@@ -27,4 +27,8 @@ public interface IProfileNavigation
     Task ShowHelpAsync();
 
     Task ShowGuidanceAsync(GuidanceTopic topic);
+
+    Task ExportProfileAsync(ProfileDto profile);
+
+    Task ImportProfileAsync();
 }
