@@ -508,6 +508,14 @@ Presentation validation improves immediate form feedback but never replaces doma
 - Deleting a profile warns that its measurements and results will be removed.
 - Product copy must state that the results are estimates, not medical diagnoses.
 
+### Profile transfer
+
+Profile transfer v1 is an offline Application use case exposed by the Android Presentation layer. It exports exactly one profile per UTF-8 CSV file with a fixed versioned schema containing canonical kilograms, centimetres, UTC timestamps, measurements, and historical calculation results. Display preferences, localized formatting, and external identifiers are never serialized.
+
+Import validates the entire file before persistence, always creates a new profile with regenerated identifiers, preserves historical formula identities and versions without recalculating, enforces the four-profile limit, and inserts the profile graph in one SQLite transaction. A failed insert leaves the database unchanged.
+
+The Android adapter writes temporary exports to `FileSystem.CacheDirectory`, invokes the native Sharesheet through `ShareFileRequest`, and reads imports through `FilePicker`/the Storage Access Framework. It requests no storage permission. Export warns that the file contains personal health data; encryption, merge/overwrite, multi-profile files, cloud backup, and synchronization remain out of scope.
+
 ## 12. Testing strategy
 
 ### Domain.Tests
@@ -551,7 +559,7 @@ The design leaves room for these future additions, but they are not part of the 
 - more anthropometric equations;
 - profiles with formula-specific sex or parameters;
 - additional progress charts beyond the initial weight graphic;
-- CSV or PDF export;
+- PDF export;
 - local backup;
 - optional synchronization;
 - iOS;
@@ -563,4 +571,7 @@ Each extension must add a use case and tests first, then adapt Presentation. Rem
 
 - [.NET MAUI documentation](https://learn.microsoft.com/en-us/dotnet/maui/?view=net-maui-10.0)
 - [.NET MAUI supported platforms](https://learn.microsoft.com/en-us/dotnet/maui/supported-platforms?view=net-maui-10.0)
+- [.NET MAUI Share](https://learn.microsoft.com/en-us/dotnet/maui/platform-integration/data/share?view=net-maui-10.0)
+- [.NET MAUI FilePicker](https://learn.microsoft.com/en-us/dotnet/api/microsoft.maui.storage.filepicker.pickasync?view=net-maui-10.0)
+- [Android Storage Access Framework](https://developer.android.com/training/data-storage/shared/documents-files)
 - [Jetpack Compose documentation](https://developer.android.com/develop/ui/compose/documentation) — considered native Android alternative

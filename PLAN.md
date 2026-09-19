@@ -34,7 +34,7 @@
 
 ## Current implementation status
 
-Slices 0 through 7 are implemented with automated Domain, Application, Infrastructure, and plain `net10.0` Presentation verification. The approved profile-settings and measurement-modes feature slice is implemented and tracked below. The Android target is configured as `net10.0-android`; release verification and the manual Android acceptance checklist remain the final handoff steps.
+Slices 0 through 7 are implemented with automated Domain, Application, Infrastructure, and plain `net10.0` Presentation verification. The approved profile-settings and measurement-modes feature slice is implemented and tracked below. The Android target is configured as `net10.0-android`; profile CSV transfer is implemented as a post-MVP offline feature and its manual Android smoke pass remains pending.
 
 The App project also targets plain `net10.0` for ViewModel tests; MAUI pages and platform files remain Android-only. SQLitePCLRaw transitive packages are pinned to version `2.1.13` because the version selected by `sqlite-net-pcl` `1.9.172` is reported by NuGet as vulnerable.
 
@@ -866,6 +866,42 @@ git commit -m "feat: add measurement history and resilient ui states"
 - [x] Android Debug build completed with 0 warnings and 0 errors.
 - [x] Android Release source/package build completed with 0 warnings and 0 errors when `PublishTrimmed=false` and `RunAOTCompilation=false` were supplied as environment-only verification overrides.
 - [ ] Default trimmed Android Release packaging remains blocked by the host's `Microsoft.NET.ILLink` task-host failure (`MSB4216`), unrelated to application compilation.
+
+---
+
+### Post-MVP feature slice: Profile CSV transfer
+
+**Status:** Implemented on `master` as an offline, Android-first profile transfer feature. Manual Android Sharesheet/FilePicker smoke validation remains pending.
+
+**Review boundary:** A user can export one complete profile to a versioned canonical CSV file, share it through Android, import it as a new profile after preview and confirmation, and retain its measurements and historical calculation results without recalculation or external identifiers.
+
+**Acceptance criteria:**
+
+- [x] Export contains one profile, canonical kg/cm values, UTC timestamps, measurements, and historical results in a fixed v1 CSV schema.
+- [x] CSV values use invariant decimals, UTF-8, CSV escaping, and version validation; malformed, duplicate, or dangling records are rejected before persistence.
+- [x] Import always generates new profile, measurement, and calculation-result IDs and preserves gender, hip values, weight-only history, formula IDs, versions, units, values, and timestamps.
+- [x] Import enforces the four-profile limit and persists the complete graph in one SQLite transaction with rollback on failure.
+- [x] Android uses the private cache directory, native Sharesheet, and FilePicker/Storage Access Framework without storage permissions or new packages.
+- [x] Profile detail exposes localized `Export profile`; profile list exposes localized `Import profile`, disabled at four profiles and reloaded after a confirmed import.
+- [x] English, Spanish, and German resources cover labels, health-data warning, preview confirmation, success, cancellation, invalid-file, unsupported-format, and profile-limit states.
+
+**Automated verification:**
+
+- [x] Serializer tests: 7 passed.
+- [x] Application tests: 55 passed.
+- [x] Infrastructure tests: 16 passed.
+- [x] App tests: 144 passed.
+- [x] Full Release verification with `PublishTrimmed=false` and `RunAOTCompilation=false`: Domain 54, Application 55, Infrastructure 16, and App 144 tests passed.
+- [x] Android Debug build with `PublishTrimmed=false` and `RunAOTCompilation=false`: 0 warnings, 0 errors.
+- [x] Android Release build with `PublishTrimmed=false` and `RunAOTCompilation=false`: 0 warnings, 0 errors.
+- [ ] Android emulator/Pixel Sharesheet, import-provider, cancellation, and four-profile smoke pass — pending device execution.
+
+The default trimmed Release verification remains blocked by the installed MAUI linker task host (`MSB4216`/`MSB4027` while creating the .NET x64 task host). The source and test verification above uses the documented overrides; production trimming/AOT packaging still needs a host/toolchain follow-up.
+
+**Implementation records:**
+
+- Design: `docs/superpowers/specs/2026-09-19-profile-csv-transfer-design.md`
+- Execution plan: `docs/superpowers/plans/2026-09-19-profile-csv-transfer-plan.md`
 
 ---
 
