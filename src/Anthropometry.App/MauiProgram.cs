@@ -40,6 +40,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<IMigration, Migration0004>();
         builder.Services.AddSingleton<MigrationRunner>();
         builder.Services.AddSingleton<IProfileRepository, SqliteProfileRepository>();
+        builder.Services.AddSingleton<IProfileTransferRepository, SqliteProfileTransferRepository>();
         builder.Services.AddSingleton<IMeasurementRepository, SqliteMeasurementRepository>();
         builder.Services.AddSingleton<ICalculationResultRepository, SqliteCalculationResultRepository>();
         builder.Services.AddSingleton<IClock, SystemClock>();
