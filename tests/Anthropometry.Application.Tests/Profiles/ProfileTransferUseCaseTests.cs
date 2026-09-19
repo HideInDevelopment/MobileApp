@@ -1,0 +1,206 @@
+using System.Text;
+using Anthropometry.Application.Abstractions;
+using Anthropometry.Application.Common;
+using Anthropometry.Application.Profiles;
+using Anthropometry.Application.Tests.Support;
+using Anthropometry.Domain.Calculations;
+using Anthropometry.Domain.Measurements;
+using Anthropometry.Domain.Profiles;
+
+namespace Anthropometry.Application.Tests.Profiles;
+
+public sealed class ProfileTransferUseCaseTests
+{
+    [Fact]
+    public async Task Export_missing_profile_returns_not_found()
+    {
+        var repository = new FakeProfileTransferRepository();
+
+        var result = await new ExportProfile(repository, new FakeClock()).ExecuteAsync(
+            new ExportProfileCommand(ProfileId.New()),
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("profile.notFound", result.Error!.Code);
+    }
+
+    [Fact]
+    public async Task Export_returns_sanitized_csv_file()
+    {
+        var snapshot = CreateSnapshot("Anna / Imported");
+        var repository = new FakeProfileTransferRepository { Snapshot = snapshot };
+
+        var result = await new ExportProfile(repository, new FakeClock()).ExecuteAsync(
+            new ExportProfileCommand(snapshot.Profile.Id),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("anthropometry-Anna-Imported-20260908.csv", result.Value.FileName);
+        Assert.NotEmpty(result.Value.Content);
+        Assert.True(ProfileTransferCsvSerializer.Parse(new MemoryStream(result.Value.Content)).IsSuccess);
+    }
+
+    [Fact]
+    public async Task Preview_returns_profile_name_gender_and_record_counts()
+    {
+        var snapshot = CreateSnapshot();
+        var content = ProfileTransferCsvSerializer.Serialize(snapshot);
+
+        var result = await new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository())
+            .PreviewAsync(new MemoryStream(content), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal("Anna", result.Value.Name);
+        Assert.Equal(ProfileGender.Female, result.Value.Gender);
+        Assert.Equal(2, result.Value.MeasurementCount);
+        Assert.Equal(3, result.Value.CalculationResultCount);
+    }
+
+    [Fact]
+    public async Task Import_creates_new_ids_and_preserves_female_history()
+    {
+        var source = CreateSnapshot();
+        var transferRepository = new FakeProfileTransferRepository();
+        var profiles = new FakeProfileRepository();
+        var useCase = new ImportProfile(transferRepository, profiles);
+        var preview = (await useCase.PreviewAsync(
+            new MemoryStream(ProfileTransferCsvSerializer.Serialize(source)),
+            CancellationToken.None)).Value;
+
+        var result = await useCase.ExecuteAsync(preview, CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.NotEqual(source.Profile.Id, result.Value.Profile.Id);
+        Assert.Equal(ProfileGender.Female, result.Value.Profile.Gender);
+        Assert.Equal(2, result.Value.MeasurementCount);
+        Assert.Equal(3, result.Value.CalculationResultCount);
+        Assert.NotNull(transferRepository.ImportedProfile);
+        Assert.All(transferRepository.ImportedMeasurements, measurement => Assert.DoesNotContain(
+            measurement.Id,
+            source.Measurements.Select(item => item.Id)));
+        Assert.Contains(transferRepository.ImportedMeasurements, measurement =>
+            measurement.Type == MeasurementType.WeightAndSizes
+            && measurement.Gender == ProfileGender.Female
+            && measurement.HipCm == 42.75m);
+        Assert.Contains(transferRepository.ImportedResults, calculation =>
+            calculation.FormulaId == "female.body-fat.us-navy"
+            && calculation.FormulaVersion == "2.0"
+            && calculation.Unit == "percent");
+        Assert.All(transferRepository.ImportedResults, calculation =>
+            Assert.Contains(transferRepository.ImportedMeasurements, measurement => measurement.Id == calculation.MeasurementId));
+    }
+
+    [Fact]
+    public async Task Import_at_profile_limit_does_not_write()
+    {
+        var profiles = new FakeProfileRepository();
+        for (var index = 0; index < 4; index++)
+        {
+            profiles.Items.Add(TestData.Profile($"Existing {index}"));
+        }
+
+        var transferRepository = new FakeProfileTransferRepository();
+        var useCase = new ImportProfile(transferRepository, profiles);
+        var preview = (await useCase.PreviewAsync(
+            new MemoryStream(ProfileTransferCsvSerializer.Serialize(CreateSnapshot())),
+            CancellationToken.None)).Value;
+
+        var result = await useCase.ExecuteAsync(preview, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("profile.limit.reached", result.Error!.Code);
+        Assert.False(transferRepository.ImportCalled);
+        Assert.Equal(4, profiles.Items.Count);
+    }
+
+    [Fact]
+    public async Task Preview_rejects_malformed_or_unsupported_files()
+    {
+        var useCase = new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository());
+
+        var malformed = await useCase.PreviewAsync(
+            new MemoryStream(Encoding.UTF8.GetBytes("not,a,profile")),
+            CancellationToken.None);
+        var unsupportedContent = Encoding.UTF8.GetString(ProfileTransferCsvSerializer.Serialize(CreateSnapshot()))
+            .Replace("meta,1,", "meta,9,", StringComparison.Ordinal);
+        var unsupported = await useCase.PreviewAsync(
+            new MemoryStream(Encoding.UTF8.GetBytes(unsupportedContent)),
+            CancellationToken.None);
+
+        Assert.False(malformed.IsSuccess);
+        Assert.Equal("profile.transfer.file.invalid", malformed.Error!.Code);
+        Assert.False(unsupported.IsSuccess);
+        Assert.Equal("profile.transfer.format.unsupported", unsupported.Error!.Code);
+    }
+
+    [Fact]
+    public async Task Import_repository_failure_returns_persistence_error()
+    {
+        var transferRepository = new FakeProfileTransferRepository { ThrowOnImport = true };
+        var useCase = new ImportProfile(transferRepository, new FakeProfileRepository());
+        var preview = (await useCase.PreviewAsync(
+            new MemoryStream(ProfileTransferCsvSerializer.Serialize(CreateSnapshot())),
+            CancellationToken.None)).Value;
+
+        var result = await useCase.ExecuteAsync(preview, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("persistence.unavailable", result.Error!.Code);
+        Assert.True(transferRepository.ImportCalled);
+    }
+
+    private static ProfileTransferSnapshot CreateSnapshot(string name = "Anna")
+    {
+        var profileId = ProfileId.New();
+        var timestamp = new DateTimeOffset(2026, 9, 1, 8, 0, 0, TimeSpan.Zero);
+        var profile = Profile.Rehydrate(
+            profileId,
+            name,
+            ProfileSettings.Create(178.25m, 31, ActivityLevel.High).Value,
+            timestamp,
+            timestamp,
+            ProfileGender.Female).Value;
+        var sized = Measurement.Rehydrate(
+            MeasurementId.New(),
+            profileId,
+            new MeasurementInput(MeasurementType.WeightAndSizes, 72.5m, 178.25m, 31.5m, 84.75m, 31, ActivityLevel.High, timestamp.AddDays(1), 42.75m, ProfileGender.Female)).Value;
+        var weightOnly = Measurement.Rehydrate(
+            MeasurementId.New(),
+            profileId,
+            new MeasurementInput(MeasurementType.WeightOnly, 71.25m, 178.25m, null, null, 31, ActivityLevel.High, timestamp.AddDays(2), null, ProfileGender.Female)).Value;
+        var results = new[]
+        {
+            CalculationResult.Create(sized.Id, CalculationType.BodyFatPercentage, new CalculationResultValue(23.45m, "percent", "female.body-fat.us-navy", "2.0"), timestamp.AddDays(1)).Value,
+            CalculationResult.Create(sized.Id, CalculationType.BasalMetabolicRate, new CalculationResultValue(1488m, "kcal/day", "female.bmr.mifflin-st-jeor", "2.0"), timestamp.AddDays(1)).Value,
+            CalculationResult.Create(weightOnly.Id, CalculationType.TotalDailyEnergyExpenditure, new CalculationResultValue(2300m, "kcal/day", "tdee.activity-multiplier", "1.0"), timestamp.AddDays(2)).Value
+        };
+        return new ProfileTransferSnapshot(profile, [sized, weightOnly], results);
+    }
+
+    private sealed class FakeProfileTransferRepository : IProfileTransferRepository
+    {
+        public ProfileTransferSnapshot? Snapshot { get; init; }
+        public bool ThrowOnImport { get; init; }
+        public bool ImportCalled { get; private set; }
+        public Profile? ImportedProfile { get; private set; }
+        public IReadOnlyList<Measurement> ImportedMeasurements { get; private set; } = [];
+        public IReadOnlyList<CalculationResult> ImportedResults { get; private set; } = [];
+
+        public Task<ProfileTransferSnapshot?> GetSnapshotAsync(ProfileId profileId, CancellationToken cancellationToken)
+            => Task.FromResult(Snapshot?.Profile.Id == profileId ? Snapshot : null);
+
+        public Task ImportAsync(Profile profile, IReadOnlyList<Measurement> measurements, IReadOnlyList<CalculationResult> results, CancellationToken cancellationToken)
+        {
+            ImportCalled = true;
+            if (ThrowOnImport)
+            {
+                throw new InvalidOperationException("Test persistence failure");
+            }
+
+            ImportedProfile = profile;
+            ImportedMeasurements = measurements;
+            ImportedResults = results;
+            return Task.CompletedTask;
+        }
+    }
+}

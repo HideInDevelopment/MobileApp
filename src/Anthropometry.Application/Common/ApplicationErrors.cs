@@ -19,4 +19,8 @@ internal static class ApplicationErrors
     public static DomainError MetricHistoryDateRangeInvalid => new("metricHistory.dateRange.invalid", "Errors.MetricHistoryDateRangeInvalid");
 
     public static DomainError PersistenceUnavailable => new("persistence.unavailable", "Errors.PersistenceUnavailable");
+
+    public static DomainError ProfileTransferFileInvalid => new("profile.transfer.file.invalid", "Errors.ProfileTransferFileInvalid");
+
+    public static DomainError ProfileTransferFormatUnsupported => new("profile.transfer.format.unsupported", "Errors.ProfileTransferFormatUnsupported");
 }
