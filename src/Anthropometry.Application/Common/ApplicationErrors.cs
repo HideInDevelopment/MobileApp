@@ -8,6 +8,8 @@ internal static class ApplicationErrors
 
     public static DomainError ProfileLimitReached => new("profile.limit.reached", "Errors.ProfileLimitReached");
 
+    public static DomainError PremiumFeatureRequired => new("premium.feature.required", "Errors.PremiumFeatureRequired");
+
     public static DomainError ProfileSettingsRequired => new("profile.settings.required", "Errors.ProfileSettingsRequired");
 
     public static DomainError CalculationUnavailableForMeasurementType => new("calculation.measurementType.unavailable", "Errors.CalculationUnavailableForMeasurementType");
