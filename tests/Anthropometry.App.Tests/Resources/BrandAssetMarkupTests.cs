@@ -16,14 +16,15 @@ public sealed class BrandAssetMarkupTests
     public void Startup_assets_do_not_use_the_default_dotnet_wordmark()
     {
         var splash = ReadAsset("Splash", "splash.svg");
-        var appIcon = ReadAsset("AppIcon", "appicon.svg");
-        var appIconForeground = ReadAsset("AppIcon", "appiconfg.svg");
+        var appIconPath = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Resources", "AppIcon", "appicon.png"));
 
         Assert.DoesNotContain("105.50037", splash);
-        Assert.DoesNotContain("105.50037", appIconForeground);
         Assert.Contains("fill=\"#FFFFFF\"", splash);
-        Assert.Contains("fill=\"#1F2937\"", appIcon);
-        Assert.Contains("<circle", appIconForeground);
+        Assert.True(File.Exists(appIconPath));
+        Assert.True(new FileInfo(appIconPath).Length > 100_000);
     }
 
     private static string ReadPathFill(string fileName)
