@@ -40,7 +40,14 @@
                 <Grid Grid.Column="1" WidthRequest="170">
                     <Button Text="{Binding SelectedMeasurementSystem.DisplayName}"
                             Style="{StaticResource SelectorButton}"
+                            IsVisible="{Binding IsMeasurementSystemLocked, Converter={StaticResource InverseBoolConverter}}"
                             Clicked="OnMeasurementSystemSelectorClicked"
+                            SemanticProperties.Description="{DynamicResource MeasurementSystem}" />
+                    <Button Text="{Binding SelectedMeasurementSystem.DisplayName}"
+                            Style="{StaticResource LockedSelectorButton}"
+                            IsVisible="{Binding IsMeasurementSystemLocked}"
+                            Command="{Binding SelectMeasurementSystemCommand}"
+                            CommandParameter="imperial"
                             SemanticProperties.Description="{DynamicResource MeasurementSystem}" />
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>

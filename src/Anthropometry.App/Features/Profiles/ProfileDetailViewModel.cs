@@ -18,6 +18,12 @@ public sealed class ProfileDetailViewModel : ObservableObject
     private bool _isLoading;
     private string? _errorMessage;
     private bool _canAddWeight;
+    private EntitlementSnapshot _entitlement = new(
+        EntitlementTier.Free,
+        SubscriptionState.Active,
+        null,
+        null,
+        null);
 
     public ProfileDetailViewModel(
         ProfileDto profile,
@@ -79,6 +85,9 @@ public sealed class ProfileDetailViewModel : ObservableObject
         }
     }
 
+    public bool IsExportLocked
+        => !FeatureAccessPolicy.CanUse(_entitlement, PremiumFeature.EncryptedProfileTransfer);
+
     public IAsyncRelayCommand LoadCommand { get; }
 
     public IAsyncRelayCommand AddWeightCommand { get; }
@@ -97,6 +106,8 @@ public sealed class ProfileDetailViewModel : ObservableObject
         ErrorMessage = null;
         try
         {
+            _entitlement = await _entitlementProvider.GetCurrentAsync(CancellationToken.None);
+            OnPropertyChanged(nameof(IsExportLocked));
             var result = await _getHistory.ExecuteAsync(Profile.Id, CancellationToken.None);
             if (result.IsSuccess)
             {
@@ -115,8 +126,9 @@ public sealed class ProfileDetailViewModel : ObservableObject
 
     private async Task ExportAsync()
     {
-        var entitlement = await _entitlementProvider.GetCurrentAsync(CancellationToken.None);
-        if (!FeatureAccessPolicy.CanUse(entitlement, PremiumFeature.EncryptedProfileTransfer))
+        _entitlement = await _entitlementProvider.GetCurrentAsync(CancellationToken.None);
+        OnPropertyChanged(nameof(IsExportLocked));
+        if (IsExportLocked)
         {
             await _navigation.ShowPremiumAsync();
             return;

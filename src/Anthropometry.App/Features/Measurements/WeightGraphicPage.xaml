@@ -97,5 +97,50 @@
                    VerticalOptions="Center"
                    HorizontalTextAlignment="Center" />
         </Grid>
+
+        <Grid Grid.RowSpan="2"
+              IsVisible="{Binding IsMetricMenuVisible}"
+              BackgroundColor="Transparent"
+              ZIndex="10">
+            <BoxView BackgroundColor="Transparent">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding DismissMetricMenuCommand}" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            <Border Style="{StaticResource CardBorder}"
+                    WidthRequest="240"
+                    Padding="8"
+                    Margin="0,8,8,0"
+                    HorizontalOptions="End"
+                    VerticalOptions="Start">
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Opacity="0.3"
+                            Radius="12"
+                            Offset="0,4" />
+                </Border.Shadow>
+                <CollectionView ItemsSource="{Binding MetricOptions}"
+                                SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Button Text="{Binding DisplayName}"
+                                        Style="{StaticResource MenuButton}"
+                                        IsVisible="{Binding IsLocked, Converter={StaticResource InverseBoolConverter}}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectMetricCommand}"
+                                        CommandParameter="{Binding Code}"
+                                        SemanticProperties.Description="{Binding DisplayName}" />
+                                <Button Text="{Binding DisplayName}"
+                                        Style="{StaticResource LockedMenuButton}"
+                                        IsVisible="{Binding IsLocked}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectMetricCommand}"
+                                        CommandParameter="{Binding Code}"
+                                        SemanticProperties.Description="{Binding DisplayName}" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

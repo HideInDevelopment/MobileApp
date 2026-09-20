@@ -60,6 +60,8 @@ public sealed class ProfileListViewModel : ObservableObject
 
     public bool CanAddProfile => _profiles.Count < FeatureAccessPolicy.GetMaximumProfiles(_entitlement);
 
+    public bool ShowAddProfileButton => HasProfiles && CanAddProfile;
+
     public bool CanImportProfile => _profiles.Count < FeatureAccessPolicy.GetMaximumProfiles(_entitlement)
         && FeatureAccessPolicy.CanUse(_entitlement, PremiumFeature.EncryptedProfileTransfer);
 
@@ -176,6 +178,7 @@ public sealed class ProfileListViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(HasProfiles));
         OnPropertyChanged(nameof(CanAddProfile));
+        OnPropertyChanged(nameof(ShowAddProfileButton));
         OnPropertyChanged(nameof(CanImportProfile));
         OnPropertyChanged(nameof(IsAddProfileLocked));
         OnPropertyChanged(nameof(IsImportProfileLocked));

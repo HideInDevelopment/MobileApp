@@ -21,7 +21,10 @@ public enum MetricKind
     TotalDailyEnergyExpenditure
 }
 
-public sealed record MetricOption(MetricKind Value, string DisplayName);
+public sealed record MetricOption(MetricKind Value, string DisplayName, bool IsLocked = false)
+{
+    public string Code => Value.ToString();
+}
 
 public sealed record WeightGraphicPoint(
     DateTimeOffset MeasuredAtUtc,
@@ -65,13 +68,16 @@ public sealed class WeightGraphicViewModel : ObservableObject
     private DateTime _toDate = DateTime.Today;
     private bool _suppressFilterReload;
     private readonly bool _isFullGraphicsLocked;
+    private readonly Func<Task>? _showPremiumAsync;
+    private bool _isMetricMenuVisible;
 
     public WeightGraphicViewModel(
         GetMetricHistory getHistory,
         ProfileId profileId,
         LanguageService languageService,
         DisplayPreferencesService displayPreferences,
-        EntitlementSnapshot? entitlement = null)
+        EntitlementSnapshot? entitlement = null,
+        Func<Task>? showPremiumAsync = null)
     {
         _getHistory = getHistory;
         _profileId = profileId;
@@ -81,12 +87,15 @@ public sealed class WeightGraphicViewModel : ObservableObject
             ?? new EntitlementSnapshot(EntitlementTier.Free, SubscriptionState.Active, null, null, null);
         _entitledDisplayPreferences = new EntitledDisplayPreferences(_displayPreferences, currentEntitlement);
         _isFullGraphicsLocked = !FeatureAccessPolicy.CanUse(currentEntitlement, PremiumFeature.FullMeasurementGraphics);
+        _showPremiumAsync = showPremiumAsync;
         Points = new ReadOnlyObservableCollection<WeightGraphicPoint>(_points);
         MetricOptions = CreateMetricOptions();
         _selectedMetricOption = MetricOptions[0];
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         ClearDateRangeCommand = new AsyncRelayCommand(ClearDateRangeAsync);
         SelectMetricCommand = new RelayCommand<string?>(SelectMetric);
+        ToggleMetricMenuCommand = new RelayCommand(() => IsMetricMenuVisible = !IsMetricMenuVisible);
+        DismissMetricMenuCommand = new RelayCommand(() => IsMetricMenuVisible = false);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
@@ -96,6 +105,12 @@ public sealed class WeightGraphicViewModel : ObservableObject
     public IReadOnlyList<MetricOption> MetricOptions { get; private set; }
 
     public bool IsFullGraphicsLocked => _isFullGraphicsLocked;
+
+    public bool IsMetricMenuVisible
+    {
+        get => _isMetricMenuVisible;
+        private set => SetProperty(ref _isMetricMenuVisible, value);
+    }
 
     public string PremiumGraphicsText => _languageService.Get("PremiumRequired");
 
@@ -270,6 +285,10 @@ public sealed class WeightGraphicViewModel : ObservableObject
 
     public IRelayCommand<string?> SelectMetricCommand { get; }
 
+    public IRelayCommand ToggleMetricMenuCommand { get; }
+
+    public IRelayCommand DismissMetricMenuCommand { get; }
+
     public void SelectPoint(WeightGraphicPoint? point)
     {
         if (EqualityComparer<WeightGraphicPoint?>.Default.Equals(_selectedPoint, point))
@@ -363,10 +382,20 @@ public sealed class WeightGraphicViewModel : ObservableObject
     {
         if (Enum.TryParse<MetricKind>(value, ignoreCase: true, out var metric))
         {
-            if (MetricOptions.Any(option => option.Value == metric))
+            var option = MetricOptions.FirstOrDefault(candidate => candidate.Value == metric);
+            IsMetricMenuVisible = false;
+            if (option is null)
             {
-                SelectedMetric = metric;
+                return;
             }
+
+            if (option.IsLocked)
+            {
+                _ = _showPremiumAsync?.Invoke();
+                return;
+            }
+
+            SelectedMetric = metric;
         }
     }
 
@@ -380,18 +409,13 @@ public sealed class WeightGraphicViewModel : ObservableObject
 
     private List<MetricOption> CreateMetricOptions()
     {
-        var options = new List<MetricOption>
-        {
-            new(MetricKind.Weight, _languageService.Get("Weight"))
-        };
-        if (!_isFullGraphicsLocked)
-        {
-            options.Add(new(MetricKind.BodyFatPercentage, _languageService.Get("BodyFatPercentage")));
-            options.Add(new(MetricKind.BasalMetabolicRate, _languageService.Get("BasalMetabolicRate")));
-            options.Add(new(MetricKind.TotalDailyEnergyExpenditure, _languageService.Get("TotalDailyEnergyExpenditure")));
-        }
-
-        return options;
+        return
+        [
+            new(MetricKind.Weight, _languageService.Get("Weight")),
+            new(MetricKind.BodyFatPercentage, _languageService.Get("BodyFatPercentage"), _isFullGraphicsLocked),
+            new(MetricKind.BasalMetabolicRate, _languageService.Get("BasalMetabolicRate"), _isFullGraphicsLocked),
+            new(MetricKind.TotalDailyEnergyExpenditure, _languageService.Get("TotalDailyEnergyExpenditure"), _isFullGraphicsLocked)
+        ];
     }
 
     private WeightGraphicPoint CreatePoint(MetricHistoryDto metric)

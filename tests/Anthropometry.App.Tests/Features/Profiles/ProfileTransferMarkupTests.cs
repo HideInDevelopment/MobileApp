@@ -97,6 +97,10 @@ public sealed class ProfileTransferMarkupTests
         Assert.Contains("Command=\"{Binding ExportCommand}\"", detail);
         Assert.Contains("{DynamicResource ImportProfile}", list);
         Assert.Contains("Command=\"{Binding ImportCommand}\"", list);
+        Assert.Contains("IsVisible=\"{Binding IsAddProfileLocked}\"", list);
+        Assert.Contains("IsVisible=\"{Binding IsImportProfileLocked}\"", list);
+        Assert.Contains("LockedButton", list);
+        Assert.Contains("IsExportLocked", detail);
         Assert.DoesNotContain("IsEnabled=\"{Binding CanImportProfile}\"", list);
         Assert.Contains("IsPassword=\"True\"", prompt);
         Assert.Contains("ProfileTransferCodeInstructions", prompt);

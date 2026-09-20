@@ -16,6 +16,8 @@ public sealed class SettingsPageMarkupTests
         Assert.Contains("OnThemeSelectorClicked", markup);
         Assert.Contains("OnDateFormatSelectorClicked", markup);
         Assert.Contains("OnMeasurementSystemSelectorClicked", markup);
+        Assert.Contains("LockedSelectorButton", markup);
+        Assert.Contains("IsMeasurementSystemLocked", markup);
         Assert.Contains("OnInactivityIntervalSelectorClicked", markup);
         Assert.Contains("{DynamicResource PremiumTitle}", markup, StringComparison.Ordinal);
         Assert.Contains("{Binding PremiumStatusText}", markup, StringComparison.Ordinal);

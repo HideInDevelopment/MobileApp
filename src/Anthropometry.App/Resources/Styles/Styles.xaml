@@ -293,6 +293,37 @@
         </Setter>
     </Style>
 
+    <Style x:Key="LockedButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource SurfaceSubtleDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+        <Setter Property="ImageSource" Value="{AppThemeBinding Light=lock.svg, Dark=lock_dark.svg}" />
+        <Setter Property="ContentLayout" Value="Left,8" />
+    </Style>
+
+    <Style x:Key="LockedSelectorButton" TargetType="Button" BasedOn="{StaticResource SelectorButton}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource SurfaceSubtleDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+        <Setter Property="ImageSource" Value="{AppThemeBinding Light=lock.svg, Dark=lock_dark.svg}" />
+        <Setter Property="ContentLayout" Value="Left,8" />
+    </Style>
+
+    <Style x:Key="MenuButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="CornerRadius" Value="6" />
+    </Style>
+
+    <Style x:Key="LockedMenuButton" TargetType="Button" BasedOn="{StaticResource MenuButton}">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray400}}" />
+        <Setter Property="ImageSource" Value="{AppThemeBinding Light=lock.svg, Dark=lock_dark.svg}" />
+        <Setter Property="ContentLayout" Value="Left,8" />
+    </Style>
+
     <Style x:Key="DropdownArrow" TargetType="Label">
         <Setter Property="Text" Value="▼" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Gray200}}" />

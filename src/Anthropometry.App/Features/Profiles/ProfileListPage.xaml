@@ -47,12 +47,25 @@
                 <Button Text="{DynamicResource AddProfile}"
                     Style="{StaticResource PrimaryButton}"
                     Command="{Binding CreateCommand}"
-                    IsVisible="{Binding HasProfiles}"
+                    IsVisible="{Binding ShowAddProfileButton}"
+                    HorizontalOptions="Fill"
+                    MinimumHeightRequest="48" />
+                <Button Text="{DynamicResource AddProfile}"
+                    Style="{StaticResource LockedButton}"
+                    Command="{Binding CreateCommand}"
+                    IsVisible="{Binding IsAddProfileLocked}"
                     HorizontalOptions="Fill"
                     MinimumHeightRequest="48" />
                 <Button Text="{DynamicResource ImportProfile}"
                     Style="{StaticResource SecondaryButton}"
                     Command="{Binding ImportCommand}"
+                    IsVisible="{Binding CanImportProfile}"
+                    HorizontalOptions="Fill"
+                    MinimumHeightRequest="48" />
+                <Button Text="{DynamicResource ImportProfile}"
+                    Style="{StaticResource LockedButton}"
+                    Command="{Binding ImportCommand}"
+                    IsVisible="{Binding IsImportProfileLocked}"
                     HorizontalOptions="Fill"
                     MinimumHeightRequest="48" />
             </VerticalStackLayout>

@@ -1,4 +1,3 @@
-using Anthropometry.App.Platforms.Android;
 using Microsoft.Maui.Graphics;
 using System.ComponentModel;
 
@@ -19,15 +18,9 @@ public partial class WeightGraphicPage : ContentPage
 
     private void OnMetricSelectorClicked(object? sender, EventArgs e)
     {
-        if (sender is View view && BindingContext is WeightGraphicViewModel viewModel)
+        if (BindingContext is WeightGraphicViewModel viewModel)
         {
-            ContextMenuHelper.Show(
-                view,
-                viewModel.MetricOptions
-                    .Select(option => new ContextMenuOption(
-                        option.DisplayName,
-                        () => viewModel.SelectMetricCommand.Execute(option.Value.ToString())))
-                    .ToArray());
+            viewModel.ToggleMetricMenuCommand.Execute(null);
         }
     }
 

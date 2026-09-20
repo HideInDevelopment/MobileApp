@@ -106,7 +106,7 @@ public sealed class WeightGraphicViewModelTests
     }
 
     [Fact]
-    public async Task Free_chart_exposes_only_the_kilogram_weight_series()
+    public async Task Free_chart_exposes_weight_and_locked_premium_series()
     {
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
@@ -122,8 +122,13 @@ public sealed class WeightGraphicViewModelTests
         await viewModel.LoadCommand.ExecuteAsync(null);
 
         var point = Assert.Single(viewModel.Points);
-        Assert.Single(viewModel.MetricOptions);
+        Assert.Equal(4, viewModel.MetricOptions.Count);
         Assert.Equal(MetricKind.Weight, viewModel.MetricOptions[0].Value);
+        Assert.False(viewModel.MetricOptions[0].IsLocked);
+        Assert.Contains(viewModel.MetricOptions, option => option.Value == MetricKind.BodyFatPercentage);
+        Assert.Contains(viewModel.MetricOptions, option => option.Value == MetricKind.BasalMetabolicRate);
+        Assert.Contains(viewModel.MetricOptions, option => option.Value == MetricKind.TotalDailyEnergyExpenditure);
+        Assert.All(viewModel.MetricOptions.Skip(1), option => Assert.True(option.IsLocked));
         Assert.Equal(80m, point.DisplayedWeight);
         Assert.Equal("kg", point.Unit);
         Assert.True(viewModel.IsFullGraphicsLocked);
@@ -153,6 +158,27 @@ public sealed class WeightGraphicViewModelTests
         viewModel.SelectMetricCommand.Execute(MetricKind.BodyFatPercentage.ToString());
 
         Assert.Equal(MetricKind.BodyFatPercentage, viewModel.SelectedMetric);
+    }
+
+    [Fact]
+    public void Free_selection_of_a_locked_metric_requests_premium_without_changing_the_chart()
+    {
+        var premiumOpened = false;
+        var profile = TestData.Profile();
+        var viewModel = CreateViewModel(
+            new FakeMeasurementRepository(),
+            profile.Id,
+            entitlement: EntitlementTestData.Free,
+            showPremiumAsync: () =>
+            {
+                premiumOpened = true;
+                return Task.CompletedTask;
+            });
+
+        viewModel.SelectMetricCommand.Execute(MetricKind.BodyFatPercentage.ToString());
+
+        Assert.True(premiumOpened);
+        Assert.Equal(MetricKind.Weight, viewModel.SelectedMetric);
     }
 
     [Fact]
@@ -239,13 +265,15 @@ public sealed class WeightGraphicViewModelTests
         Anthropometry.App.Localization.LanguageService? languageService = null,
         DisplayPreferencesService? displayPreferences = null,
         FakeCalculationResultRepository? resultRepository = null,
-        EntitlementSnapshot? entitlement = null)
+        EntitlementSnapshot? entitlement = null,
+        Func<Task>? showPremiumAsync = null)
         => new(
             new GetMetricHistory(repository, resultRepository ?? new FakeCalculationResultRepository()),
             profileId,
             languageService ?? TestData.LanguageService(),
             displayPreferences ?? TestData.DisplayPreferences(),
-            entitlement);
+            entitlement,
+            showPremiumAsync);
 
     private static Measurement CreateMeasurement(
         Anthropometry.Domain.Profiles.ProfileId profileId,
