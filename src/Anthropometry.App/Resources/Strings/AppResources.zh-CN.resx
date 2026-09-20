@@ -37,4 +37,22 @@
   <data name="MeasurementDate"><value>测量日期</value></data>
   <data name="MeasurementDateError"><value>请选择今天或有效的 Premium 日期。</value></data>
   <data name="PremiumRequired"><value>需要 Premium</value></data>
+  <data name="PremiumTitle"><value>Premium</value></data>
+  <data name="PremiumOpen"><value>查看 Premium</value></data>
+  <data name="PremiumDescription"><value>在本设备上保护健康数据隐私，同时解锁完整体验。</value></data>
+  <data name="PremiumStatusFree"><value>免费计划</value></data>
+  <data name="PremiumStatusActive"><value>Premium 已激活</value></data>
+  <data name="PremiumFeatures"><value>Premium 包含</value></data>
+  <data name="PremiumFeatureProfiles"><value>最多 10 个个人资料</value></data>
+  <data name="PremiumFeatureUnits"><value>英制单位</value></data>
+  <data name="PremiumFeatureCharts"><value>所有测量图表</value></data>
+  <data name="PremiumFeatureTransfer"><value>加密的个人资料导入和导出</value></data>
+  <data name="PremiumFeaturePastMeasurements"><value>使用过去日期的测量</value></data>
+  <data name="PremiumSubscribe"><value>订阅</value></data>
+  <data name="PremiumRestore"><value>恢复购买</value></data>
+  <data name="PremiumManageSubscription"><value>管理订阅</value></data>
+  <data name="PremiumUnavailable"><value>Premium 暂时不可用。请稍后重试。</value></data>
+  <data name="PremiumPurchasePending"><value>购买正在等待处理。</value></data>
+  <data name="PremiumPurchaseCanceled"><value>购买已取消。</value></data>
+  <data name="PremiumPurchaseFailed"><value>无法完成购买。</value></data>
 </root>

@@ -48,13 +48,11 @@
                     Style="{StaticResource PrimaryButton}"
                     Command="{Binding CreateCommand}"
                     IsVisible="{Binding HasProfiles}"
-                    IsEnabled="{Binding CanAddProfile}"
                     HorizontalOptions="Fill"
                     MinimumHeightRequest="48" />
                 <Button Text="{DynamicResource ImportProfile}"
                     Style="{StaticResource SecondaryButton}"
                     Command="{Binding ImportCommand}"
-                    IsEnabled="{Binding CanImportProfile}"
                     HorizontalOptions="Fill"
                     MinimumHeightRequest="48" />
             </VerticalStackLayout>

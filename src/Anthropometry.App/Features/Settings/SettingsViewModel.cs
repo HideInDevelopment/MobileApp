@@ -65,6 +65,7 @@ public sealed class SettingsViewModel : ObservableObject
         SelectDateFormatCommand = new RelayCommand<string?>(SelectDateFormat);
         SelectMeasurementSystemCommand = new RelayCommand<string?>(SelectMeasurementSystem);
         SelectInactivityIntervalCommand = new RelayCommand<string?>(SelectInactivityInterval);
+        PremiumCommand = new AsyncRelayCommand(() => _showPremiumAsync?.Invoke() ?? Task.CompletedTask);
         _languageService.LanguageChanged += OnLanguageChanged;
     }
 
@@ -85,6 +86,14 @@ public sealed class SettingsViewModel : ObservableObject
     public IRelayCommand<string?> SelectMeasurementSystemCommand { get; }
 
     public IRelayCommand<string?> SelectInactivityIntervalCommand { get; }
+
+    public IAsyncRelayCommand PremiumCommand { get; }
+
+    public bool IsPremium
+        => FeatureAccessPolicy.CanUse(_entitlement, PremiumFeature.ImperialUnits);
+
+    public string PremiumStatusText
+        => _languageService.Get(IsPremium ? "PremiumStatusActive" : "PremiumStatusFree");
 
     public IReadOnlyList<ThemeOption> Themes =>
     [
@@ -351,5 +360,6 @@ public sealed class SettingsViewModel : ObservableObject
         OnPropertyChanged(nameof(SelectedMeasurementSystem));
         OnPropertyChanged(nameof(InactivityIntervals));
         OnPropertyChanged(nameof(SelectedInactivityInterval));
+        OnPropertyChanged(nameof(PremiumStatusText));
     }
 }

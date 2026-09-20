@@ -1,13 +1,16 @@
 using Anthropometry.App.Common;
 using Anthropometry.App.Composition;
 using Anthropometry.App.Display;
+using Anthropometry.App.Entitlements;
 using Anthropometry.App.Features.Measurements;
+using Anthropometry.App.Features.Premium;
 using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Calculations;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Application.Measurements;
 using Anthropometry.Application.Profiles;
 using Anthropometry.Domain.Calculations.Bmr;
@@ -46,6 +49,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<IMeasurementRepository, SqliteMeasurementRepository>();
         builder.Services.AddSingleton<ICalculationResultRepository, SqliteCalculationResultRepository>();
         builder.Services.AddSingleton<IClock, SystemClock>();
+        builder.Services.AddSingleton<IEntitlementCache, PreferencesEntitlementCache>();
+        builder.Services.AddSingleton<IBillingGateway, UnavailableBillingGateway>();
+        builder.Services.AddSingleton<EntitlementService>();
+        builder.Services.AddSingleton<IEntitlementProvider>(services => services.GetRequiredService<EntitlementService>());
         builder.Services.AddSingleton<ILanguagePreferenceStore, PreferencesLanguagePreferenceStore>();
         builder.Services.AddSingleton<LanguageService>();
         builder.Services.AddSingleton<IThemePreferenceStore, PreferencesThemePreferenceStore>();

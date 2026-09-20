@@ -48,6 +48,19 @@
             <Label Text="{DynamicResource PremiumRequired}"
                    IsVisible="{Binding IsMeasurementSystemLocked}"
                    Style="{StaticResource SecondaryText}" />
+            <Border Style="{StaticResource CardBorder}" Padding="16">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                        <Label Text="{DynamicResource PremiumTitle}" Style="{StaticResource CardTitle}" />
+                        <Label Text="{Binding PremiumStatusText}" Style="{StaticResource SecondaryText}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1"
+                            Text="{DynamicResource PremiumOpen}"
+                            Command="{Binding PremiumCommand}"
+                            Style="{StaticResource SecondaryButton}"
+                            MinimumHeightRequest="48" />
+                </Grid>
+            </Border>
             <Border Style="{StaticResource CardBorder}" Padding="16" Margin="0,8,0,0">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="{DynamicResource ReminderSettings}" Style="{StaticResource CardTitle}" />

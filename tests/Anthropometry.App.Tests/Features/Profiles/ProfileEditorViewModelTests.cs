@@ -367,6 +367,8 @@ public sealed class ProfileEditorViewModelTests
 
         public Task ShowSettingsAsync() => Task.CompletedTask;
 
+        public Task ShowPremiumAsync() => Task.CompletedTask;
+
         public Task ShowHelpAsync() => Task.CompletedTask;
 
         public Task ShowGuidanceAsync(GuidanceTopic topic)

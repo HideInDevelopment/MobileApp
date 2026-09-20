@@ -82,6 +82,8 @@ public sealed class ResponsiveLayoutTests
 
         public Task ShowWeightGraphicAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;
 
+        public Task ShowPremiumAsync() => Task.CompletedTask;
+
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 
         public Task CancelAsync() => Task.CompletedTask;
@@ -108,6 +110,8 @@ public sealed class ResponsiveLayoutTests
         public Task ShowHistoryAsync(Anthropometry.Application.Common.ProfileDto profile) => Task.CompletedTask;
 
         public Task ShowSettingsAsync() => Task.CompletedTask;
+
+        public Task ShowPremiumAsync() => Task.CompletedTask;
 
         public Task ShowHelpAsync() => Task.CompletedTask;
 

@@ -242,4 +242,22 @@
   <data name="MeasurementDate" xml:space="preserve"><value>Messdatum</value></data>
   <data name="MeasurementDateError" xml:space="preserve"><value>Wählen Sie heute oder ein gültiges Premium-Datum.</value></data>
   <data name="PremiumRequired" xml:space="preserve"><value>Premium erforderlich</value></data>
+  <data name="PremiumTitle" xml:space="preserve"><value>Premium</value></data>
+  <data name="PremiumOpen" xml:space="preserve"><value>Premium ansehen</value></data>
+  <data name="PremiumDescription" xml:space="preserve"><value>Schalte alle Funktionen frei und bewahre deine Gesundheitsdaten privat auf diesem Gerät.</value></data>
+  <data name="PremiumStatusFree" xml:space="preserve"><value>Kostenloser Tarif</value></data>
+  <data name="PremiumStatusActive" xml:space="preserve"><value>Premium ist aktiv</value></data>
+  <data name="PremiumFeatures" xml:space="preserve"><value>Mit Premium enthalten</value></data>
+  <data name="PremiumFeatureProfiles" xml:space="preserve"><value>Bis zu 10 Profile</value></data>
+  <data name="PremiumFeatureUnits" xml:space="preserve"><value>Imperiale Einheiten</value></data>
+  <data name="PremiumFeatureCharts" xml:space="preserve"><value>Alle Messdiagramme</value></data>
+  <data name="PremiumFeatureTransfer" xml:space="preserve"><value>Verschlüsselter Profilimport und -export</value></data>
+  <data name="PremiumFeaturePastMeasurements" xml:space="preserve"><value>Messungen mit vergangenen Daten</value></data>
+  <data name="PremiumSubscribe" xml:space="preserve"><value>Abonnieren</value></data>
+  <data name="PremiumRestore" xml:space="preserve"><value>Käufe wiederherstellen</value></data>
+  <data name="PremiumManageSubscription" xml:space="preserve"><value>Abonnement verwalten</value></data>
+  <data name="PremiumUnavailable" xml:space="preserve"><value>Premium ist vorübergehend nicht verfügbar. Versuche es später erneut.</value></data>
+  <data name="PremiumPurchasePending" xml:space="preserve"><value>Dein Kauf ist ausstehend.</value></data>
+  <data name="PremiumPurchaseCanceled" xml:space="preserve"><value>Der Kauf wurde abgebrochen.</value></data>
+  <data name="PremiumPurchaseFailed" xml:space="preserve"><value>Der Kauf konnte nicht abgeschlossen werden.</value></data>
 </root>

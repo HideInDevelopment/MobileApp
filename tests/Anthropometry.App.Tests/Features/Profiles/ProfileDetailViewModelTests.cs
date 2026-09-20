@@ -157,6 +157,8 @@ public sealed class ProfileDetailViewModelTests
 
         public Task ShowSettingsAsync() => Task.CompletedTask;
 
+        public Task ShowPremiumAsync() => Task.CompletedTask;
+
         public Task ShowHelpAsync() => Task.CompletedTask;
 
         public Task ShowGuidanceAsync(Anthropometry.App.Features.Help.GuidanceTopic topic) => Task.CompletedTask;

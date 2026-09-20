@@ -37,4 +37,22 @@
   <data name="MeasurementDate"><value>測定日</value></data>
   <data name="MeasurementDateError"><value>今日または有効なPremiumの日付を選択してください。</value></data>
   <data name="PremiumRequired"><value>Premiumが必要です</value></data>
+  <data name="PremiumTitle"><value>Premium</value></data>
+  <data name="PremiumOpen"><value>Premiumを見る</value></data>
+  <data name="PremiumDescription"><value>この端末で健康データを保護しながら、すべての機能を利用できます。</value></data>
+  <data name="PremiumStatusFree"><value>無料プラン</value></data>
+  <data name="PremiumStatusActive"><value>Premiumは有効です</value></data>
+  <data name="PremiumFeatures"><value>Premiumに含まれる機能</value></data>
+  <data name="PremiumFeatureProfiles"><value>最大10個のプロフィール</value></data>
+  <data name="PremiumFeatureUnits"><value>ヤード・ポンド法の単位</value></data>
+  <data name="PremiumFeatureCharts"><value>すべての測定グラフ</value></data>
+  <data name="PremiumFeatureTransfer"><value>暗号化されたプロフィールのインポートとエクスポート</value></data>
+  <data name="PremiumFeaturePastMeasurements"><value>過去の日付での測定</value></data>
+  <data name="PremiumSubscribe"><value>登録する</value></data>
+  <data name="PremiumRestore"><value>購入を復元</value></data>
+  <data name="PremiumManageSubscription"><value>登録を管理</value></data>
+  <data name="PremiumUnavailable"><value>Premiumは一時的に利用できません。後でもう一度お試しください。</value></data>
+  <data name="PremiumPurchasePending"><value>購入は保留中です。</value></data>
+  <data name="PremiumPurchaseCanceled"><value>購入はキャンセルされました。</value></data>
+  <data name="PremiumPurchaseFailed"><value>購入を完了できませんでした。</value></data>
 </root>

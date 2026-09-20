@@ -229,4 +229,22 @@
   <data name="MeasurementDate"><value>Date de mesure</value></data>
   <data name="MeasurementDateError"><value>Choisissez aujourd’hui ou une date Premium valide.</value></data>
   <data name="PremiumRequired"><value>Premium requis</value></data>
+  <data name="PremiumTitle"><value>Premium</value></data>
+  <data name="PremiumOpen"><value>Voir Premium</value></data>
+  <data name="PremiumDescription"><value>Débloquez toute l’expérience tout en gardant vos données de santé privées sur cet appareil.</value></data>
+  <data name="PremiumStatusFree"><value>Offre gratuite</value></data>
+  <data name="PremiumStatusActive"><value>Premium est actif</value></data>
+  <data name="PremiumFeatures"><value>Inclus avec Premium</value></data>
+  <data name="PremiumFeatureProfiles"><value>Jusqu’à 10 profils</value></data>
+  <data name="PremiumFeatureUnits"><value>Unités impériales</value></data>
+  <data name="PremiumFeatureCharts"><value>Tous les graphiques de mesures</value></data>
+  <data name="PremiumFeatureTransfer"><value>Importation et exportation de profils chiffrées</value></data>
+  <data name="PremiumFeaturePastMeasurements"><value>Mesures avec des dates antérieures</value></data>
+  <data name="PremiumSubscribe"><value>S’abonner</value></data>
+  <data name="PremiumRestore"><value>Restaurer les achats</value></data>
+  <data name="PremiumManageSubscription"><value>Gérer l’abonnement</value></data>
+  <data name="PremiumUnavailable"><value>Premium est temporairement indisponible. Réessayez plus tard.</value></data>
+  <data name="PremiumPurchasePending"><value>Votre achat est en attente.</value></data>
+  <data name="PremiumPurchaseCanceled"><value>L’achat a été annulé.</value></data>
+  <data name="PremiumPurchaseFailed"><value>L’achat n’a pas pu être effectué.</value></data>
 </root>

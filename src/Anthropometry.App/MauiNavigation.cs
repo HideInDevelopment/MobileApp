@@ -1,6 +1,7 @@
 using System.Globalization;
 using Anthropometry.App.Features.Help;
 using Anthropometry.App.Features.Measurements;
+using Anthropometry.App.Features.Premium;
 using Anthropometry.App.Features.Profiles;
 using Anthropometry.App.Features.Results;
 using Anthropometry.App.Display;
@@ -9,6 +10,8 @@ using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Abstractions;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Application.Measurements;
 using Anthropometry.Application.Profiles;
 using Anthropometry.Domain.Profiles;
@@ -32,16 +35,18 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         _displayPreferences = displayPreferences;
     }
 
-    public Task CreateProfileAsync()
+    public async Task CreateProfileAsync()
     {
+        var entitlement = await GetEntitlementAsync();
         var page = new ProfileEditorPage(new ProfileEditorViewModel(
             _services.GetRequiredService<CreateProfile>(),
             _services.GetRequiredService<UpdateProfile>(),
             null,
             this,
             _languageService,
-            _displayPreferences));
-        return PushAsync(page);
+            _displayPreferences,
+            entitlement));
+        await PushAsync(page);
     }
 
     public Task SelectProfileAsync(ProfileDto profile)
@@ -49,18 +54,21 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             profile,
             _services.GetRequiredService<GetMeasurementHistory>(),
             this,
-            _languageService));
+            _languageService,
+            _services.GetRequiredService<IEntitlementProvider>()));
 
-    public Task RenameProfileAsync(ProfileDto profile)
+    public async Task RenameProfileAsync(ProfileDto profile)
     {
+        var entitlement = await GetEntitlementAsync();
         var page = new ProfileEditorPage(new ProfileEditorViewModel(
             _services.GetRequiredService<CreateProfile>(),
             _services.GetRequiredService<UpdateProfile>(),
             profile,
             this,
             _languageService,
-            _displayPreferences));
-        return PushAsync(page);
+            _displayPreferences,
+            entitlement));
+        await PushAsync(page);
     }
 
     public Task<bool> ConfirmDeleteAsync(ProfileDto profile)
@@ -96,18 +104,24 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             this,
             _languageService,
             _displayPreferences,
-            _services.GetRequiredService<UpdateMeasurement>()));
+            _services.GetRequiredService<UpdateMeasurement>(),
+            entitlementProvider: _services.GetRequiredService<IEntitlementProvider>(),
+            clock: _services.GetRequiredService<IClock>()));
         return PushAsync(page);
     }
 
-    public Task ShowHistoryAsync(ProfileDto profile)
-        => PushAsync(new MeasurementHistoryPage(new MeasurementHistoryViewModel(
+    public async Task ShowHistoryAsync(ProfileDto profile)
+    {
+        var entitlement = await GetEntitlementAsync();
+        await PushAsync(new MeasurementHistoryPage(new MeasurementHistoryViewModel(
             _services.GetRequiredService<GetMeasurementHistory>(),
             _services.GetRequiredService<DeleteMeasurement>(),
             profile,
             this,
             _languageService,
-            _displayPreferences)));
+            _displayPreferences,
+            entitlement)));
+    }
 
     public Task EditMeasurementAsync(ProfileDto profile, MeasurementDto measurement)
         => PushAsync(new MeasurementEditorPage(new MeasurementEditorViewModel(
@@ -121,7 +135,9 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _languageService,
             _displayPreferences,
             _services.GetRequiredService<UpdateMeasurement>(),
-            measurement)));
+            measurement,
+            _services.GetRequiredService<IEntitlementProvider>(),
+            _services.GetRequiredService<IClock>())));
 
     public Task<bool> ConfirmDeleteAsync(MeasurementDto measurement)
         => Shell.Current.DisplayAlertAsync(
@@ -133,19 +149,35 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _languageService.Get("DeleteMeasurement"),
             _languageService.Get("Cancel"));
 
-    public Task ShowWeightGraphicAsync(ProfileId profileId)
-        => PushAsync(new WeightGraphicPage(new WeightGraphicViewModel(
+    public async Task ShowWeightGraphicAsync(ProfileId profileId)
+    {
+        var entitlement = await GetEntitlementAsync();
+        await PushAsync(new WeightGraphicPage(new WeightGraphicViewModel(
             _services.GetRequiredService<GetMetricHistory>(),
             profileId,
             _languageService,
-            _displayPreferences)));
+            _displayPreferences,
+            entitlement,
+            ShowPremiumAsync)));
+    }
 
-    public Task ShowSettingsAsync()
-        => PushAsync(new SettingsPage(new SettingsViewModel(
+    public async Task ShowSettingsAsync()
+    {
+        var entitlement = await GetEntitlementAsync();
+        await PushAsync(new SettingsPage(new SettingsViewModel(
             _services.GetRequiredService<LanguageService>(),
             _services.GetRequiredService<ThemeService>(),
             _displayPreferences,
-            _services.GetRequiredService<ReminderCoordinator>())));
+            _services.GetRequiredService<ReminderCoordinator>(),
+            entitlement,
+            ShowPremiumAsync)));
+    }
+
+    public Task ShowPremiumAsync()
+        => PushAsync(new PremiumPage(new PremiumViewModel(
+            _services.GetRequiredService<EntitlementService>(),
+            _services.GetRequiredService<IBillingGateway>(),
+            _languageService)));
 
     public async Task ExportProfileAsync(ProfileDto profile)
     {
@@ -357,4 +389,7 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
     private static Task PushAsync(Page page) => Shell.Current.Navigation.PushAsync(page);
 
     private static Task<Page> PopAsync() => Shell.Current.Navigation.PopAsync();
+
+    private Task<EntitlementSnapshot> GetEntitlementAsync()
+        => _services.GetRequiredService<IEntitlementProvider>().GetCurrentAsync(CancellationToken.None);
 }

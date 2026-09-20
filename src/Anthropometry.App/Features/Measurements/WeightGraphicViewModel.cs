@@ -65,13 +65,15 @@ public sealed class WeightGraphicViewModel : ObservableObject
     private DateTime _toDate = DateTime.Today;
     private bool _suppressFilterReload;
     private readonly bool _isFullGraphicsLocked;
+    private readonly Func<Task>? _showPremiumAsync;
 
     public WeightGraphicViewModel(
         GetMetricHistory getHistory,
         ProfileId profileId,
         LanguageService languageService,
         DisplayPreferencesService displayPreferences,
-        EntitlementSnapshot? entitlement = null)
+        EntitlementSnapshot? entitlement = null,
+        Func<Task>? showPremiumAsync = null)
     {
         _getHistory = getHistory;
         _profileId = profileId;
@@ -81,12 +83,14 @@ public sealed class WeightGraphicViewModel : ObservableObject
             ?? new EntitlementSnapshot(EntitlementTier.Free, SubscriptionState.Active, null, null, null);
         _entitledDisplayPreferences = new EntitledDisplayPreferences(_displayPreferences, currentEntitlement);
         _isFullGraphicsLocked = !FeatureAccessPolicy.CanUse(currentEntitlement, PremiumFeature.FullMeasurementGraphics);
+        _showPremiumAsync = showPremiumAsync;
         Points = new ReadOnlyObservableCollection<WeightGraphicPoint>(_points);
         MetricOptions = CreateMetricOptions();
         _selectedMetricOption = MetricOptions[0];
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         ClearDateRangeCommand = new AsyncRelayCommand(ClearDateRangeAsync);
         SelectMetricCommand = new RelayCommand<string?>(SelectMetric);
+        ShowPremiumCommand = new AsyncRelayCommand(() => _showPremiumAsync?.Invoke() ?? Task.CompletedTask);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
         _languageService.LanguageChanged += OnLanguageChanged;
     }
@@ -270,6 +274,8 @@ public sealed class WeightGraphicViewModel : ObservableObject
 
     public IRelayCommand<string?> SelectMetricCommand { get; }
 
+    public IAsyncRelayCommand ShowPremiumCommand { get; }
+
     public void SelectPoint(WeightGraphicPoint? point)
     {
         if (EqualityComparer<WeightGraphicPoint?>.Default.Equals(_selectedPoint, point))
@@ -366,6 +372,10 @@ public sealed class WeightGraphicViewModel : ObservableObject
             if (MetricOptions.Any(option => option.Value == metric))
             {
                 SelectedMetric = metric;
+            }
+            else if (_isFullGraphicsLocked)
+            {
+                _ = _showPremiumAsync?.Invoke();
             }
         }
     }

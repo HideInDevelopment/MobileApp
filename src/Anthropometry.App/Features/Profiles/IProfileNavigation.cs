@@ -24,6 +24,8 @@ public interface IProfileNavigation
 
     Task ShowSettingsAsync();
 
+    Task ShowPremiumAsync();
+
     Task ShowHelpAsync();
 
     Task ShowGuidanceAsync(GuidanceTopic topic);

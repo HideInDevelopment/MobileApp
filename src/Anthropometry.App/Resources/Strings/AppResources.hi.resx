@@ -129,4 +129,22 @@
   <data name="MeasurementDate"><value>माप की तारीख</value></data>
   <data name="MeasurementDateError"><value>आज या मान्य Premium तारीख चुनें।</value></data>
   <data name="PremiumRequired"><value>Premium आवश्यक है</value></data>
+  <data name="PremiumTitle"><value>Premium</value></data>
+  <data name="PremiumOpen"><value>Premium देखें</value></data>
+  <data name="PremiumDescription"><value>इस डिवाइस पर अपने स्वास्थ्य डेटा को निजी रखते हुए पूरा अनुभव अनलॉक करें।</value></data>
+  <data name="PremiumStatusFree"><value>निःशुल्क योजना</value></data>
+  <data name="PremiumStatusActive"><value>Premium सक्रिय है</value></data>
+  <data name="PremiumFeatures"><value>Premium में शामिल</value></data>
+  <data name="PremiumFeatureProfiles"><value>10 प्रोफ़ाइल तक</value></data>
+  <data name="PremiumFeatureUnits"><value>इंपीरियल इकाइयाँ</value></data>
+  <data name="PremiumFeatureCharts"><value>सभी माप ग्राफ़</value></data>
+  <data name="PremiumFeatureTransfer"><value>एन्क्रिप्टेड प्रोफ़ाइल आयात और निर्यात</value></data>
+  <data name="PremiumFeaturePastMeasurements"><value>पिछली तारीखों वाली माप</value></data>
+  <data name="PremiumSubscribe"><value>सदस्यता लें</value></data>
+  <data name="PremiumRestore"><value>खरीदारी पुनर्स्थापित करें</value></data>
+  <data name="PremiumManageSubscription"><value>सदस्यता प्रबंधित करें</value></data>
+  <data name="PremiumUnavailable"><value>Premium अस्थायी रूप से उपलब्ध नहीं है। बाद में फिर कोशिश करें।</value></data>
+  <data name="PremiumPurchasePending"><value>आपकी खरीदारी लंबित है।</value></data>
+  <data name="PremiumPurchaseCanceled"><value>खरीदारी रद्द कर दी गई।</value></data>
+  <data name="PremiumPurchaseFailed"><value>खरीदारी पूरी नहीं हो सकी।</value></data>
 </root>

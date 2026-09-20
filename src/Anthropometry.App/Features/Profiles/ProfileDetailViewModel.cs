@@ -1,4 +1,6 @@
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Abstractions;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Measurements;
@@ -12,6 +14,7 @@ public sealed class ProfileDetailViewModel : ObservableObject
     private readonly IProfileNavigation _navigation;
     private readonly GetMeasurementHistory _getHistory;
     private readonly LanguageService _languageService;
+    private readonly IEntitlementProvider _entitlementProvider;
     private bool _isLoading;
     private string? _errorMessage;
     private bool _canAddWeight;
@@ -20,18 +23,20 @@ public sealed class ProfileDetailViewModel : ObservableObject
         ProfileDto profile,
         GetMeasurementHistory getHistory,
         IProfileNavigation navigation,
-        LanguageService languageService)
+        LanguageService languageService,
+        IEntitlementProvider? entitlementProvider = null)
     {
         Profile = profile;
         _getHistory = getHistory;
         _navigation = navigation;
         _languageService = languageService;
+        _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
         LoadCommand = new AsyncRelayCommand(LoadAsync);
         AddWeightCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightOnly), () => CanAddWeight);
         AddMeasurementsCommand = new AsyncRelayCommand(() => _navigation.CreateMeasurementAsync(Profile, MeasurementType.WeightAndSizes));
         HistoryCommand = new AsyncRelayCommand(() => _navigation.ShowHistoryAsync(Profile));
         EditCommand = new AsyncRelayCommand(() => _navigation.RenameProfileAsync(Profile));
-        ExportCommand = new AsyncRelayCommand(() => _navigation.ExportProfileAsync(Profile));
+        ExportCommand = new AsyncRelayCommand(ExportAsync);
     }
 
     public ProfileDto Profile { get; private set; }
@@ -106,5 +111,17 @@ public sealed class ProfileDetailViewModel : ObservableObject
         {
             IsLoading = false;
         }
+    }
+
+    private async Task ExportAsync()
+    {
+        var entitlement = await _entitlementProvider.GetCurrentAsync(CancellationToken.None);
+        if (!FeatureAccessPolicy.CanUse(entitlement, PremiumFeature.EncryptedProfileTransfer))
+        {
+            await _navigation.ShowPremiumAsync();
+            return;
+        }
+
+        await _navigation.ExportProfileAsync(Profile);
     }
 }

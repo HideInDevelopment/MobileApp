@@ -242,4 +242,22 @@
   <data name="MeasurementDate"><value>Fecha de medición</value></data>
   <data name="MeasurementDateError"><value>Elige hoy o una fecha Premium válida.</value></data>
   <data name="PremiumRequired"><value>Se requiere Premium</value></data>
+  <data name="PremiumTitle"><value>Premium</value></data>
+  <data name="PremiumOpen"><value>Ver Premium</value></data>
+  <data name="PremiumDescription"><value>Desbloquea toda la experiencia manteniendo tus datos de salud privados en este dispositivo.</value></data>
+  <data name="PremiumStatusFree"><value>Plan gratuito</value></data>
+  <data name="PremiumStatusActive"><value>Premium está activo</value></data>
+  <data name="PremiumFeatures"><value>Incluido con Premium</value></data>
+  <data name="PremiumFeatureProfiles"><value>Hasta 10 perfiles</value></data>
+  <data name="PremiumFeatureUnits"><value>Unidades imperiales</value></data>
+  <data name="PremiumFeatureCharts"><value>Todos los gráficos de mediciones</value></data>
+  <data name="PremiumFeatureTransfer"><value>Importación y exportación cifrada de perfiles</value></data>
+  <data name="PremiumFeaturePastMeasurements"><value>Mediciones con fechas anteriores</value></data>
+  <data name="PremiumSubscribe"><value>Suscribirse</value></data>
+  <data name="PremiumRestore"><value>Restaurar compras</value></data>
+  <data name="PremiumManageSubscription"><value>Gestionar suscripción</value></data>
+  <data name="PremiumUnavailable"><value>Premium no está disponible temporalmente. Inténtalo más tarde.</value></data>
+  <data name="PremiumPurchasePending"><value>Tu compra está pendiente.</value></data>
+  <data name="PremiumPurchaseCanceled"><value>La compra se canceló.</value></data>
+  <data name="PremiumPurchaseFailed"><value>No se pudo completar la compra.</value></data>
 </root>

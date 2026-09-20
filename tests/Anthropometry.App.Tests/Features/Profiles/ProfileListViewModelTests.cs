@@ -43,7 +43,7 @@ public sealed class ProfileListViewModelTests
         Assert.Equal("Manuel", profile.Name);
         Assert.False(viewModel.IsEmpty);
         Assert.True(viewModel.HasProfiles);
-        Assert.True(viewModel.CanAddProfile);
+        Assert.False(viewModel.CanAddProfile);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class ProfileListViewModelTests
 
         Assert.True(viewModel.HasProfiles);
         Assert.False(viewModel.CanAddProfile);
-        Assert.False(viewModel.CreateCommand.CanExecute(null));
+        Assert.True(viewModel.CreateCommand.CanExecute(null));
     }
 
     [Fact]
@@ -153,6 +153,8 @@ public sealed class ProfileListViewModelTests
             SettingsTask = Task.CompletedTask;
             return SettingsTask;
         }
+
+        public Task ShowPremiumAsync() => Task.CompletedTask;
 
         public Task ShowHelpAsync()
         {

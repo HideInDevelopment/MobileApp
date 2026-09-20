@@ -562,6 +562,8 @@ public sealed class MeasurementEditorViewModelTests
 
         public Task ShowWeightGraphicAsync(Anthropometry.Domain.Profiles.ProfileId profileId) => Task.CompletedTask;
 
+        public Task ShowPremiumAsync() => Task.CompletedTask;
+
         public Task CancelAsync() => Task.CompletedTask;
 
         public Task ShowGuidanceAsync(GuidanceTopic topic)

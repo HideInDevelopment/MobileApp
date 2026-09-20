@@ -129,4 +129,22 @@
   <data name="MeasurementDate"><value>تاريخ القياس</value></data>
   <data name="MeasurementDateError"><value>اختر اليوم أو تاريخ Premium صالحًا.</value></data>
   <data name="PremiumRequired"><value>يتطلب Premium</value></data>
+  <data name="PremiumTitle"><value>Premium</value></data>
+  <data name="PremiumOpen"><value>عرض Premium</value></data>
+  <data name="PremiumDescription"><value>افتح التجربة الكاملة مع الحفاظ على خصوصية بياناتك الصحية على هذا الجهاز.</value></data>
+  <data name="PremiumStatusFree"><value>الخطة المجانية</value></data>
+  <data name="PremiumStatusActive"><value>Premium مفعّل</value></data>
+  <data name="PremiumFeatures"><value>يتضمن Premium</value></data>
+  <data name="PremiumFeatureProfiles"><value>ما يصل إلى 10 ملفات شخصية</value></data>
+  <data name="PremiumFeatureUnits"><value>الوحدات الإمبراطورية</value></data>
+  <data name="PremiumFeatureCharts"><value>جميع مخططات القياسات</value></data>
+  <data name="PremiumFeatureTransfer"><value>استيراد وتصدير الملفات الشخصية المشفّر</value></data>
+  <data name="PremiumFeaturePastMeasurements"><value>قياسات بتواريخ سابقة</value></data>
+  <data name="PremiumSubscribe"><value>الاشتراك</value></data>
+  <data name="PremiumRestore"><value>استعادة المشتريات</value></data>
+  <data name="PremiumManageSubscription"><value>إدارة الاشتراك</value></data>
+  <data name="PremiumUnavailable"><value>Premium غير متاح مؤقتًا. حاول مرة أخرى لاحقًا.</value></data>
+  <data name="PremiumPurchasePending"><value>عملية الشراء قيد الانتظار.</value></data>
+  <data name="PremiumPurchaseCanceled"><value>تم إلغاء عملية الشراء.</value></data>
+  <data name="PremiumPurchaseFailed"><value>تعذّر إكمال عملية الشراء.</value></data>
 </root>

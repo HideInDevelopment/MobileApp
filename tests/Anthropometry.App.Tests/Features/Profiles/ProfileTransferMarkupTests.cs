@@ -3,6 +3,7 @@ using Anthropometry.App.Features.Profiles;
 using Anthropometry.Application.Common;
 using Anthropometry.Application.Measurements;
 using Anthropometry.Application.Profiles;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
@@ -20,7 +21,8 @@ public sealed class ProfileTransferMarkupTests
             ToDto(profile),
             new GetMeasurementHistory(new FakeMeasurementRepository()),
             navigation,
-            TestData.LanguageService());
+            TestData.LanguageService(),
+            new FakeEntitlementProvider(EntitlementTestData.Premium));
 
         await viewModel.ExportCommand.ExecuteAsync(null);
 
@@ -28,7 +30,7 @@ public sealed class ProfileTransferMarkupTests
     }
 
     [Fact]
-    public async Task List_import_command_is_enabled_below_the_profile_limit()
+    public async Task List_import_command_is_available_for_premium_below_the_profile_limit()
     {
         var repository = new FakeProfileRepository();
         repository.Items.Add(TestData.Profile());
@@ -41,10 +43,10 @@ public sealed class ProfileTransferMarkupTests
     }
 
     [Fact]
-    public async Task List_import_command_is_disabled_at_the_profile_limit()
+    public async Task List_import_command_opens_premium_at_the_profile_limit()
     {
         var repository = new FakeProfileRepository();
-        for (var index = 0; index < 4; index++)
+        for (var index = 0; index < 10; index++)
         {
             repository.Items.Add(TestData.Profile($"Profile {index}"));
         }
@@ -53,7 +55,7 @@ public sealed class ProfileTransferMarkupTests
         await viewModel.LoadCommand.ExecuteAsync(null);
 
         Assert.False(viewModel.CanImportProfile);
-        Assert.False(viewModel.ImportCommand.CanExecute(null));
+        Assert.True(viewModel.ImportCommand.CanExecute(null));
     }
 
     [Fact]
@@ -95,7 +97,7 @@ public sealed class ProfileTransferMarkupTests
         Assert.Contains("Command=\"{Binding ExportCommand}\"", detail);
         Assert.Contains("{DynamicResource ImportProfile}", list);
         Assert.Contains("Command=\"{Binding ImportCommand}\"", list);
-        Assert.Contains("IsEnabled=\"{Binding CanImportProfile}\"", list);
+        Assert.DoesNotContain("IsEnabled=\"{Binding CanImportProfile}\"", list);
         Assert.Contains("IsPassword=\"True\"", prompt);
         Assert.Contains("ProfileTransferCodeInstructions", prompt);
     }
@@ -105,7 +107,8 @@ public sealed class ProfileTransferMarkupTests
             new GetProfiles(repository),
             new DeleteProfile(repository),
             navigation,
-            TestData.LanguageService());
+            TestData.LanguageService(),
+            new FakeEntitlementProvider(EntitlementTestData.Premium));
 
     private static ProfileDto ToDto(Anthropometry.Domain.Profiles.Profile profile)
         => new(
@@ -137,6 +140,7 @@ public sealed class ProfileTransferMarkupTests
         public Task CancelAsync() => Task.CompletedTask;
         public Task ShowHistoryAsync(ProfileDto profile) => Task.CompletedTask;
         public Task ShowSettingsAsync() => Task.CompletedTask;
+        public Task ShowPremiumAsync() => Task.CompletedTask;
         public Task ShowHelpAsync() => Task.CompletedTask;
         public Task ShowGuidanceAsync(GuidanceTopic topic) => Task.CompletedTask;
 
