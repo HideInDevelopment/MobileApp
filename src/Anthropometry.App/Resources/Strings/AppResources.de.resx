@@ -56,6 +56,15 @@
   <data name="ProfileTransferInvalidFile" xml:space="preserve"><value>Diese Datei ist kein gültiger Anthropometry-Profil-Export.</value></data>
   <data name="ProfileTransferUnsupportedFormat" xml:space="preserve"><value>Dieses Profil-Exportformat wird nicht unterstützt.</value></data>
   <data name="ProfileTransferLimitReached" xml:space="preserve"><value>Du hast bereits 4 Profile. Lösche eines, bevor du ein weiteres importierst.</value></data>
+  <data name="ProfileTransferPassphraseTitle" xml:space="preserve"><value>Profil-Export schützen</value></data>
+  <data name="ProfileTransferPassphraseInstructions" xml:space="preserve"><value>Lege eine Passphrase für diese Profildatei fest. Du benötigst sie zum Importieren der Datei.</value></data>
+  <data name="ProfileTransferPassphrasePlaceholder" xml:space="preserve"><value>Passphrase</value></data>
+  <data name="ProfileTransferPassphraseConfirmationPlaceholder" xml:space="preserve"><value>Passphrase bestätigen</value></data>
+  <data name="ProfileTransferPassphraseInvalid" xml:space="preserve"><value>Verwende mindestens 12 Zeichen ohne Leerzeichen.</value></data>
+  <data name="ProfileTransferPassphraseMismatch" xml:space="preserve"><value>Die Passphrasen stimmen nicht überein.</value></data>
+  <data name="ProfileTransferPasswordRequired" xml:space="preserve"><value>Gib die Passphrase ein, um diese Datei zu öffnen.</value></data>
+  <data name="ProfileTransferAuthenticationFailed" xml:space="preserve"><value>Die Passphrase ist falsch oder die Datei wurde geändert.</value></data>
+  <data name="ProfileTransferLegacyWarning" xml:space="preserve"><value>Diese Datei ist ein älterer ungeschützter CSV-Export. Importiere sie nur, wenn du ihrer Quelle vertraust.</value></data>
   <data name="EstimateDisclaimer" xml:space="preserve"><value>Messungen und Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
   <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
   <data name="Weight" xml:space="preserve"><value>Gewicht</value></data>

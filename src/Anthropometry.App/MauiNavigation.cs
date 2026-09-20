@@ -149,18 +149,6 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 
     public async Task ExportProfileAsync(ProfileDto profile)
     {
-        var exported = await _services.GetRequiredService<ExportProfile>().ExecuteAsync(
-            new ExportProfileCommand(profile.Id),
-            CancellationToken.None);
-        if (!exported.IsSuccess)
-        {
-            await Shell.Current.DisplayAlertAsync(
-                _languageService.Get("ExportProfileTitle"),
-                _languageService.Get("ProfileTransferExportError"),
-                _languageService.Get("Close"));
-            return;
-        }
-
         var confirmed = await Shell.Current.DisplayAlertAsync(
             _languageService.Get("ExportProfileTitle"),
             _languageService.Get("ProfileTransferPrivacyWarning"),
@@ -168,6 +156,24 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _languageService.Get("Cancel"));
         if (!confirmed)
         {
+            return;
+        }
+
+        var passphrase = await PromptForPassphraseAsync(requiresConfirmation: true);
+        if (passphrase is null)
+        {
+            return;
+        }
+
+        var exported = await _services.GetRequiredService<ExportProfile>().ExecuteAsync(
+            new ExportProfileCommand(profile.Id, passphrase),
+            CancellationToken.None);
+        if (!exported.IsSuccess)
+        {
+            await Shell.Current.DisplayAlertAsync(
+                _languageService.Get("ExportProfileTitle"),
+                _languageService.Get("ProfileTransferExportError"),
+                _languageService.Get("Close"));
             return;
         }
 
@@ -192,10 +198,10 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
 
     public async Task ImportProfileAsync()
     {
-        Stream? content;
+        ProfileTransferFile? file;
         try
         {
-            content = await _services.GetRequiredService<IProfileTransferFileService>().PickCsvAsync(
+            file = await _services.GetRequiredService<IProfileTransferFileService>().PickTransferAsync(
                 _languageService.Get("ImportProfileTitle"),
                 CancellationToken.None);
         }
@@ -212,55 +218,72 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             return;
         }
 
-        if (content is null)
+        if (file is null)
         {
             return;
         }
 
-        await using (content)
+        var useCase = _services.GetRequiredService<ImportProfile>();
+        var preview = await useCase.PreviewAsync(file.Content, passphrase: null, CancellationToken.None);
+        if (!preview.IsSuccess && preview.Error?.Code == "profile.transfer.password.required")
         {
-            var useCase = _services.GetRequiredService<ImportProfile>();
-            var preview = await useCase.PreviewAsync(content, CancellationToken.None);
-            if (!preview.IsSuccess)
-            {
-                await ShowImportErrorAsync(preview.Error!.Code);
-                return;
-            }
-
-            var confirmation = string.Format(
-                CultureInfo.CurrentCulture,
-                _languageService.Get("ProfileTransferConfirmation"),
-                preview.Value.Name,
-                preview.Value.MeasurementCount,
-                preview.Value.CalculationResultCount);
-            var confirmed = await Shell.Current.DisplayAlertAsync(
-                _languageService.Get("ImportProfileTitle"),
-                confirmation,
-                _languageService.Get("ImportProfile"),
-                _languageService.Get("Cancel"));
-            if (!confirmed)
+            var passphrase = await PromptForPassphraseAsync(requiresConfirmation: false);
+            if (passphrase is null)
             {
                 return;
             }
 
-            var imported = await useCase.ExecuteAsync(preview.Value, CancellationToken.None);
-            if (!imported.IsSuccess)
-            {
-                await ShowImportErrorAsync(imported.Error!.Code);
-                return;
-            }
-
-            await Shell.Current.DisplayAlertAsync(
-                _languageService.Get("ImportProfileTitle"),
-                _languageService.Get("ProfileTransferSuccess"),
-                _languageService.Get("Close"));
+            preview = await useCase.PreviewAsync(file.Content, passphrase, CancellationToken.None);
         }
+
+        if (!preview.IsSuccess)
+        {
+            await ShowImportErrorAsync(preview.Error!.Code);
+            return;
+        }
+
+        var confirmation = string.Format(
+            CultureInfo.CurrentCulture,
+            _languageService.Get("ProfileTransferConfirmation"),
+            preview.Value.Name,
+            preview.Value.MeasurementCount,
+            preview.Value.CalculationResultCount);
+        if (preview.Value.IsLegacyUnprotected)
+        {
+            confirmation += Environment.NewLine + Environment.NewLine +
+                _languageService.Get("ProfileTransferLegacyWarning");
+        }
+
+        var confirmed = await Shell.Current.DisplayAlertAsync(
+            _languageService.Get("ImportProfileTitle"),
+            confirmation,
+            _languageService.Get("ImportProfile"),
+            _languageService.Get("Cancel"));
+        if (!confirmed)
+        {
+            return;
+        }
+
+        var imported = await useCase.ExecuteAsync(preview.Value, CancellationToken.None);
+        if (!imported.IsSuccess)
+        {
+            await ShowImportErrorAsync(imported.Error!.Code);
+            return;
+        }
+
+        await Shell.Current.DisplayAlertAsync(
+            _languageService.Get("ImportProfileTitle"),
+            _languageService.Get("ProfileTransferSuccess"),
+            _languageService.Get("Close"));
     }
 
     private Task ShowImportErrorAsync(string code)
     {
         var key = code switch
         {
+            "profile.transfer.password.required" => "ProfileTransferPasswordRequired",
+            "profile.transfer.authentication.failed" => "ProfileTransferAuthenticationFailed",
+            "profile.transfer.passphrase.invalid" => "ProfileTransferPassphraseInvalid",
             "profile.transfer.format.unsupported" => "ProfileTransferUnsupportedFormat",
             "profile.limit.reached" => "ProfileTransferLimitReached",
             _ => "ProfileTransferImportError"
@@ -269,6 +292,13 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             _languageService.Get("ImportProfileTitle"),
             _languageService.Get(key),
             _languageService.Get("Close"));
+    }
+
+    private async Task<string?> PromptForPassphraseAsync(bool requiresConfirmation)
+    {
+        var page = new PassphrasePromptPage(requiresConfirmation, _languageService);
+        await Shell.Current.Navigation.PushModalAsync(page);
+        return await page.Completion;
     }
 
     public Task ShowHelpAsync() => PushAsync(new HelpPage());
