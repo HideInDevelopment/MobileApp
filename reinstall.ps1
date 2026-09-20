@@ -9,6 +9,66 @@ $adb = Join-Path $androidSdk 'platform-tools\adb.exe'
 $packageName = 'com.companyname.anthropometry.app'
 $apk = Join-Path $repositoryRoot 'src\Anthropometry.App\bin\Debug\net10.0-android\com.companyname.anthropometry.app-Signed.apk'
 
+function Invoke-NativeCommand {
+    param(
+        [Parameter(Mandatory)]
+        [string]$FilePath,
+
+        [Parameter(Mandatory)]
+        [string[]]$Arguments
+    )
+
+    # Windows PowerShell formats native stderr output as NativeCommandError,
+    # even when the native process succeeds. Start the process through .NET so
+    # both streams are captured directly and the exit code is the source of
+    # truth.
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = $FilePath
+    $startInfo.UseShellExecute = $false
+    $startInfo.CreateNoWindow = $true
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+
+    $argumentListProperty = $startInfo.PSObject.Properties['ArgumentList']
+    if ($null -ne $argumentListProperty) {
+        foreach ($Argument in $Arguments) {
+            [void]$startInfo.ArgumentList.Add($Argument)
+        }
+    }
+    else {
+        $quotedArguments = foreach ($Argument in $Arguments) {
+            '"' + $Argument.Replace('"', '\"') + '"'
+        }
+        $startInfo.Arguments = $quotedArguments -join ' '
+    }
+
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = $startInfo
+    try {
+        if (-not $process.Start()) {
+            throw "Could not start '$FilePath'."
+        }
+
+        $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+        $stderrTask = $process.StandardError.ReadToEndAsync()
+        $process.WaitForExit()
+
+        $stdout = $stdoutTask.Result
+        $stderr = $stderrTask.Result
+        $exitCode = $process.ExitCode
+    }
+    finally {
+        $process.Dispose()
+    }
+
+    $output = (($stdout, $stderr | Where-Object { $_ }) -join [Environment]::NewLine).Trim()
+
+    [pscustomobject]@{
+        Output   = $output
+        ExitCode = $exitCode
+    }
+}
+
 Push-Location -LiteralPath $repositoryRoot
 try {
     $env:JAVA_HOME = $javaSdk
@@ -68,9 +128,19 @@ try {
         throw "The build succeeded, but the APK was not found at '$apk'."
     }
 
-    $keystoreOutput = & $keytool -list -v -keystore $androidDebugKeystore -alias androiddebugkey -storepass android -keypass android 2>&1 | Out-String
+    $keystoreResult = Invoke-NativeCommand $keytool @('-list', '-v', '-keystore', $androidDebugKeystore, '-alias', 'androiddebugkey', '-storepass', 'android', '-keypass', 'android')
+    if ($keystoreResult.ExitCode -ne 0) {
+        throw "The Android debug keystore could not be read. Exit code $($keystoreResult.ExitCode)."
+    }
+
+    $keystoreOutput = $keystoreResult.Output
     $expectedCertificateMatch = [regex]::Match($keystoreOutput, '(?im)^\s*SHA256:\s*([0-9a-f:]+)')
-    $apkOutput = & $apksigner.FullName verify --print-certs $apk 2>&1 | Out-String
+    $apkResult = Invoke-NativeCommand $apksigner.FullName @('verify', '--print-certs', $apk)
+    if ($apkResult.ExitCode -ne 0) {
+        throw "The APK certificate could not be read. Exit code $($apkResult.ExitCode)."
+    }
+
+    $apkOutput = $apkResult.Output
     $actualCertificateMatch = [regex]::Match($apkOutput, '(?im)certificate SHA-256 digest:\s*([0-9a-f]+)')
     if (-not $expectedCertificateMatch.Success -or -not $actualCertificateMatch.Success) {
         throw 'The APK certificate could not be verified after the build.'
@@ -82,8 +152,9 @@ try {
         throw "The APK was signed with an unexpected certificate. Expected '$expectedCertificate' but found '$actualCertificate'."
     }
 
-    $installOutput = & $adb -e install -r $apk 2>&1 | Out-String
-    $installExitCode = $LASTEXITCODE
+    $installResult = Invoke-NativeCommand $adb @('-e', 'install', '-r', $apk)
+    $installOutput = $installResult.Output
+    $installExitCode = $installResult.ExitCode
     if ($installOutput) {
         Write-Host $installOutput.TrimEnd()
     }
@@ -97,13 +168,17 @@ try {
             throw 'Installation cancelled. The existing app and its data were left untouched.'
         }
 
-        & $adb -e uninstall $packageName
-        if ($LASTEXITCODE -ne 0) {
-            throw "The old APK could not be uninstalled. Exit code $LASTEXITCODE."
+        $uninstallResult = Invoke-NativeCommand $adb @('-e', 'uninstall', $packageName)
+        if ($uninstallResult.Output) {
+            Write-Host $uninstallResult.Output.TrimEnd()
+        }
+        if ($uninstallResult.ExitCode -ne 0) {
+            throw "The old APK could not be uninstalled. Exit code $($uninstallResult.ExitCode)."
         }
 
-        $installOutput = & $adb -e install $apk 2>&1 | Out-String
-        $installExitCode = $LASTEXITCODE
+        $installResult = Invoke-NativeCommand $adb @('-e', 'install', $apk)
+        $installOutput = $installResult.Output
+        $installExitCode = $installResult.ExitCode
         if ($installOutput) {
             Write-Host $installOutput.TrimEnd()
         }
@@ -113,10 +188,17 @@ try {
         throw "The APK installation failed with exit code $installExitCode."
     }
 
-    & $adb -e shell am force-stop $packageName
-    & $adb -e shell monkey -p $packageName 1
-    if ($LASTEXITCODE -ne 0) {
-        throw "The app could not be launched with exit code $LASTEXITCODE."
+    $forceStopResult = Invoke-NativeCommand $adb @('-e', 'shell', 'am', 'force-stop', $packageName)
+    if ($forceStopResult.ExitCode -ne 0) {
+        throw "The app could not be stopped before launch. Exit code $($forceStopResult.ExitCode)."
+    }
+
+    $launchResult = Invoke-NativeCommand $adb @('-e', 'shell', 'monkey', '-p', $packageName, '1')
+    if ($launchResult.Output) {
+        Write-Host $launchResult.Output.TrimEnd()
+    }
+    if ($launchResult.ExitCode -ne 0) {
+        throw "The app could not be launched with exit code $($launchResult.ExitCode)."
     }
 
     Write-Host "The app was rebuilt from '$apk', installed, and launched." -ForegroundColor Green
