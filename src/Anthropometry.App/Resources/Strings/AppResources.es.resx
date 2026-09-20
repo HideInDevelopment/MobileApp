@@ -235,4 +235,8 @@
   <data name="HelpTransferSafety" xml:space="preserve"><value>Se crea un código nuevo para cada exportación. Si lo pierdes, no podrás abrir el perfil cifrado.</value></data>
   <data name="Previous" xml:space="preserve"><value>Anterior</value></data>
   <data name="Next" xml:space="preserve"><value>Siguiente</value></data>
+  <data name="HelpRemindersTitle" xml:space="preserve"><value>Guía de recordatorios</value></data>
+  <data name="HelpDailyReminderBody" xml:space="preserve"><value>Configura una hora diaria para recibir una notificación que te recuerde registrar una medición.</value></data>
+  <data name="HelpInactivityReminderBody" xml:space="preserve"><value>También puedes recibir un recordatorio después de 7 o 14 días sin abrir la aplicación.</value></data>
+  <data name="HelpReminderPrivacy" xml:space="preserve"><value>Los recordatorios se programan localmente en tu dispositivo. Puedes cambiarlos o desactivarlos en cualquier momento desde Ajustes.</value></data>
 </root>

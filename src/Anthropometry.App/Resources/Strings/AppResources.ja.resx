@@ -30,4 +30,8 @@
   <data name="HelpTransferSafety"><value>エクスポートごとに新しいコードが作成されます。コードを失うと、暗号化されたプロフィールを開けません。</value></data>
   <data name="Previous"><value>前へ</value></data>
   <data name="Next"><value>次へ</value></data>
+  <data name="HelpRemindersTitle"><value>リマインダーの案内</value></data>
+  <data name="HelpDailyReminderBody"><value>測定値の記録を促す通知を毎日受け取る時刻を設定できます。</value></data>
+  <data name="HelpInactivityReminderBody"><value>アプリを7日間または14日間開いていない場合にも、リマインダーを受け取れます。</value></data>
+  <data name="HelpReminderPrivacy"><value>リマインダーは端末上でローカルに設定されます。設定からいつでも変更または無効化できます。</value></data>
 </root>

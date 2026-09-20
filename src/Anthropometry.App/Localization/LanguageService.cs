@@ -69,6 +69,7 @@ public sealed class LanguageService
         "HelpActivityFactors", "HelpUnits", "HelpTransferTitle", "HelpTransferBody",
         "HelpTransferCodeBody", "HelpTransferUsefulness", "HelpTransferSafety", "Close", "Theme", "LightTheme", "DarkTheme",
         "Previous", "Next",
+        "HelpRemindersTitle", "HelpDailyReminderBody", "HelpInactivityReminderBody", "HelpReminderPrivacy",
         "GuidanceActivityLevelTitle", "GuidanceActivityLevelBody", "GuidanceWeightTitle", "GuidanceWeightBody",
         "GuidanceNeckTitle", "GuidanceNeckBody", "GuidanceAbdomenTitle", "GuidanceAbdomenBody",
         "GuidanceWaistTitle", "GuidanceWaistBody", "GuidanceHipTitle", "GuidanceHipBody",

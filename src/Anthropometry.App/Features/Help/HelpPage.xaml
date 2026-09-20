@@ -4,7 +4,7 @@
              x:Class="Anthropometry.App.Features.Help.HelpPage"
              Title="{DynamicResource HelpTitle}">
     <Grid RowDefinitions="*,Auto">
-        <ScrollView x:Name="OverviewPage" Grid.Row="0">
+        <ScrollView x:Name="ActivityPage" Grid.Row="0">
             <VerticalStackLayout Padding="20" Spacing="16">
                 <Label Text="{DynamicResource HelpAboutTitle}" FontSize="22" FontAttributes="Bold" />
                 <Label Text="{DynamicResource HelpDisclaimer}" LineBreakMode="WordWrap" />
@@ -32,7 +32,11 @@
                 <Label Text="{DynamicResource GuidanceReusedSizesBody}" LineBreakMode="WordWrap" />
                 <Label Text="{DynamicResource GuidanceEstimateDisclaimerTitle}" FontAttributes="Bold" />
                 <Label Text="{DynamicResource GuidanceEstimateDisclaimerBody}" LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+        </ScrollView>
 
+        <ScrollView x:Name="EquationsPage" Grid.Row="0" IsVisible="False">
+            <VerticalStackLayout Padding="20" Spacing="16">
                 <Label Text="{DynamicResource HelpEquationsTitle}" FontSize="22" FontAttributes="Bold" />
 
                 <VerticalStackLayout Spacing="6">
@@ -80,6 +84,33 @@
             </VerticalStackLayout>
         </ScrollView>
 
+        <ScrollView x:Name="ReminderPage" Grid.Row="0" IsVisible="False">
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <Label Text="{DynamicResource HelpRemindersTitle}" FontSize="22" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpDailyReminderBody}" LineBreakMode="WordWrap" />
+                <Border Padding="12" StrokeThickness="1">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{DynamicResource DailyReminder}" FontAttributes="Bold" />
+                        <Label Text="{DynamicResource ReminderTime}" LineBreakMode="WordWrap" />
+                    </VerticalStackLayout>
+                </Border>
+                <Label Text="{DynamicResource HelpInactivityReminderBody}" LineBreakMode="WordWrap" />
+                <Border Padding="12" StrokeThickness="1">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{DynamicResource InactivityReminder}" FontAttributes="Bold" />
+                        <Label Text="{DynamicResource InactivityReminderInterval}" LineBreakMode="WordWrap" />
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="{DynamicResource SevenDays}" />
+                            <Label Text="/" />
+                            <Label Text="{DynamicResource FourteenDays}" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+                <Label Text="{DynamicResource HelpReminderPrivacy}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource ReminderPermissionRequired}" LineBreakMode="WordWrap" />
+            </VerticalStackLayout>
+        </ScrollView>
+
         <ScrollView x:Name="TransferPage" Grid.Row="0" IsVisible="False">
             <VerticalStackLayout Padding="20" Spacing="16">
                 <Label Text="{DynamicResource HelpTransferTitle}" FontSize="22" FontAttributes="Bold" />
@@ -100,7 +131,7 @@
                     MinimumHeightRequest="48" />
             <Label x:Name="PageIndicator"
                    Grid.Column="1"
-                   Text="1 / 2"
+                   Text="1 / 4"
                    HorizontalTextAlignment="Center"
                    VerticalTextAlignment="Center" />
             <Button x:Name="NextButton"

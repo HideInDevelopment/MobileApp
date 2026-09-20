@@ -114,4 +114,16 @@
   <data name="HelpTransferSafety"><value>हर निर्यात के लिए नया कोड बनाया जाता है। कोड खो जाने पर एन्क्रिप्ट की गई प्रोफ़ाइल नहीं खोली जा सकती।</value></data>
   <data name="Previous"><value>पिछला</value></data>
   <data name="Next"><value>अगला</value></data>
+  <data name="HelpRemindersTitle"><value>रिमाइंडर मार्गदर्शन</value></data>
+  <data name="HelpDailyReminderBody"><value>माप दर्ज करने की याद दिलाने वाला नोटिफ़िकेशन पाने के लिए रोज़ का समय सेट करें।</value></data>
+  <data name="HelpInactivityReminderBody"><value>ऐप को 7 या 14 दिनों तक न खोलने पर भी आपको रिमाइंडर मिल सकता है।</value></data>
+  <data name="HelpReminderPrivacy"><value>रिमाइंडर आपके डिवाइस पर स्थानीय रूप से शेड्यूल होते हैं। आप उन्हें सेटिंग्स में कभी भी बदल या बंद कर सकते हैं।</value></data>
+  <data name="ReminderSettings"><value>रिमाइंडर</value></data>
+  <data name="DailyReminder"><value>दैनिक माप रिमाइंडर</value></data>
+  <data name="ReminderTime"><value>रिमाइंडर का समय</value></data>
+  <data name="InactivityReminder"><value>निष्क्रियता के बाद रिमाइंडर</value></data>
+  <data name="InactivityReminderInterval"><value>बाद</value></data>
+  <data name="SevenDays"><value>7 दिन</value></data>
+  <data name="FourteenDays"><value>14 दिन</value></data>
+  <data name="ReminderPermissionRequired"><value>रिमाइंडर चालू करने के लिए नोटिफ़िकेशन की अनुमति दें।</value></data>
 </root>

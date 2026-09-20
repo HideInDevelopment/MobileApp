@@ -31,4 +31,8 @@
   <data name="HelpTransferSafety"><value>Per ogni esportazione viene creato un nuovo codice. Se perdi il codice, il profilo crittografato non può essere aperto.</value></data>
   <data name="Previous"><value>Precedente</value></data>
   <data name="Next"><value>Avanti</value></data>
+  <data name="HelpRemindersTitle"><value>Guida ai promemoria</value></data>
+  <data name="HelpDailyReminderBody"><value>Imposta un orario giornaliero per ricevere una notifica che ti ricordi di registrare una misurazione.</value></data>
+  <data name="HelpInactivityReminderBody"><value>Puoi anche ricevere un promemoria dopo 7 o 14 giorni senza aprire l’app.</value></data>
+  <data name="HelpReminderPrivacy"><value>I promemoria vengono programmati localmente sul dispositivo. Puoi modificarli o disattivarli in qualsiasi momento nelle impostazioni.</value></data>
 </root>

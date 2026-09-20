@@ -235,4 +235,8 @@
   <data name="HelpTransferSafety" xml:space="preserve"><value>Für jeden Export wird ein neuer Code erstellt. Wenn Sie ihn verlieren, kann das verschlüsselte Profil nicht geöffnet werden.</value></data>
   <data name="Previous" xml:space="preserve"><value>Zurück</value></data>
   <data name="Next" xml:space="preserve"><value>Weiter</value></data>
+  <data name="HelpRemindersTitle" xml:space="preserve"><value>Informationen zu Erinnerungen</value></data>
+  <data name="HelpDailyReminderBody" xml:space="preserve"><value>Legen Sie eine tägliche Uhrzeit fest, zu der Sie eine Benachrichtigung zum Aufzeichnen einer Messung erhalten.</value></data>
+  <data name="HelpInactivityReminderBody" xml:space="preserve"><value>Sie können auch nach 7 oder 14 Tagen ohne Öffnen der App erinnert werden.</value></data>
+  <data name="HelpReminderPrivacy" xml:space="preserve"><value>Erinnerungen werden lokal auf Ihrem Gerät geplant. Sie können sie jederzeit in den Einstellungen ändern oder deaktivieren.</value></data>
 </root>

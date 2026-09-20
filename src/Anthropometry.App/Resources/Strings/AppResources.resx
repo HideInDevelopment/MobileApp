@@ -235,4 +235,8 @@
   <data name="LanguageSimplifiedChinese" xml:space="preserve"><value>Simplified Chinese</value></data>
   <data name="LanguageArabic" xml:space="preserve"><value>Arabic</value></data>
   <data name="LanguageHindi" xml:space="preserve"><value>Hindi</value></data>
+  <data name="HelpRemindersTitle" xml:space="preserve"><value>Reminder guidance</value></data>
+  <data name="HelpDailyReminderBody" xml:space="preserve"><value>Set a daily time to receive a notification that reminds you to record a measurement.</value></data>
+  <data name="HelpInactivityReminderBody" xml:space="preserve"><value>You can also be reminded after 7 or 14 days without opening the app.</value></data>
+  <data name="HelpReminderPrivacy" xml:space="preserve"><value>Reminders are scheduled locally on your device. You can change or disable them at any time in Settings.</value></data>
 </root>

@@ -2,7 +2,7 @@ namespace Anthropometry.App.Features.Help;
 
 public partial class HelpPage : ContentPage
 {
-    private const int LastPageIndex = 1;
+    private const int LastPageIndex = 3;
     private int _pageIndex;
 
     public HelpPage()
@@ -24,8 +24,10 @@ public partial class HelpPage : ContentPage
     private void ShowPage(int pageIndex)
     {
         _pageIndex = Math.Clamp(pageIndex, 0, LastPageIndex);
-        OverviewPage.IsVisible = _pageIndex == 0;
-        TransferPage.IsVisible = _pageIndex == 1;
+        ActivityPage.IsVisible = _pageIndex == 0;
+        EquationsPage.IsVisible = _pageIndex == 1;
+        ReminderPage.IsVisible = _pageIndex == 2;
+        TransferPage.IsVisible = _pageIndex == 3;
         PreviousButton.IsEnabled = _pageIndex > 0;
         NextButton.IsEnabled = _pageIndex < LastPageIndex;
         PageIndicator.Text = $"{_pageIndex + 1} / {LastPageIndex + 1}";

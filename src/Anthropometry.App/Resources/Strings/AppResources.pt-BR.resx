@@ -35,4 +35,8 @@
   <data name="HelpTransferSafety"><value>Um novo código é criado para cada exportação. Se você perder o código, não será possível abrir o perfil criptografado.</value></data>
   <data name="Previous"><value>Anterior</value></data>
   <data name="Next"><value>Avançar</value></data>
+  <data name="HelpRemindersTitle"><value>Orientações sobre lembretes</value></data>
+  <data name="HelpDailyReminderBody"><value>Defina um horário diário para receber uma notificação lembrando você de registrar uma medição.</value></data>
+  <data name="HelpInactivityReminderBody"><value>Você também pode receber um lembrete após 7 ou 14 dias sem abrir o aplicativo.</value></data>
+  <data name="HelpReminderPrivacy"><value>Os lembretes são programados localmente no seu dispositivo. Você pode alterá-los ou desativá-los a qualquer momento em Configurações.</value></data>
 </root>

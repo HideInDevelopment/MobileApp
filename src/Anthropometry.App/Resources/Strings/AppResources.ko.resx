@@ -30,4 +30,8 @@
   <data name="HelpTransferSafety"><value>내보낼 때마다 새 코드가 생성됩니다. 코드를 잃어버리면 암호화된 프로필을 열 수 없습니다.</value></data>
   <data name="Previous"><value>이전</value></data>
   <data name="Next"><value>다음</value></data>
+  <data name="HelpRemindersTitle"><value>알림 안내</value></data>
+  <data name="HelpDailyReminderBody"><value>측정 기록을 안내하는 알림을 매일 받을 시간을 설정할 수 있습니다.</value></data>
+  <data name="HelpInactivityReminderBody"><value>앱을 7일 또는 14일 동안 열지 않으면 알림을 받을 수도 있습니다.</value></data>
+  <data name="HelpReminderPrivacy"><value>알림은 기기에서 로컬로 예약됩니다. 설정에서 언제든지 변경하거나 끌 수 있습니다.</value></data>
 </root>

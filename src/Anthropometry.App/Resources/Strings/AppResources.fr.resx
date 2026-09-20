@@ -222,4 +222,8 @@
   <data name="HelpTransferSafety"><value>Un nouveau code est créé pour chaque exportation. Si vous perdez le code, le profil chiffré ne peut pas être ouvert.</value></data>
   <data name="Previous"><value>Précédent</value></data>
   <data name="Next"><value>Suivant</value></data>
+  <data name="HelpRemindersTitle"><value>Guide des rappels</value></data>
+  <data name="HelpDailyReminderBody"><value>Définissez une heure quotidienne pour recevoir une notification vous rappelant d’enregistrer une mesure.</value></data>
+  <data name="HelpInactivityReminderBody"><value>Vous pouvez également recevoir un rappel après 7 ou 14 jours sans ouvrir l’application.</value></data>
+  <data name="HelpReminderPrivacy"><value>Les rappels sont programmés localement sur votre appareil. Vous pouvez les modifier ou les désactiver à tout moment dans les réglages.</value></data>
 </root>

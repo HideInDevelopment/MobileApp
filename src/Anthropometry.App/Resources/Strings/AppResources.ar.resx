@@ -114,4 +114,16 @@
   <data name="HelpTransferSafety"><value>يُنشأ رمز جديد لكل عملية تصدير. إذا فقدت الرمز، فلن تتمكن من فتح الملف الشخصي المشفّر.</value></data>
   <data name="Previous"><value>السابق</value></data>
   <data name="Next"><value>التالي</value></data>
+  <data name="HelpRemindersTitle"><value>إرشادات التذكيرات</value></data>
+  <data name="HelpDailyReminderBody"><value>حدد وقتًا يوميًا لتلقي إشعار يذكرك بتسجيل قياس.</value></data>
+  <data name="HelpInactivityReminderBody"><value>يمكنك أيضًا تلقي تذكير بعد 7 أو 14 يومًا من دون فتح التطبيق.</value></data>
+  <data name="HelpReminderPrivacy"><value>تُجدول التذكيرات محليًا على جهازك. يمكنك تغييرها أو تعطيلها في أي وقت من الإعدادات.</value></data>
+  <data name="ReminderSettings"><value>التذكيرات</value></data>
+  <data name="DailyReminder"><value>تذكير القياس اليومي</value></data>
+  <data name="ReminderTime"><value>وقت التذكير</value></data>
+  <data name="InactivityReminder"><value>تذكير بعد عدم النشاط</value></data>
+  <data name="InactivityReminderInterval"><value>بعد</value></data>
+  <data name="SevenDays"><value>7 أيام</value></data>
+  <data name="FourteenDays"><value>14 يومًا</value></data>
+  <data name="ReminderPermissionRequired"><value>اسمح بالإشعارات لتفعيل التذكيرات.</value></data>
 </root>

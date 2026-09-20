@@ -56,4 +56,24 @@ public sealed class HelpPageMarkupTests
         Assert.Contains("Clicked=\"OnPreviousClicked\"", markup);
         Assert.DoesNotContain("CSV", markup, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public void Places_reminder_guidance_between_equations_and_transfer_pages()
+    {
+        var path = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Features", "Help", "HelpPage.xaml"));
+        var markup = File.ReadAllText(path);
+
+        var equationsIndex = markup.IndexOf("x:Name=\"EquationsPage\"", StringComparison.Ordinal);
+        var remindersIndex = markup.IndexOf("x:Name=\"ReminderPage\"", StringComparison.Ordinal);
+        var transferIndex = markup.IndexOf("x:Name=\"TransferPage\"", StringComparison.Ordinal);
+
+        Assert.True(equationsIndex >= 0);
+        Assert.True(remindersIndex > equationsIndex);
+        Assert.True(transferIndex > remindersIndex);
+        Assert.Contains("Text=\"{DynamicResource HelpRemindersTitle}\"", markup);
+        Assert.Contains("Text=\"1 / 4\"", markup);
+    }
 }
