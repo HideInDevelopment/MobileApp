@@ -23,4 +23,10 @@ internal static class ApplicationErrors
     public static DomainError ProfileTransferFileInvalid => new("profile.transfer.file.invalid", "Errors.ProfileTransferFileInvalid");
 
     public static DomainError ProfileTransferFormatUnsupported => new("profile.transfer.format.unsupported", "Errors.ProfileTransferFormatUnsupported");
+
+    public static DomainError ProfileTransferPasswordRequired => new("profile.transfer.password.required", "Errors.ProfileTransferPasswordRequired");
+
+    public static DomainError ProfileTransferAuthenticationFailed => new("profile.transfer.authentication.failed", "Errors.ProfileTransferAuthenticationFailed");
+
+    public static DomainError ProfileTransferPassphraseInvalid => new("profile.transfer.passphrase.invalid", "Errors.ProfileTransferPassphraseInvalid");
 }

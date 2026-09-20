@@ -58,7 +58,10 @@ public sealed record ProfileImportPreview(
     string Name,
     ProfileGender Gender,
     int MeasurementCount,
-    int CalculationResultCount);
+    int CalculationResultCount,
+    bool IsLegacyUnprotected = false);
+
+public sealed record ProfileTransferProtectedPayload(byte[] CsvContent, bool IsLegacyUnprotected);
 
 public sealed record ImportedProfile(
     ProfileDto Profile,
