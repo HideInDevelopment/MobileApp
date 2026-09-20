@@ -183,6 +183,45 @@ public sealed class CalculationUseCaseTests
         Assert.Equal(weightOnly.Id, results.Items[0].MeasurementId);
     }
 
+    [Fact]
+    public async Task Weight_only_calculation_reuses_sizes_recorded_on_the_same_day()
+    {
+        var profile = TestData.Profile();
+        var measuredAt = new DateTimeOffset(2026, 9, 8, 12, 0, 0, TimeSpan.Zero);
+        var previous = Measurement.Create(
+            profile.Id,
+            TestData.MeasurementInput(measuredAt),
+            measuredAt).Value;
+        var weightOnly = Measurement.Create(
+            profile.Id,
+            new MeasurementInput(
+                MeasurementType.WeightOnly,
+                79m,
+                180m,
+                null,
+                null,
+                35,
+                ActivityLevel.Moderate,
+                measuredAt),
+            measuredAt).Value;
+        var measurements = new FakeMeasurementRepository();
+        measurements.Items.Add(previous);
+        measurements.Items.Add(weightOnly);
+        var results = new FakeCalculationResultRepository();
+        var catalog = new FormulaCatalog(
+            new UsNavyMaleBodyFatFormula(),
+            new MifflinStJeorMaleBmrFormula(),
+            new TdeeFormula(),
+            new UsNavyFemaleBodyFatFormula(),
+            new MifflinStJeorFemaleBmrFormula());
+
+        var result = await new CalculateBodyFat(measurements, results, catalog, new FakeClock())
+            .ExecuteAsync(new CalculateBodyFatCommand(profile.Id, weightOnly.Id), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(weightOnly.Id, result.Value.MeasurementId);
+    }
+
     [Theory]
     [InlineData("body-fat")]
     [InlineData("bmr")]

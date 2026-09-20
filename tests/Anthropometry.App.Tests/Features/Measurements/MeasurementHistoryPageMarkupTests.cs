@@ -31,4 +31,25 @@ public sealed class MeasurementHistoryPageMarkupTests
         Assert.Contains("Command=\"{Binding WeightGraphicCommand}\"", markup);
         Assert.Contains("Command=\"{Binding DismissChartMenuCommand}\"", markup);
     }
+
+    [Fact]
+    public void Uses_theme_aware_warning_styles_for_weight_only_rows()
+    {
+        var pagePath = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Features", "Measurements", "MeasurementHistoryPage.xaml"));
+        var stylesPath = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Resources", "Styles", "Styles.xaml"));
+        var pageMarkup = File.ReadAllText(pagePath);
+        var stylesMarkup = File.ReadAllText(stylesPath);
+
+        Assert.Contains("Style=\"{StaticResource MeasurementHistoryRowBorder}\"", pageMarkup);
+        Assert.Contains("Style=\"{StaticResource MeasurementHistoryRowText}\"", pageMarkup);
+        Assert.Contains("WarningSurfaceDark", stylesMarkup);
+        Assert.Contains("{StaticResource PrimaryDarkText}", stylesMarkup);
+        Assert.Contains("Binding ShowWarningIcon", stylesMarkup);
+    }
 }

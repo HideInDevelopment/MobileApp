@@ -15,6 +15,8 @@
     <Color x:Key="DestructiveDark">#F97066</Color>
     <Color x:Key="SurfaceSubtle">#F9FAFB</Color>
     <Color x:Key="SurfaceSubtleDark">#1F2937</Color>
+    <Color x:Key="WarningSurface">#FFF2CC</Color>
+    <Color x:Key="WarningSurfaceDark">#B8860B</Color>
 
     <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="Black">#000000</Color>

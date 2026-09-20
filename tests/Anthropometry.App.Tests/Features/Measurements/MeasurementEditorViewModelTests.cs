@@ -421,6 +421,35 @@ public sealed class MeasurementEditorViewModelTests
         Assert.False(viewModel.IsMeasurementDateLocked);
     }
 
+    [Fact]
+    public async Task Premium_user_save_persists_the_selected_measurement_date()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var results = new FakeCalculationResultRepository();
+        var viewModel = CreateViewModel(
+            profile,
+            MeasurementType.WeightAndSizes,
+            profiles,
+            measurements,
+            results,
+            entitlementProvider: new FakeEntitlementProvider(EntitlementTestData.Premium));
+
+        await viewModel.LoadEntitlementsAsync();
+        viewModel.MeasurementDate = viewModel.MaximumMeasurementDate.AddDays(-2);
+        viewModel.WeightText = "80";
+        viewModel.NeckText = "40";
+        viewModel.AbdomenText = "90";
+
+        await viewModel.SaveCommand.ExecuteAsync(null);
+
+        var saved = Assert.Single(measurements.Items);
+        Assert.Equal(viewModel.MeasurementDate, saved.MeasuredAtUtc.ToLocalTime().Date);
+        Assert.True(viewModel.IsCompleted, viewModel.ErrorMessage ?? viewModel.ValidationMessage);
+    }
+
     private static MeasurementEditorViewModel CreateViewModel(
         Profile profile,
         MeasurementType measurementType,

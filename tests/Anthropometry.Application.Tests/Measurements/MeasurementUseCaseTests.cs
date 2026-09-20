@@ -160,6 +160,36 @@ public sealed class MeasurementUseCaseTests
         Assert.Empty(measurements.Items);
     }
 
+    [Theory]
+    [InlineData(MeasurementType.WeightOnly)]
+    [InlineData(MeasurementType.WeightAndSizes)]
+    public async Task Premium_user_can_record_measurements_on_a_past_date(MeasurementType type)
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var clock = new FakeClock { UtcNow = new DateTimeOffset(2026, 9, 20, 12, 0, 0, TimeSpan.Zero) };
+        var measuredAt = clock.UtcNow.AddDays(-3);
+
+        var result = await new RecordMeasurement(
+            profiles,
+            measurements,
+            clock,
+            new FakeEntitlementProvider(EntitlementTestData.Premium)).ExecuteAsync(
+            new RecordMeasurementCommand(
+                profile.Id,
+                type,
+                79m,
+                type == MeasurementType.WeightAndSizes ? 40m : null,
+                type == MeasurementType.WeightAndSizes ? 90m : null,
+                measuredAt),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(measuredAt, Assert.Single(measurements.Items).MeasuredAtUtc);
+    }
+
     [Fact]
     public async Task Future_measurements_are_rejected_for_premium_users()
     {

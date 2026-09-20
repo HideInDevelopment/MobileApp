@@ -58,7 +58,7 @@
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Border Style="{StaticResource CardBorder}" Padding="12" Margin="0,6" BackgroundColor="{Binding RowBackgroundColor}">
+                    <Border Style="{StaticResource MeasurementHistoryRowBorder}" Padding="12" Margin="0,6">
                         <Grid ColumnDefinitions="64,*,Auto" ColumnSpacing="12">
                             <Label Grid.Column="0"
                                    Text="⚠"
@@ -69,10 +69,10 @@
                                    VerticalOptions="Center"
                                    SemanticProperties.Description="{DynamicResource ReusedMeasurementsDescription}" />
                             <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
-                                <Label Text="{Binding DateText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
-                                <Label Text="{Binding WeightText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
-                                <Label Text="{Binding HeightText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
-                                <Label Text="{Binding MeasurementTypeText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Style="{StaticResource MeasurementHistoryRowText}" Text="{Binding DateText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Style="{StaticResource MeasurementHistoryRowText}" Text="{Binding WeightText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Style="{StaticResource MeasurementHistoryRowText}" Text="{Binding HeightText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
+                                <Label Style="{StaticResource MeasurementHistoryRowText}" Text="{Binding MeasurementTypeText}" FontAttributes="Bold" HorizontalTextAlignment="Start" />
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="2" Spacing="4">
                                 <Button Text="{DynamicResource ViewResults}" Style="{StaticResource PrimaryButton}" IsVisible="{Binding CanViewResults}" Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectCommand}" CommandParameter="{Binding}" MinimumHeightRequest="48" SemanticProperties.Description="{DynamicResource ViewResults}" />

@@ -45,7 +45,7 @@ public sealed class MeasurementHistoryViewModelTests
     }
 
     [Fact]
-    public async Task Load_exposes_a_background_color_for_each_history_row()
+    public async Task Load_exposes_warning_state_for_each_history_row()
     {
         var profile = TestData.Profile();
         var repository = new FakeMeasurementRepository();
@@ -55,8 +55,8 @@ public sealed class MeasurementHistoryViewModelTests
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
-        Assert.Equal("#FFF2CC", viewModel.Measurements[0].RowBackgroundColor);
-        Assert.Equal("Transparent", viewModel.Measurements[1].RowBackgroundColor);
+        Assert.True(viewModel.Measurements[0].ShowWarningIcon);
+        Assert.False(viewModel.Measurements[1].ShowWarningIcon);
     }
 
     [Fact]

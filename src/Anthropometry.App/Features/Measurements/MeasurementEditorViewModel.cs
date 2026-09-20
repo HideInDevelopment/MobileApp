@@ -384,7 +384,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private DateTimeOffset NowUtc => _clock?.UtcNow ?? DateTimeOffset.UtcNow;
 
     private DateTimeOffset NewMeasurementTimestampUtc()
-        => ToUtcAtLocalNoon(IsMeasurementDateEnabled ? MeasurementDate : NowUtc.ToLocalTime().Date);
+    {
+        var nowLocal = NowUtc.ToLocalTime();
+        var measuredLocal = MeasurementDate.Date.Add(nowLocal.TimeOfDay);
+        var offset = TimeZoneInfo.Local.GetUtcOffset(measuredLocal);
+        return new DateTimeOffset(measuredLocal, offset).ToUniversalTime();
+    }
 
     private static DateTimeOffset ToUtcAtLocalNoon(DateTime localDate)
     {

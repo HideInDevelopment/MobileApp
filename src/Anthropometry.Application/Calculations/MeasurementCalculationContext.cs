@@ -25,7 +25,8 @@ internal static class MeasurementCalculationContext
         var history = await measurements.GetByProfileAsync(profileId, cancellationToken);
         return history
             .Where(candidate => candidate.Type == MeasurementType.WeightAndSizes
-                && candidate.MeasuredAtUtc < measurement.MeasuredAtUtc
+                && candidate.Id != measurement.Id
+                && candidate.MeasuredAtUtc <= measurement.MeasuredAtUtc
                 && candidate.Gender == measurement.Gender
                 && HasRequiredSizes(candidate))
             .OrderByDescending(candidate => candidate.MeasuredAtUtc)
