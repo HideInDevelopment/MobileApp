@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Anthropometry.App.Features.Profiles.PassphrasePromptPage"
+             Title="{DynamicResource ProfileTransferPassphraseTitle}">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="16">
+            <Label Text="{DynamicResource ProfileTransferPassphraseInstructions}"
+                   Style="{StaticResource SecondaryText}" />
+            <Entry Text="{Binding Passphrase}"
+                   IsPassword="True"
+                   Placeholder="{DynamicResource ProfileTransferPassphrasePlaceholder}"
+                   ClearButtonVisibility="WhileEditing" />
+            <Entry Text="{Binding Confirmation}"
+                   IsPassword="True"
+                   IsVisible="{Binding RequiresConfirmation}"
+                   Placeholder="{DynamicResource ProfileTransferPassphraseConfirmationPlaceholder}"
+                   ClearButtonVisibility="WhileEditing" />
+            <Label Text="{Binding ValidationMessage}"
+                   TextColor="Red"
+                   IsVisible="{Binding ValidationMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+            <Button Text="{DynamicResource Save}"
+                    Clicked="OnSubmitClicked"
+                    MinimumHeightRequest="48" />
+            <Button Text="{DynamicResource Cancel}"
+                    Clicked="OnCancelClicked"
+                    MinimumHeightRequest="48" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

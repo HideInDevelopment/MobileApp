@@ -1,5 +1,6 @@
 using Anthropometry.Application.Profiles;
 using Microsoft.Maui.Storage;
+using System.Buffers;
 
 namespace Anthropometry.App.Features.Profiles;
 
@@ -21,7 +22,7 @@ public sealed class MauiProfileTransferFileService : IProfileTransferFileService
             .WaitAsync(cancellationToken);
     }
 
-    public async Task<Stream?> PickCsvAsync(string title, CancellationToken cancellationToken)
+    public async Task<ProfileTransferFile?> PickTransferAsync(string title, CancellationToken cancellationToken)
     {
         var result = await FilePicker.Default.PickAsync(
                 new PickOptions
@@ -29,7 +30,7 @@ public sealed class MauiProfileTransferFileService : IProfileTransferFileService
                     PickerTitle = title,
                     FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
                     {
-                        [DevicePlatform.Android] = ["text/csv", ".csv"]
+                        [DevicePlatform.Android] = ["application/octet-stream", ".anthropometry", "text/csv", ".csv"]
                     })
                 })
             .WaitAsync(cancellationToken);
@@ -39,15 +40,38 @@ public sealed class MauiProfileTransferFileService : IProfileTransferFileService
         }
 
         await using var source = await result.OpenReadAsync();
-        var copy = new MemoryStream();
-        await source.CopyToAsync(copy, cancellationToken);
-        copy.Position = 0;
-        return copy;
+        var buffer = ArrayPool<byte>.Shared.Rent(81920);
+        try
+        {
+            using var copy = new MemoryStream();
+            while (true)
+            {
+                var read = await source.ReadAsync(buffer.AsMemory(), cancellationToken);
+                if (read == 0)
+                {
+                    break;
+                }
+
+                if (copy.Length + read > ProfileTransferProtection.MaxProtectedFileBytes)
+                {
+                    throw new InvalidDataException("The profile transfer file is too large.");
+                }
+
+                copy.Write(buffer, 0, read);
+            }
+
+            return new ProfileTransferFile(result.FileName, copy.ToArray());
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer, clearArray: true);
+        }
     }
 
     private static void CleanupPreviousExports()
     {
-        foreach (var path in Directory.EnumerateFiles(FileSystem.CacheDirectory, $"{ExportPrefix}*.csv"))
+        foreach (var path in Directory.EnumerateFiles(FileSystem.CacheDirectory, $"{ExportPrefix}*.anthropometry")
+            .Concat(Directory.EnumerateFiles(FileSystem.CacheDirectory, $"{ExportPrefix}*.csv")))
         {
             try
             {

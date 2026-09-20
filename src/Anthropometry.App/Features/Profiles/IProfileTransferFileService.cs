@@ -6,5 +6,5 @@ public interface IProfileTransferFileService
 {
     Task ShareAsync(ProfileExportFile file, string title, CancellationToken cancellationToken);
 
-    Task<Stream?> PickCsvAsync(string title, CancellationToken cancellationToken);
+    Task<ProfileTransferFile?> PickTransferAsync(string title, CancellationToken cancellationToken);
 }

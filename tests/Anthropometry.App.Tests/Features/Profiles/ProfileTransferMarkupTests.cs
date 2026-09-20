@@ -89,12 +89,14 @@ public sealed class ProfileTransferMarkupTests
     {
         var detail = ReadMarkup("ProfileDetailPage.xaml");
         var list = ReadMarkup("ProfileListPage.xaml");
+        var prompt = ReadMarkup("PassphrasePromptPage.xaml");
 
         Assert.Contains("{DynamicResource ExportProfile}", detail);
         Assert.Contains("Command=\"{Binding ExportCommand}\"", detail);
         Assert.Contains("{DynamicResource ImportProfile}", list);
         Assert.Contains("Command=\"{Binding ImportCommand}\"", list);
         Assert.Contains("IsEnabled=\"{Binding CanImportProfile}\"", list);
+        Assert.Contains("IsPassword=\"True\"", prompt);
     }
 
     private static ProfileListViewModel CreateListViewModel(FakeProfileRepository repository, NavigationSpy navigation)
