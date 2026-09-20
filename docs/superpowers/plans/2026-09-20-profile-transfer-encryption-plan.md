@@ -254,15 +254,15 @@
 - Modify: `docs/superpowers/specs/2026-09-20-profile-transfer-encryption-design.md` only if implementation decisions changed during review
 - Modify: `docs/superpowers/plans/2026-09-20-profile-transfer-encryption-plan.md` to record completed steps
 
-- [ ] **Step 1: Update the architecture boundary**
+- [x] **Step 1: Update the architecture boundary**
 
   Replace the current plain-CSV export description with the protected `.anthropometry` envelope, passphrase-derived key, AES-GCM authentication, legacy CSV migration path, no-Keystore portable-key decision, no-storage-permission rule, and explicit limitation that a passphrase holder can create a new valid file.
 
-- [ ] **Step 2: Review the complete diff**
+- [x] **Step 2: Review the complete diff**
 
   Run `git diff --check` and inspect for plaintext health-data logging, passphrase persistence, hard-coded keys, unauthenticated encryption, unbounded KDF work, file-size bypasses, stale `.csv` filenames, stale resource keys, direct repository calls from ViewModels, Android permissions, and unrelated changes.
 
-- [ ] **Step 3: Run full automated verification**
+- [x] **Step 3: Run full automated verification**
 
   ```powershell
   dotnet restore
@@ -276,7 +276,7 @@
 
   On the emulator or connected Pixel, export male and female profiles, confirm the `.anthropometry` Sharesheet item, import from Downloads/document provider with the correct passphrase, verify history/results/formula metadata, retry with a wrong passphrase, modify one byte and confirm rejection, import a legacy CSV with its warning, cancel export/import, and confirm no partial profile appears.
 
-- [ ] **Step 5: Commit documentation and verification records**
+- [x] **Step 5: Commit documentation and verification records**
 
   ```powershell
   git add ARCHITECTURE.md PLAN.md docs/superpowers/specs/2026-09-20-profile-transfer-encryption-design.md docs/superpowers/specs/2026-09-19-profile-csv-transfer-design.md docs/superpowers/plans/2026-09-20-profile-transfer-encryption-plan.md
@@ -290,3 +290,11 @@ dotnet restore
 dotnet test --configuration Release -m:1 -p:PublishTrimmed=false -p:RunAOTCompilation=false --verbosity minimal
 dotnet build .\src\Anthropometry.App\Anthropometry.App.csproj -f net10.0-android -c Debug -m:1 -p:PublishTrimmed=false -p:RunAOTCompilation=false -p:AndroidSdkDirectory="$env:LOCALAPPDATA\Android\Sdk" -p:JavaSdkDirectory="C:\Program Files\Microsoft\jdk-21.0.12.101-hotspot" --verbosity minimal
 ```
+
+## Execution record
+
+- Task 1 complete in `4965625`: authenticated envelope and protection tests (14 passed after the final UTF-8 BOM compatibility regression test); Application suite (68 passed at task boundary).
+- Task 2 complete in `69baca4`: protected export/import integration and transfer tests (16 focused passed); Application suite (70 passed).
+- Task 3 complete in `cbde89f`: bounded Android adapter, obscured passphrase prompt, and prompt tests (10 focused passed); App suite (148 passed). Android compile was intentionally deferred until the shared navigation contract was updated in Task 4.
+- Task 4 complete in `afb58c9`: protected navigation orchestration and localized English/Spanish/German copy; focused localization/markup tests (11 passed); App suite (149 passed); Android Debug build (0 warnings, 0 errors).
+- Task 5 complete in the documentation commit: full Release tests passed (Domain 54, Application 70, Infrastructure 16, App 149); Android Debug and Release builds passed with 0 warnings and 0 errors using the documented trim/AOT overrides. Repository restore is blocked by missing host workload resolver SDK directories (`MSB4276`), and Android device smoke testing remains pending because it requires a connected emulator or Pixel.

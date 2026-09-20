@@ -869,39 +869,44 @@ git commit -m "feat: add measurement history and resilient ui states"
 
 ---
 
-### Post-MVP feature slice: Profile CSV transfer
+### Post-MVP feature slice: Protected profile transfer
 
-**Status:** Implemented on `master` as an offline, Android-first profile transfer feature. Manual Android Sharesheet/FilePicker smoke validation remains pending.
+**Status:** Implemented on `master` as an offline, Android-first protected profile transfer feature. Manual Android Sharesheet/FilePicker smoke validation remains pending.
 
-**Review boundary:** A user can export one complete profile to a versioned canonical CSV file, share it through Android, import it as a new profile after preview and confirmation, and retain its measurements and historical calculation results without recalculation or external identifiers.
+**Review boundary:** A user can export one complete profile to a password-protected, versioned `.anthropometry` file, share it through Android, import it as a new profile after authenticated preview and confirmation, and retain its measurements and historical calculation results without recalculation or external identifiers.
 
 **Acceptance criteria:**
 
-- [x] Export contains one profile, canonical kg/cm values, UTC timestamps, measurements, and historical results in a fixed v1 CSV schema.
-- [x] CSV values use invariant decimals, UTF-8, CSV escaping, and version validation; malformed, duplicate, or dangling records are rejected before persistence.
+- [x] New exports contain one profile in a `.anthropometry` binary envelope using PBKDF2-HMAC-SHA256 and AES-256-GCM; the authenticated inner payload contains canonical kg/cm values, UTC timestamps, measurements, and historical results in the fixed v1 CSV schema.
+- [x] Export requires a passphrase of at least 12 non-whitespace characters, confirms it in an obscured prompt, and never persists or logs it.
+- [x] CSV values use invariant decimals, UTF-8, CSV escaping, and version validation; malformed, duplicate, dangling, tampered, or unauthenticated records are rejected before persistence.
+- [x] Protected imports enforce bounded file size and PBKDF2 work, require the passphrase, and authenticate the envelope header, salt, nonce, tag, and ciphertext before parsing.
+- [x] Previous plain CSV exports are accepted only through an explicitly labelled legacy path with a localized unprotected-file warning; new exports never produce CSV files.
 - [x] Import always generates new profile, measurement, and calculation-result IDs and preserves gender, hip values, weight-only history, formula IDs, versions, units, values, and timestamps.
 - [x] Import enforces the four-profile limit and persists the complete graph in one SQLite transaction with rollback on failure.
 - [x] Android uses the private cache directory, native Sharesheet, and FilePicker/Storage Access Framework without storage permissions or new packages.
 - [x] Profile detail exposes localized `Export profile`; profile list exposes localized `Import profile`, disabled at four profiles and reloaded after a confirmed import.
-- [x] English, Spanish, and German resources cover labels, health-data warning, preview confirmation, success, cancellation, invalid-file, unsupported-format, and profile-limit states.
+- [x] English, Spanish, and German resources cover labels, health-data warning, protected-file password flow, legacy warning, preview confirmation, success, cancellation, invalid-file, unsupported-format, authentication failure, and profile-limit states.
 
 **Automated verification:**
 
-- [x] Serializer tests: 7 passed.
-- [x] Application tests: 55 passed.
+- [x] Protection tests: 14 passed.
+- [x] Serializer and transfer tests: 16 passed.
+- [x] Application tests: 70 passed.
 - [x] Infrastructure tests: 16 passed.
-- [x] App tests: 144 passed.
-- [x] Full Release verification with `PublishTrimmed=false` and `RunAOTCompilation=false`: Domain 54, Application 55, Infrastructure 16, and App 144 tests passed.
+- [x] App prompt/localization tests: 11 passed; complete App suite: 149 passed.
+- [x] Full Release verification with `PublishTrimmed=false` and `RunAOTCompilation=false`: Domain 54, Application 70, Infrastructure 16, and App 149 tests passed.
 - [x] Android Debug build with `PublishTrimmed=false` and `RunAOTCompilation=false`: 0 warnings, 0 errors.
 - [x] Android Release build with `PublishTrimmed=false` and `RunAOTCompilation=false`: 0 warnings, 0 errors.
 - [ ] Android emulator/Pixel Sharesheet, import-provider, cancellation, and four-profile smoke pass — pending device execution.
 
-The default trimmed Release verification remains blocked by the installed MAUI linker task host (`MSB4216`/`MSB4027` while creating the .NET x64 task host). The source and test verification above uses the documented overrides; production trimming/AOT packaging still needs a host/toolchain follow-up.
+The repository-wide `dotnet restore` command was also attempted, but this host's .NET 10 SDK stopped before project restore because the workload resolver SDK directories were missing (`MSB4276`). The existing restored assets were sufficient for the no-restore verification above. The default trimmed Release verification remains blocked by the installed MAUI linker task host (`MSB4216`/`MSB4027` while creating the .NET x64 task host). The source and test verification above uses the documented overrides; production trimming/AOT packaging still needs a host/toolchain follow-up.
 
 **Implementation records:**
 
-- Design: `docs/superpowers/specs/2026-09-19-profile-csv-transfer-design.md`
-- Execution plan: `docs/superpowers/plans/2026-09-19-profile-csv-transfer-plan.md`
+- Protected-transfer design: `docs/superpowers/specs/2026-09-20-profile-transfer-encryption-design.md`
+- Protected-transfer execution plan: `docs/superpowers/plans/2026-09-20-profile-transfer-encryption-plan.md`
+- Historical plain-CSV design: `docs/superpowers/specs/2026-09-19-profile-csv-transfer-design.md`
 
 ---
 

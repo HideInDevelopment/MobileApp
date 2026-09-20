@@ -1,5 +1,7 @@
 # Profile CSV Transfer Design
 
+> Historical design note: this document describes the original unprotected CSV transfer format. New exports use the protected `.anthropometry` envelope described in `docs/superpowers/specs/2026-09-20-profile-transfer-encryption-design.md`; the plain CSV format remains only as a temporary, explicitly warned legacy import path.
+
 ## Goal
 
 Allow a user to export one complete profile as a portable CSV file through the Android Sharesheet and import that file as a new local profile with its complete measurement history and historical calculation results.
