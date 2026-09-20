@@ -44,6 +44,24 @@ public sealed class SettingsViewModelTests
     }
 
     [Fact]
+    public void Language_names_follow_the_active_application_language()
+    {
+        var service = new LanguageService(new FakeLanguagePreferenceStore());
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
+        var themeService = new ThemeService(new FakeThemePreferenceStore());
+        themeService.Initialize();
+        var viewModel = new SettingsViewModel(service, themeService, CreateDisplayPreferences());
+        var english = viewModel.Languages.Single(language => language.Code == "en");
+        var spanish = viewModel.Languages.Single(language => language.Code == "es");
+
+        Assert.Equal("English", viewModel.GetLanguageDisplayName(english));
+        viewModel.SelectedLanguage = spanish;
+
+        Assert.Equal("Inglés", viewModel.GetLanguageDisplayName(english));
+        Assert.Equal("Español", viewModel.SelectedLanguageDisplayName);
+    }
+
+    [Fact]
     public void Selecting_a_theme_applies_and_persists_it()
     {
         var languageService = new LanguageService(new FakeLanguagePreferenceStore());

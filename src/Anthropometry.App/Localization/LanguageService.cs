@@ -3,7 +3,7 @@ using System.Resources;
 
 namespace Anthropometry.App.Localization;
 
-public sealed record LanguageOption(string Code, string DisplayName, string CultureName)
+public sealed record LanguageOption(string Code, string DisplayNameKey, string CultureName)
 {
     public CultureInfo Culture => CultureInfo.GetCultureInfo(CultureName);
 
@@ -14,17 +14,17 @@ public sealed class LanguageService
 {
     private static readonly IReadOnlyList<LanguageOption> Languages =
     [
-        new("en", "English", "en-US"),
-        new("es", "Español", "es-ES"),
-        new("de", "Deutsch", "de-DE"),
-        new("fr", "Français", "fr-FR"),
-        new("pt-BR", "Português (Brasil)", "pt-BR"),
-        new("it", "Italiano", "it-IT"),
-        new("ja", "日本語", "ja-JP"),
-        new("ko", "한국어", "ko-KR"),
-        new("zh-CN", "简体中文", "zh-CN"),
-        new("ar", "العربية", "ar-SA"),
-        new("hi", "हिन्दी", "hi-IN")
+        new("en", "LanguageEnglish", "en-US"),
+        new("es", "LanguageSpanish", "es-ES"),
+        new("de", "LanguageGerman", "de-DE"),
+        new("fr", "LanguageFrench", "fr-FR"),
+        new("pt-BR", "LanguagePortugueseBrazil", "pt-BR"),
+        new("it", "LanguageItalian", "it-IT"),
+        new("ja", "LanguageJapanese", "ja-JP"),
+        new("ko", "LanguageKorean", "ko-KR"),
+        new("zh-CN", "LanguageSimplifiedChinese", "zh-CN"),
+        new("ar", "LanguageArabic", "ar-SA"),
+        new("hi", "LanguageHindi", "hi-IN")
     ];
 
     public static IReadOnlyList<LanguageOption> SupportedLanguages => Languages;
@@ -54,7 +54,9 @@ public sealed class LanguageService
         "Filter", "ClearFilters", "FromDate", "ToDate", "MeasurementType", "AllMeasurements", "NoMatchingMeasurements", "NoMatchingMeasurementsDescription", "InvalidHistoryDateRange",
         "WeightAndSizes", "ReusedMeasurementsDescription", "EstimatedResults", "ResultsTitle",
         "BodyFatPercentage", "BasalMetabolicRate", "TotalDailyEnergyExpenditure", "ResultsLoadError",
-        "Language", "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",
+        "Language", "LanguageEnglish", "LanguageSpanish", "LanguageGerman", "LanguageFrench", "LanguagePortugueseBrazil",
+        "LanguageItalian", "LanguageJapanese", "LanguageKorean", "LanguageSimplifiedChinese", "LanguageArabic", "LanguageHindi",
+        "Sedentary", "LightlyActive", "ModeratelyActive", "HighlyActive", "VeryHighlyActive",
         "DeleteProfileTitle", "DeleteProfileMessage", "DeleteAction",
         "Charts", "MetricChart", "MetricChartTitle", "MetricChartNoMeasurements", "MetricChartLoadError", "InvalidMetricChartDateRange", "ChartMetric", "WeightGraphic", "WeightGraphicTitle", "WeightGraphicNoMeasurements", "WeightGraphicLoadError", "Date",
         "HelpAboutTitle", "HelpDisclaimer", "HelpMeasurementConsistency", "HelpEquationsTitle",

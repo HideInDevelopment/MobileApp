@@ -212,4 +212,15 @@
   <data name="Lb" xml:space="preserve"><value>lb</value></data>
   <data name="Ft" xml:space="preserve"><value>ft</value></data>
   <data name="In" xml:space="preserve"><value>in</value></data>
+  <data name="LanguageEnglish" xml:space="preserve"><value>Englisch</value></data>
+  <data name="LanguageSpanish" xml:space="preserve"><value>Spanisch</value></data>
+  <data name="LanguageGerman" xml:space="preserve"><value>Deutsch</value></data>
+  <data name="LanguageFrench" xml:space="preserve"><value>Französisch</value></data>
+  <data name="LanguagePortugueseBrazil" xml:space="preserve"><value>Portugiesisch (Brasilien)</value></data>
+  <data name="LanguageItalian" xml:space="preserve"><value>Italienisch</value></data>
+  <data name="LanguageJapanese" xml:space="preserve"><value>Japanisch</value></data>
+  <data name="LanguageKorean" xml:space="preserve"><value>Koreanisch</value></data>
+  <data name="LanguageSimplifiedChinese" xml:space="preserve"><value>Vereinfachtes Chinesisch</value></data>
+  <data name="LanguageArabic" xml:space="preserve"><value>Arabisch</value></data>
+  <data name="LanguageHindi" xml:space="preserve"><value>Hindi</value></data>
 </root>

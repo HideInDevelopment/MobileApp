@@ -18,7 +18,7 @@ public partial class SettingsPage : ContentPage
                 view,
                 viewModel.Languages
                     .Select(option => new ContextMenuOption(
-                        option.DisplayName,
+                        viewModel.GetLanguageDisplayName(option),
                         () => viewModel.SelectLanguageCommand.Execute(option.Code)))
                     .ToArray());
         }

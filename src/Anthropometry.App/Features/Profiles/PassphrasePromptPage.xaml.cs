@@ -4,7 +4,7 @@ namespace Anthropometry.App.Features.Profiles;
 
 public partial class PassphrasePromptPage : ContentPage
 {
-    private readonly TaskCompletionSource<string?> _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly PassphrasePromptSession _session = new();
 
     public PassphrasePromptPage(bool requiresConfirmation, LanguageService languageService)
     {
@@ -12,7 +12,7 @@ public partial class PassphrasePromptPage : ContentPage
         BindingContext = new PassphrasePromptViewModel(requiresConfirmation, languageService);
     }
 
-    public Task<string?> Completion => _completion.Task;
+    public Task<string?> Completion => _session.Completion;
 
     private async void OnSubmitClicked(object? sender, EventArgs e)
     {
@@ -22,22 +22,20 @@ public partial class PassphrasePromptPage : ContentPage
             return;
         }
 
-        _completion.TrySetResult(passphrase);
+        await _session.CloseAsync(passphrase, async () => await Navigation.PopModalAsync());
         viewModel.Cancel();
-        await Navigation.PopModalAsync();
     }
 
     private async void OnCancelClicked(object? sender, EventArgs e)
     {
         var viewModel = (PassphrasePromptViewModel)BindingContext;
         viewModel.Cancel();
-        _completion.TrySetResult(null);
-        await Navigation.PopModalAsync();
+        await _session.CloseAsync(null, async () => await Navigation.PopModalAsync());
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        _completion.TrySetResult(null);
+        _session.Dismissed();
     }
 }

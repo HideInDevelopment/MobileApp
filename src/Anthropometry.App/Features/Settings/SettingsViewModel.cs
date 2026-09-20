@@ -56,6 +56,12 @@ public sealed class SettingsViewModel : ObservableObject
 
     public IReadOnlyList<LanguageOption> Languages { get; }
 
+    public string SelectedLanguageDisplayName
+        => _selectedLanguage is null ? string.Empty : GetLanguageDisplayName(_selectedLanguage);
+
+    public string GetLanguageDisplayName(LanguageOption language)
+        => _languageService.Get(language.DisplayNameKey);
+
     public IRelayCommand<string?> SelectLanguageCommand { get; }
 
     public IRelayCommand<string?> SelectThemeCommand { get; }
@@ -309,6 +315,9 @@ public sealed class SettingsViewModel : ObservableObject
 
     private void OnLanguageChanged(object? sender, EventArgs e)
     {
+        _selectedLanguage = Languages.Single(language => language.Code == _languageService.CurrentLanguageCode);
+        OnPropertyChanged(nameof(SelectedLanguage));
+        OnPropertyChanged(nameof(SelectedLanguageDisplayName));
         OnPropertyChanged(nameof(Themes));
         OnPropertyChanged(nameof(SelectedTheme));
         OnPropertyChanged(nameof(DateFormats));

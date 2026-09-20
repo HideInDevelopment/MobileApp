@@ -8,7 +8,7 @@
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                 <Label Grid.Column="0" Text="{DynamicResource Language}" VerticalOptions="Center" />
                 <Grid Grid.Column="1" WidthRequest="170">
-                    <Button Text="{Binding SelectedLanguage.DisplayName}"
+                    <Button Text="{Binding SelectedLanguageDisplayName}"
                             Style="{StaticResource SelectorButton}"
                             Clicked="OnLanguageSelectorClicked"
                             SemanticProperties.Description="{DynamicResource Language}" />

@@ -68,4 +68,41 @@ public sealed class PassphrasePromptViewModelTests
         Assert.Equal(string.Empty, viewModel.Passphrase);
         Assert.Equal(string.Empty, viewModel.Confirmation);
     }
+
+    [Fact]
+    public async Task Prompt_completion_waits_until_the_modal_is_closed()
+    {
+        var session = new PassphrasePromptSession();
+        var modalClosed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var closeTask = session.CloseAsync(
+            Passphrase,
+            () => modalClosed.Task);
+
+        Assert.False(session.Completion.IsCompleted);
+        modalClosed.SetResult();
+        await closeTask;
+
+        Assert.Equal(Passphrase, await session.Completion);
+    }
+
+    [Fact]
+    public async Task Prompt_completion_is_cancelled_when_modal_dismissal_fails()
+    {
+        var session = new PassphrasePromptSession();
+
+        await session.CloseAsync(Passphrase, () => throw new InvalidOperationException());
+
+        Assert.Null(await session.Completion);
+    }
+
+    [Fact]
+    public async Task Unexpected_modal_dismissal_completes_with_no_passphrase()
+    {
+        var session = new PassphrasePromptSession();
+
+        session.Dismissed();
+
+        Assert.Null(await session.Completion);
+    }
 }

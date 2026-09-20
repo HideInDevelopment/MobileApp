@@ -96,4 +96,15 @@
   <data name="Lb"><value>رطل</value></data>
   <data name="Ft"><value>قدم</value></data>
   <data name="In"><value>بوصة</value></data>
+  <data name="LanguageEnglish"><value>الإنجليزية</value></data>
+  <data name="LanguageSpanish"><value>الإسبانية</value></data>
+  <data name="LanguageGerman"><value>الألمانية</value></data>
+  <data name="LanguageFrench"><value>الفرنسية</value></data>
+  <data name="LanguagePortugueseBrazil"><value>البرتغالية (البرازيل)</value></data>
+  <data name="LanguageItalian"><value>الإيطالية</value></data>
+  <data name="LanguageJapanese"><value>اليابانية</value></data>
+  <data name="LanguageKorean"><value>الكورية</value></data>
+  <data name="LanguageSimplifiedChinese"><value>الصينية المبسطة</value></data>
+  <data name="LanguageArabic"><value>العربية</value></data>
+  <data name="LanguageHindi"><value>الهندية</value></data>
 </root>

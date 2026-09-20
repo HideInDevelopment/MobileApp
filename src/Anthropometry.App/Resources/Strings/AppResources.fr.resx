@@ -204,4 +204,15 @@
   <data name="ActivityLevelModerateDescription"><value>Exercice modéré trois à cinq jours par semaine.</value></data>
   <data name="ActivityLevelHighDescription"><value>Exercice intense six à sept jours par semaine.</value></data>
   <data name="ActivityLevelVeryHighDescription"><value>Exercice très intense ou travail physiquement exigeant.</value></data>
+  <data name="LanguageEnglish"><value>Anglais</value></data>
+  <data name="LanguageSpanish"><value>Espagnol</value></data>
+  <data name="LanguageGerman"><value>Allemand</value></data>
+  <data name="LanguageFrench"><value>Français</value></data>
+  <data name="LanguagePortugueseBrazil"><value>Portugais (Brésil)</value></data>
+  <data name="LanguageItalian"><value>Italien</value></data>
+  <data name="LanguageJapanese"><value>Japonais</value></data>
+  <data name="LanguageKorean"><value>Coréen</value></data>
+  <data name="LanguageSimplifiedChinese"><value>Chinois simplifié</value></data>
+  <data name="LanguageArabic"><value>Arabe</value></data>
+  <data name="LanguageHindi"><value>Hindi</value></data>
 </root>

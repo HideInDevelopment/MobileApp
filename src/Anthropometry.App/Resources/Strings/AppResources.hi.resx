@@ -96,4 +96,15 @@
   <data name="Lb"><value>पाउंड</value></data>
   <data name="Ft"><value>फुट</value></data>
   <data name="In"><value>इंच</value></data>
+  <data name="LanguageEnglish"><value>अंग्रेज़ी</value></data>
+  <data name="LanguageSpanish"><value>स्पेनिश</value></data>
+  <data name="LanguageGerman"><value>जर्मन</value></data>
+  <data name="LanguageFrench"><value>फ़्रेंच</value></data>
+  <data name="LanguagePortugueseBrazil"><value>पुर्तगाली (ब्राज़ील)</value></data>
+  <data name="LanguageItalian"><value>इतालवी</value></data>
+  <data name="LanguageJapanese"><value>जापानी</value></data>
+  <data name="LanguageKorean"><value>कोरियाई</value></data>
+  <data name="LanguageSimplifiedChinese"><value>सरल चीनी</value></data>
+  <data name="LanguageArabic"><value>अरबी</value></data>
+  <data name="LanguageHindi"><value>हिंदी</value></data>
 </root>
