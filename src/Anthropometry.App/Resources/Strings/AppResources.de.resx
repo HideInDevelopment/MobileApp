@@ -62,8 +62,8 @@
   <data name="ProfileTransferPassphraseConfirmationPlaceholder" xml:space="preserve"><value>Passphrase bestätigen</value></data>
   <data name="ProfileTransferPassphraseInvalid" xml:space="preserve"><value>Verwende mindestens 12 Zeichen ohne Leerzeichen.</value></data>
   <data name="ProfileTransferPassphraseMismatch" xml:space="preserve"><value>Die Passphrasen stimmen nicht überein.</value></data>
-  <data name="ProfileTransferPasswordRequired" xml:space="preserve"><value>Gib die Passphrase ein, um diese Datei zu öffnen.</value></data>
-  <data name="ProfileTransferAuthenticationFailed" xml:space="preserve"><value>Die Passphrase ist falsch oder die Datei wurde geändert.</value></data>
+  <data name="ProfileTransferPasswordRequired" xml:space="preserve"><value>Gib den Übertragungscode ein, um diese Datei zu öffnen. Für ältere Dateien kann die ursprüngliche Passphrase erforderlich sein.</value></data>
+  <data name="ProfileTransferAuthenticationFailed" xml:space="preserve"><value>Der Übertragungscode oder die Passphrase ist falsch, oder die Datei wurde geändert.</value></data>
   <data name="ProfileTransferLegacyWarning" xml:space="preserve"><value>Diese Datei ist ein älterer ungeschützter CSV-Export. Importiere sie nur, wenn du ihrer Quelle vertraust.</value></data>
   <data name="EstimateDisclaimer" xml:space="preserve"><value>Messungen und Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
   <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Ergebnisse sind Schätzungen, keine medizinischen Diagnosen.</value></data>
@@ -223,4 +223,9 @@
   <data name="LanguageSimplifiedChinese" xml:space="preserve"><value>Vereinfachtes Chinesisch</value></data>
   <data name="LanguageArabic" xml:space="preserve"><value>Arabisch</value></data>
   <data name="LanguageHindi" xml:space="preserve"><value>Hindi</value></data>
+  <data name="ProfileTransferCodeTitle" xml:space="preserve"><value>Profilübertragungscode</value></data>
+  <data name="ProfileTransferCodeInstructions" xml:space="preserve"><value>Geben Sie den beim Export angezeigten 16-stelligen Übertragungscode ein. Für ältere Dateien kann die ursprüngliche Passphrase erforderlich sein.</value></data>
+  <data name="ProfileTransferCodePlaceholder" xml:space="preserve"><value>Übertragungscode oder alte Passphrase</value></data>
+  <data name="ProfileTransferCodeInvalid" xml:space="preserve"><value>Geben Sie einen gültigen 16-stelligen Übertragungscode oder die Passphrase eines älteren Exports ein.</value></data>
+  <data name="ProfileTransferCodeMessage" xml:space="preserve"><value>Ihr 16-stelliger Übertragungscode lautet:&#xA;&#xA;{0}&#xA;&#xA;Bewahren Sie ihn sicher auf. Sie benötigen ihn zum Importieren dieser Datei.</value></data>
 </root>

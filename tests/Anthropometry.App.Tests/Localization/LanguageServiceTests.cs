@@ -65,7 +65,12 @@ public sealed class LanguageServiceTests
             "ProfileTransferPassphraseMismatch",
             "ProfileTransferPasswordRequired",
             "ProfileTransferAuthenticationFailed",
-            "ProfileTransferLegacyWarning"
+            "ProfileTransferLegacyWarning",
+            "ProfileTransferCodeTitle",
+            "ProfileTransferCodeInstructions",
+            "ProfileTransferCodePlaceholder",
+            "ProfileTransferCodeInvalid",
+            "ProfileTransferCodeMessage"
         };
 
         service.Initialize(CultureInfo.GetCultureInfo("en-US"));

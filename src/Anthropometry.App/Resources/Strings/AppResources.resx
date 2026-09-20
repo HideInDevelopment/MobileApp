@@ -62,9 +62,14 @@
   <data name="ProfileTransferPassphraseConfirmationPlaceholder" xml:space="preserve"><value>Confirm passphrase</value></data>
   <data name="ProfileTransferPassphraseInvalid" xml:space="preserve"><value>Use at least 12 non-whitespace characters.</value></data>
   <data name="ProfileTransferPassphraseMismatch" xml:space="preserve"><value>The passphrases do not match.</value></data>
-  <data name="ProfileTransferPasswordRequired" xml:space="preserve"><value>Enter the passphrase to open this file.</value></data>
-  <data name="ProfileTransferAuthenticationFailed" xml:space="preserve"><value>The passphrase is incorrect or the file was modified.</value></data>
+  <data name="ProfileTransferPasswordRequired" xml:space="preserve"><value>Enter the transfer code to open this file. Older files may require their original passphrase.</value></data>
+  <data name="ProfileTransferAuthenticationFailed" xml:space="preserve"><value>The transfer code or passphrase is incorrect, or the file was modified.</value></data>
   <data name="ProfileTransferLegacyWarning" xml:space="preserve"><value>This file is an older unprotected CSV export. Only import it if you trust its source.</value></data>
+  <data name="ProfileTransferCodeTitle" xml:space="preserve"><value>Profile transfer code</value></data>
+  <data name="ProfileTransferCodeInstructions" xml:space="preserve"><value>Enter the 16-digit transfer code shown when this file was exported. Older files may require their original passphrase.</value></data>
+  <data name="ProfileTransferCodePlaceholder" xml:space="preserve"><value>Transfer code or legacy passphrase</value></data>
+  <data name="ProfileTransferCodeInvalid" xml:space="preserve"><value>Enter a valid 16-digit transfer code or the passphrase for an older export.</value></data>
+  <data name="ProfileTransferCodeMessage" xml:space="preserve"><value>Your 16-digit transfer code is:&#xA;&#xA;{0}&#xA;&#xA;Keep it safe. You will need it to import this file.</value></data>
   <data name="EstimateDisclaimer" xml:space="preserve"><value>Measurements and results are estimates, not medical diagnoses.</value></data>
   <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Results are estimates, not medical diagnoses.</value></data>
   <data name="Weight" xml:space="preserve"><value>Weight</value></data>

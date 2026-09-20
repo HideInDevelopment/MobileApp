@@ -7,7 +7,7 @@ using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Application.Profiles;
 
-public sealed record ExportProfileCommand(ProfileId ProfileId, string Passphrase);
+public sealed record ExportProfileCommand(ProfileId ProfileId);
 
 public sealed class ExportProfile
 {
@@ -32,9 +32,10 @@ public sealed class ExportProfile
                 return Result.Failure<ProfileExportFile>(ApplicationErrors.ProfileNotFound);
             }
 
+            var transferCode = ProfileTransferProtection.GenerateTransferCode();
             var protectedContent = ProfileTransferProtection.Protect(
                 ProfileTransferCsvSerializer.Serialize(snapshot),
-                command.Passphrase);
+                transferCode);
             if (!protectedContent.IsSuccess)
             {
                 return Result.Failure<ProfileExportFile>(protectedContent.Error!);
@@ -44,7 +45,8 @@ public sealed class ExportProfile
             var fileName = $"anthropometry-{safeName}-{_clock.UtcNow:yyyyMMdd}.anthropometry";
             return Result.Success(new ProfileExportFile(
                 fileName,
-                protectedContent.Value));
+                protectedContent.Value,
+                transferCode));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

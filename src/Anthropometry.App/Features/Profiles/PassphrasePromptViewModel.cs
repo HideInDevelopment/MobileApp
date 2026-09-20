@@ -48,9 +48,9 @@ public sealed class PassphrasePromptViewModel : ObservableObject
     {
         submitted = null;
         IsCancelled = false;
-        if (!ProfileTransferProtection.ValidatePassphrase(Passphrase).IsSuccess)
+        if (!ProfileTransferProtection.ValidateTransferCredential(Passphrase).IsSuccess)
         {
-            ValidationMessage = _languageService.Get("ProfileTransferPassphraseInvalid");
+            ValidationMessage = _languageService.Get("ProfileTransferCodeInvalid");
             return false;
         }
 

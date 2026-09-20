@@ -97,7 +97,7 @@ public sealed class ProfileTransferMarkupTests
         Assert.Contains("Command=\"{Binding ImportCommand}\"", list);
         Assert.Contains("IsEnabled=\"{Binding CanImportProfile}\"", list);
         Assert.Contains("IsPassword=\"True\"", prompt);
-        Assert.Contains("ProfileTransferPassphraseInstructions", prompt);
+        Assert.Contains("ProfileTransferCodeInstructions", prompt);
     }
 
     private static ProfileListViewModel CreateListViewModel(FakeProfileRepository repository, NavigationSpy navigation)

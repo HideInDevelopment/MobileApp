@@ -6,6 +6,7 @@ namespace Anthropometry.Application.Tests.Profiles;
 public sealed class ProfileTransferProtectionTests
 {
     private const string Passphrase = "correct horse battery staple";
+    private const string TransferCode = "4827193066428501";
     private static readonly byte[] CsvPayload = Encoding.UTF8.GetBytes(
         "record_type,format_version,exported_at_utc\nmeta,1,2026-09-20T10:00:00.0000000+00:00\n");
 
@@ -20,6 +21,29 @@ public sealed class ProfileTransferProtectionTests
         Assert.True(unprotected.IsSuccess);
         Assert.Equal(CsvPayload, unprotected.Value.CsvContent);
         Assert.False(unprotected.Value.IsLegacyUnprotected);
+    }
+
+    [Fact]
+    public void Generated_transfer_codes_are_random_sixteen_digit_codes()
+    {
+        var first = ProfileTransferProtection.GenerateTransferCode();
+        var second = ProfileTransferProtection.GenerateTransferCode();
+
+        Assert.Equal(ProfileTransferProtection.TransferCodeLength, first.Length);
+        Assert.All(first, character => Assert.InRange(character, '0', '9'));
+        Assert.NotEqual(first, second);
+    }
+
+    [Fact]
+    public void Protected_payload_round_trips_with_a_transfer_code()
+    {
+        var protectedPayload = ProfileTransferProtection.Protect(CsvPayload, TransferCode);
+
+        Assert.True(protectedPayload.IsSuccess);
+        var unprotected = ProfileTransferProtection.Unprotect(protectedPayload.Value, TransferCode);
+
+        Assert.True(unprotected.IsSuccess);
+        Assert.Equal(CsvPayload, unprotected.Value.CsvContent);
     }
 
     [Fact]
@@ -107,6 +131,20 @@ public sealed class ProfileTransferProtectionTests
     public void Short_or_blank_passphrases_are_rejected(string? passphrase)
     {
         var result = ProfileTransferProtection.ValidatePassphrase(passphrase);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("profile.transfer.passphrase.invalid", result.Error!.Code);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("123456789012345")]
+    [InlineData("12345678901234567")]
+    [InlineData("12345678901234a6")]
+    public void Invalid_transfer_codes_are_rejected(string? transferCode)
+    {
+        var result = ProfileTransferProtection.ValidateTransferCode(transferCode);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("profile.transfer.passphrase.invalid", result.Error!.Code);

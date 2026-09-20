@@ -51,7 +51,7 @@ public sealed record ProfileTransferCalculationResult(
     string FormulaVersion,
     DateTimeOffset CalculatedAtUtc);
 
-public sealed record ProfileExportFile(string FileName, byte[] Content);
+public sealed record ProfileExportFile(string FileName, byte[] Content, string TransferCode);
 
 public sealed record ProfileImportPreview(
     ProfileTransferDocument Document,

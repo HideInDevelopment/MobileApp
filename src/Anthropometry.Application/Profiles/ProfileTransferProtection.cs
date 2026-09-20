@@ -10,6 +10,7 @@ public static class ProfileTransferProtection
 {
     public const string Magic = "ANTHROPOMETRY\0";
     public const int MaxProtectedFileBytes = 10 * 1024 * 1024;
+    public const int TransferCodeLength = 16;
     public const int MinimumPassphraseLength = 12;
     public const int CurrentPbkdf2Iterations = 600_000;
 
@@ -29,7 +30,7 @@ public static class ProfileTransferProtection
     private static readonly byte[] Utf8Bom = [0xEF, 0xBB, 0xBF];
     private static readonly int HeaderSize = MagicBytes.Length + 4 + sizeof(int) + SaltSize + NonceSize;
 
-    public static Result<byte[]> Protect(byte[] csvContent, string passphrase)
+    public static Result<byte[]> Protect(byte[] csvContent, string credential)
     {
         if (csvContent is null
             || csvContent.Length == 0
@@ -38,15 +39,15 @@ public static class ProfileTransferProtection
             return Failure<byte[]>(ApplicationErrors.ProfileTransferFileInvalid);
         }
 
-        var passphraseValidation = ValidatePassphrase(passphrase);
-        if (!passphraseValidation.IsSuccess)
+        var credentialValidation = ValidateTransferCredential(credential);
+        if (!credentialValidation.IsSuccess)
         {
-            return Result.Failure<byte[]>(passphraseValidation.Error!);
+            return Result.Failure<byte[]>(credentialValidation.Error!);
         }
 
         var salt = new byte[SaltSize];
         var nonce = new byte[NonceSize];
-        var passwordBytes = Encoding.UTF8.GetBytes(passphrase);
+        var passwordBytes = Encoding.UTF8.GetBytes(credential);
         var key = Array.Empty<byte>();
         try
         {
@@ -127,10 +128,10 @@ public static class ProfileTransferProtection
             return Failure<ProfileTransferProtectedPayload>(ApplicationErrors.ProfileTransferPasswordRequired);
         }
 
-        var passphraseValidation = ValidatePassphrase(passphrase);
-        if (!passphraseValidation.IsSuccess)
+        var credentialValidation = ValidateTransferCredential(passphrase);
+        if (!credentialValidation.IsSuccess)
         {
-            return Failure<ProfileTransferProtectedPayload>(ApplicationErrors.ProfileTransferPassphraseInvalid);
+            return Failure<ProfileTransferProtectedPayload>(credentialValidation.Error!);
         }
 
         var passwordBytes = Encoding.UTF8.GetBytes(passphrase);
@@ -166,6 +167,28 @@ public static class ProfileTransferProtection
 
     public static Result ValidatePassphrase(string? passphrase)
         => !string.IsNullOrWhiteSpace(passphrase) && passphrase.Trim().Length >= MinimumPassphraseLength
+            ? Result.Success()
+            : Result.Failure(ApplicationErrors.ProfileTransferPassphraseInvalid);
+
+    public static string GenerateTransferCode()
+    {
+        var code = new char[TransferCodeLength];
+        for (var index = 0; index < code.Length; index++)
+        {
+            code[index] = (char)('0' + RandomNumberGenerator.GetInt32(10));
+        }
+
+        return new string(code);
+    }
+
+    public static Result ValidateTransferCode(string? transferCode)
+        => transferCode is { Length: TransferCodeLength }
+            && transferCode.All(character => character is >= '0' and <= '9')
+            ? Result.Success()
+            : Result.Failure(ApplicationErrors.ProfileTransferPassphraseInvalid);
+
+    public static Result ValidateTransferCredential(string? credential)
+        => ValidateTransferCode(credential).IsSuccess || ValidatePassphrase(credential).IsSuccess
             ? Result.Success()
             : Result.Failure(ApplicationErrors.ProfileTransferPassphraseInvalid);
 

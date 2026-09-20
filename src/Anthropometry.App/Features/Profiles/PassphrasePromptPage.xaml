@@ -2,14 +2,14 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Profiles.PassphrasePromptPage"
-             Title="{DynamicResource ProfileTransferPassphraseTitle}">
+             Title="{DynamicResource ProfileTransferCodeTitle}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="16">
-            <Label Text="{DynamicResource ProfileTransferPassphraseInstructions}"
+            <Label Text="{DynamicResource ProfileTransferCodeInstructions}"
                    Style="{StaticResource SecondaryText}" />
             <Entry Text="{Binding Passphrase}"
                    IsPassword="True"
-                   Placeholder="{DynamicResource ProfileTransferPassphrasePlaceholder}"
+                   Placeholder="{DynamicResource ProfileTransferCodePlaceholder}"
                    ClearButtonVisibility="WhileEditing" />
             <Entry Text="{Binding Confirmation}"
                    IsPassword="True"

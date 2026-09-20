@@ -62,8 +62,8 @@
   <data name="ProfileTransferPassphraseConfirmationPlaceholder" xml:space="preserve"><value>Confirmar contraseña</value></data>
   <data name="ProfileTransferPassphraseInvalid" xml:space="preserve"><value>Usa al menos 12 caracteres que no sean espacios en blanco.</value></data>
   <data name="ProfileTransferPassphraseMismatch" xml:space="preserve"><value>Las contraseñas no coinciden.</value></data>
-  <data name="ProfileTransferPasswordRequired" xml:space="preserve"><value>Introduce la contraseña para abrir este archivo.</value></data>
-  <data name="ProfileTransferAuthenticationFailed" xml:space="preserve"><value>La contraseña no es correcta o el archivo ha sido modificado.</value></data>
+  <data name="ProfileTransferPasswordRequired" xml:space="preserve"><value>Introduce el código de transferencia para abrir este archivo. Los archivos antiguos pueden requerir su contraseña original.</value></data>
+  <data name="ProfileTransferAuthenticationFailed" xml:space="preserve"><value>El código de transferencia o la contraseña no son correctos, o el archivo ha sido modificado.</value></data>
   <data name="ProfileTransferLegacyWarning" xml:space="preserve"><value>Este archivo es una exportación CSV antigua sin protección. Impórtalo solo si confías en su origen.</value></data>
   <data name="EstimateDisclaimer" xml:space="preserve"><value>Las medidas y los resultados son estimaciones, no diagnósticos médicos.</value></data>
   <data name="ResultsEstimateDisclaimer" xml:space="preserve"><value>Los resultados son estimaciones, no diagnósticos médicos.</value></data>
@@ -223,4 +223,9 @@
   <data name="LanguageSimplifiedChinese" xml:space="preserve"><value>Chino simplificado</value></data>
   <data name="LanguageArabic" xml:space="preserve"><value>Árabe</value></data>
   <data name="LanguageHindi" xml:space="preserve"><value>Hindi</value></data>
+  <data name="ProfileTransferCodeTitle" xml:space="preserve"><value>Código de transferencia del perfil</value></data>
+  <data name="ProfileTransferCodeInstructions" xml:space="preserve"><value>Introduce el código de transferencia de 16 dígitos mostrado al exportar este archivo. Los archivos antiguos pueden requerir su contraseña original.</value></data>
+  <data name="ProfileTransferCodePlaceholder" xml:space="preserve"><value>Código de transferencia o contraseña antigua</value></data>
+  <data name="ProfileTransferCodeInvalid" xml:space="preserve"><value>Introduce un código de transferencia válido de 16 dígitos o la contraseña de una exportación antigua.</value></data>
+  <data name="ProfileTransferCodeMessage" xml:space="preserve"><value>Tu código de transferencia de 16 dígitos es:&#xA;&#xA;{0}&#xA;&#xA;Guárdalo en un lugar seguro. Lo necesitarás para importar este archivo.</value></data>
 </root>

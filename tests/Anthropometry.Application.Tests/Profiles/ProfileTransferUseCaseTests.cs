@@ -19,7 +19,7 @@ public sealed class ProfileTransferUseCaseTests
         var repository = new FakeProfileTransferRepository();
 
         var result = await new ExportProfile(repository, new FakeClock()).ExecuteAsync(
-            new ExportProfileCommand(ProfileId.New(), Passphrase),
+            new ExportProfileCommand(ProfileId.New()),
             CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -33,13 +33,15 @@ public sealed class ProfileTransferUseCaseTests
         var repository = new FakeProfileTransferRepository { Snapshot = snapshot };
 
         var result = await new ExportProfile(repository, new FakeClock()).ExecuteAsync(
-            new ExportProfileCommand(snapshot.Profile.Id, Passphrase),
+            new ExportProfileCommand(snapshot.Profile.Id),
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
         Assert.Equal("anthropometry-Anna-Imported-20260908.anthropometry", result.Value.FileName);
         Assert.NotEmpty(result.Value.Content);
-        var unprotected = ProfileTransferProtection.Unprotect(result.Value.Content, Passphrase);
+        Assert.Equal(ProfileTransferProtection.TransferCodeLength, result.Value.TransferCode.Length);
+        Assert.All(result.Value.TransferCode, character => Assert.InRange(character, '0', '9'));
+        var unprotected = ProfileTransferProtection.Unprotect(result.Value.Content, result.Value.TransferCode);
         Assert.True(unprotected.IsSuccess);
         Assert.False(unprotected.Value.IsLegacyUnprotected);
         Assert.True(ProfileTransferCsvSerializer.Parse(new MemoryStream(unprotected.Value.CsvContent)).IsSuccess);

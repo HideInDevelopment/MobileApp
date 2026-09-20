@@ -159,14 +159,8 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             return;
         }
 
-        var passphrase = await PromptForPassphraseAsync(requiresConfirmation: true);
-        if (passphrase is null)
-        {
-            return;
-        }
-
         var exported = await _services.GetRequiredService<ExportProfile>().ExecuteAsync(
-            new ExportProfileCommand(profile.Id, passphrase),
+            new ExportProfileCommand(profile.Id),
             CancellationToken.None);
         if (!exported.IsSuccess)
         {
@@ -174,6 +168,19 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
                 _languageService.Get("ExportProfileTitle"),
                 _languageService.Get("ProfileTransferExportError"),
                 _languageService.Get("Close"));
+            return;
+        }
+
+        var shouldShare = await Shell.Current.DisplayAlertAsync(
+            _languageService.Get("ExportProfileTitle"),
+            string.Format(
+                CultureInfo.CurrentCulture,
+                _languageService.Get("ProfileTransferCodeMessage"),
+                exported.Value.TransferCode),
+            _languageService.Get("ExportProfile"),
+            _languageService.Get("Cancel"));
+        if (!shouldShare)
+        {
             return;
         }
 
@@ -227,13 +234,13 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
         var preview = await useCase.PreviewAsync(file.Content, passphrase: null, CancellationToken.None);
         if (!preview.IsSuccess && preview.Error?.Code == "profile.transfer.password.required")
         {
-            var passphrase = await PromptForPassphraseAsync(requiresConfirmation: false);
-            if (passphrase is null)
+            var credential = await PromptForPassphraseAsync(requiresConfirmation: false);
+            if (credential is null)
             {
                 return;
             }
 
-            preview = await useCase.PreviewAsync(file.Content, passphrase, CancellationToken.None);
+            preview = await useCase.PreviewAsync(file.Content, credential, CancellationToken.None);
         }
 
         if (!preview.IsSuccess)

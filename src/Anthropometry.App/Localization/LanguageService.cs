@@ -46,6 +46,8 @@ public sealed class LanguageService
         "ProfileTransferPassphraseConfirmationPlaceholder", "ProfileTransferPassphraseInvalid",
         "ProfileTransferPassphraseMismatch", "ProfileTransferPasswordRequired",
         "ProfileTransferAuthenticationFailed", "ProfileTransferLegacyWarning",
+        "ProfileTransferCodeTitle", "ProfileTransferCodeInstructions", "ProfileTransferCodePlaceholder",
+        "ProfileTransferCodeInvalid", "ProfileTransferCodeMessage",
         "EstimateDisclaimer", "ResultsEstimateDisclaimer", "Weight", "Neck", "Abdomen", "Waist", "Hip",
         "Kg", "Cm", "SaveWeight", "CalculateResults", "ValidMeasurementExtended", "ValidWeight",
         "ValidMeasurementExtendedFemale",

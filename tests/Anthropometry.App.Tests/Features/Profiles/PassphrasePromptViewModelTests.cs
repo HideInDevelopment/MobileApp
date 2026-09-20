@@ -6,45 +6,43 @@ namespace Anthropometry.App.Tests.Features.Profiles;
 public sealed class PassphrasePromptViewModelTests
 {
     private const string Passphrase = "correct horse battery staple";
+    private const string TransferCode = "4827193066428501";
 
     [Fact]
-    public void Matching_passphrase_can_be_submitted_for_export()
+    public void Valid_transfer_code_can_be_submitted_for_import()
     {
-        var viewModel = new PassphrasePromptViewModel(true, TestData.LanguageService())
+        var viewModel = new PassphrasePromptViewModel(false, TestData.LanguageService())
         {
-            Passphrase = Passphrase,
-            Confirmation = Passphrase
+            Passphrase = TransferCode
+        };
+
+        var accepted = viewModel.TrySubmit(out var submitted);
+
+        Assert.True(accepted);
+        Assert.Equal(TransferCode, submitted);
+        Assert.Null(viewModel.ValidationMessage);
+    }
+
+    [Fact]
+    public void Legacy_passphrase_can_still_be_submitted_for_import()
+    {
+        var viewModel = new PassphrasePromptViewModel(false, TestData.LanguageService())
+        {
+            Passphrase = Passphrase
         };
 
         var accepted = viewModel.TrySubmit(out var submitted);
 
         Assert.True(accepted);
         Assert.Equal(Passphrase, submitted);
-        Assert.Null(viewModel.ValidationMessage);
     }
 
     [Fact]
-    public void Mismatched_confirmation_is_rejected()
-    {
-        var viewModel = new PassphrasePromptViewModel(true, TestData.LanguageService())
-        {
-            Passphrase = Passphrase,
-            Confirmation = "different passphrase"
-        };
-
-        var accepted = viewModel.TrySubmit(out var submitted);
-
-        Assert.False(accepted);
-        Assert.Null(submitted);
-        Assert.NotNull(viewModel.ValidationMessage);
-    }
-
-    [Fact]
-    public void Too_short_passphrase_is_rejected()
+    public void Invalid_transfer_credential_is_rejected()
     {
         var viewModel = new PassphrasePromptViewModel(false, TestData.LanguageService())
         {
-            Passphrase = "short"
+            Passphrase = "1234"
         };
 
         var accepted = viewModel.TrySubmit(out var submitted);
