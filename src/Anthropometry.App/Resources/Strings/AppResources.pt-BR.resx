@@ -39,4 +39,7 @@
   <data name="HelpDailyReminderBody"><value>Defina um horário diário para receber uma notificação lembrando você de registrar uma medição.</value></data>
   <data name="HelpInactivityReminderBody"><value>Você também pode receber um lembrete após 7 ou 14 dias sem abrir o aplicativo.</value></data>
   <data name="HelpReminderPrivacy"><value>Os lembretes são programados localmente no seu dispositivo. Você pode alterá-los ou desativá-los a qualquer momento em Configurações.</value></data>
+  <data name="MeasurementDate"><value>Data da medição</value></data>
+  <data name="MeasurementDateError"><value>Escolha hoje ou uma data Premium válida.</value></data>
+  <data name="PremiumRequired"><value>Premium necessário</value></data>
 </root>

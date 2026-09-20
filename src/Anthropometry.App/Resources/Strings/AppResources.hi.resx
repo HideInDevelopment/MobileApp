@@ -126,4 +126,7 @@
   <data name="SevenDays"><value>7 दिन</value></data>
   <data name="FourteenDays"><value>14 दिन</value></data>
   <data name="ReminderPermissionRequired"><value>रिमाइंडर चालू करने के लिए नोटिफ़िकेशन की अनुमति दें।</value></data>
+  <data name="MeasurementDate"><value>माप की तारीख</value></data>
+  <data name="MeasurementDateError"><value>आज या मान्य Premium तारीख चुनें।</value></data>
+  <data name="PremiumRequired"><value>Premium आवश्यक है</value></data>
 </root>

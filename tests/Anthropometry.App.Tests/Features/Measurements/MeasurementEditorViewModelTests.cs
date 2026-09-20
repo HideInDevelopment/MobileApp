@@ -61,6 +61,7 @@ public sealed class MeasurementEditorViewModelTests
         Assert.True(viewModel.CanSave);
         await viewModel.SaveCommand.ExecuteAsync(null);
 
+        Assert.True(viewModel.IsCompleted, viewModel.ErrorMessage ?? viewModel.ValidationMessage);
         Assert.Equal(2, measurements.Items.Count);
         var saved = measurements.Items[1];
         Assert.Equal(MeasurementType.WeightOnly, saved.Type);
@@ -111,7 +112,7 @@ public sealed class MeasurementEditorViewModelTests
 
         await viewModel.SaveCommand.ExecuteAsync(null);
 
-        Assert.True(viewModel.IsCompleted);
+        Assert.True(viewModel.IsCompleted, viewModel.ErrorMessage ?? viewModel.ValidationMessage);
         Assert.Single(measurements.Items);
         Assert.Equal(3, results.Items.Count);
         Assert.NotNull(navigation.SavedMeasurement);
@@ -383,6 +384,39 @@ public sealed class MeasurementEditorViewModelTests
             results.Items.Single(result => result.CalculationType == CalculationType.TotalDailyEnergyExpenditure).Value);
     }
 
+    [Fact]
+    public void Free_user_sees_the_measurement_date_as_locked()
+    {
+        var viewModel = CreateViewModel(
+            TestData.Profile(),
+            MeasurementType.WeightAndSizes,
+            new FakeProfileRepository(),
+            new FakeMeasurementRepository(),
+            new FakeCalculationResultRepository(),
+            entitlementProvider: new FakeEntitlementProvider(EntitlementTestData.Free));
+
+        Assert.False(viewModel.IsMeasurementDateEnabled);
+        Assert.True(viewModel.IsMeasurementDateLocked);
+        Assert.Equal("Premium required", viewModel.MeasurementDatePremiumText);
+    }
+
+    [Fact]
+    public async Task Premium_user_can_enable_a_past_measurement_date()
+    {
+        var viewModel = CreateViewModel(
+            TestData.Profile(),
+            MeasurementType.WeightAndSizes,
+            new FakeProfileRepository(),
+            new FakeMeasurementRepository(),
+            new FakeCalculationResultRepository(),
+            entitlementProvider: new FakeEntitlementProvider(EntitlementTestData.Premium));
+
+        await viewModel.LoadEntitlementsAsync();
+
+        Assert.True(viewModel.IsMeasurementDateEnabled);
+        Assert.False(viewModel.IsMeasurementDateLocked);
+    }
+
     private static MeasurementEditorViewModel CreateViewModel(
         Profile profile,
         MeasurementType measurementType,
@@ -393,7 +427,8 @@ public sealed class MeasurementEditorViewModelTests
         Anthropometry.App.Localization.LanguageService? languageService = null,
         DisplayPreferencesService? displayPreferences = null,
         MeasurementDto? existingMeasurement = null,
-        ActivityLevel activityLevel = ActivityLevel.Moderate)
+        ActivityLevel activityLevel = ActivityLevel.Moderate,
+        Anthropometry.Application.Abstractions.IEntitlementProvider? entitlementProvider = null)
     {
         var catalog = new FormulaCatalog(
             new UsNavyMaleBodyFatFormula(),
@@ -410,7 +445,7 @@ public sealed class MeasurementEditorViewModelTests
             profile.UpdatedAtUtc,
             profile.Gender);
         return new MeasurementEditorViewModel(
-            new RecordMeasurement(profiles, measurements, new FakeClock()),
+            new RecordMeasurement(profiles, measurements, clock, entitlementProvider),
             new CalculateBodyFat(measurements, results, catalog, clock),
             new CalculateBasalMetabolicRate(measurements, results, catalog, clock),
             new CalculateTotalDailyEnergyExpenditure(measurements, results, catalog, clock),
@@ -419,8 +454,10 @@ public sealed class MeasurementEditorViewModelTests
             navigation ?? new NavigationSpy(),
             languageService ?? TestData.LanguageService(),
             displayPreferences ?? CreateDisplayPreferences(),
-            new UpdateMeasurement(measurements, results),
-            existingMeasurement);
+            new UpdateMeasurement(measurements, results, clock, entitlementProvider),
+            existingMeasurement,
+            entitlementProvider,
+            clock);
     }
 
     private static DisplayPreferencesService CreateDisplayPreferences()

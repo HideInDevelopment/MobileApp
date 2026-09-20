@@ -14,6 +14,7 @@ public sealed class UpdateMeasurementTests
         var measurements = new FakeMeasurementRepository();
         var existing = TestData.Measurement(profile.Id);
         measurements.Items.Add(existing);
+        var clock = new FakeClock { UtcNow = new DateTimeOffset(2026, 9, 20, 12, 0, 0, TimeSpan.Zero) };
         var results = new FakeCalculationResultRepository();
         results.Items.Add(CalculationResult.Create(
             existing.Id,
@@ -21,7 +22,7 @@ public sealed class UpdateMeasurementTests
             new CalculationResultValue(1755m, "kcal/day", "old-bmr", "1.0"),
             DateTimeOffset.UtcNow).Value);
 
-        var result = await new UpdateMeasurement(measurements, results).ExecuteAsync(
+        var result = await new UpdateMeasurement(measurements, results, clock, new FakeEntitlementProvider(EntitlementTestData.Premium)).ExecuteAsync(
             new UpdateMeasurementCommand(
                 existing.Id,
                 profile.Id,
@@ -69,5 +70,47 @@ public sealed class UpdateMeasurementTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal("measurement.notFound", result.Error!.Code);
+    }
+
+    [Fact]
+    public async Task Free_user_cannot_change_a_measurement_to_a_past_date()
+    {
+        var profile = TestData.Profile();
+        var clock = new FakeClock { UtcNow = new DateTimeOffset(2026, 9, 20, 12, 0, 0, TimeSpan.Zero) };
+        var measurements = new FakeMeasurementRepository();
+        var existing = Anthropometry.Domain.Measurements.Measurement.Create(
+            profile.Id,
+            TestData.MeasurementInput(clock.UtcNow),
+            clock.UtcNow).Value;
+        measurements.Items.Add(existing);
+        var results = new FakeCalculationResultRepository();
+        results.Items.Add(CalculationResult.Create(
+            existing.Id,
+            CalculationType.BasalMetabolicRate,
+            new CalculationResultValue(1755m, "kcal/day", "old-bmr", "1.0"),
+            clock.UtcNow).Value);
+
+        var result = await new UpdateMeasurement(
+            measurements,
+            results,
+            clock,
+            new FakeEntitlementProvider(EntitlementTestData.Free)).ExecuteAsync(
+            new UpdateMeasurementCommand(
+                existing.Id,
+                profile.Id,
+                MeasurementType.WeightAndSizes,
+                82.5m,
+                181.5m,
+                41.25m,
+                91.75m,
+                36,
+                Anthropometry.Domain.Calculations.ActivityLevel.High,
+                clock.UtcNow.AddDays(-1)),
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.pastDate.premiumRequired", result.Error!.Code);
+        Assert.Single(results.Items);
+        Assert.Equal(existing.WeightKg, measurements.Items.Single().WeightKg);
     }
 }

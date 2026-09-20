@@ -239,4 +239,7 @@
   <data name="HelpDailyReminderBody" xml:space="preserve"><value>Legen Sie eine tägliche Uhrzeit fest, zu der Sie eine Benachrichtigung zum Aufzeichnen einer Messung erhalten.</value></data>
   <data name="HelpInactivityReminderBody" xml:space="preserve"><value>Sie können auch nach 7 oder 14 Tagen ohne Öffnen der App erinnert werden.</value></data>
   <data name="HelpReminderPrivacy" xml:space="preserve"><value>Erinnerungen werden lokal auf Ihrem Gerät geplant. Sie können sie jederzeit in den Einstellungen ändern oder deaktivieren.</value></data>
+  <data name="MeasurementDate" xml:space="preserve"><value>Messdatum</value></data>
+  <data name="MeasurementDateError" xml:space="preserve"><value>Wählen Sie heute oder ein gültiges Premium-Datum.</value></data>
+  <data name="PremiumRequired" xml:space="preserve"><value>Premium erforderlich</value></data>
 </root>

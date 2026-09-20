@@ -34,4 +34,7 @@
   <data name="HelpDailyReminderBody"><value>设置每天接收通知的时间，提醒您记录测量结果。</value></data>
   <data name="HelpInactivityReminderBody"><value>如果您连续7天或14天未打开应用，也可以收到提醒。</value></data>
   <data name="HelpReminderPrivacy"><value>提醒会在您的设备上本地安排。您可以随时在设置中修改或关闭提醒。</value></data>
+  <data name="MeasurementDate"><value>测量日期</value></data>
+  <data name="MeasurementDateError"><value>请选择今天或有效的 Premium 日期。</value></data>
+  <data name="PremiumRequired"><value>需要 Premium</value></data>
 </root>

@@ -29,9 +29,10 @@ public sealed class MeasurementUseCaseTests
         var measurements = new FakeMeasurementRepository();
         var profile = TestData.Profile();
         profiles.Items.Add(profile);
+        var clock = new FakeClock();
 
-        var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
-            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 80m, 40m, 90m, DateTimeOffset.UtcNow),
+        var result = await new RecordMeasurement(profiles, measurements, clock).ExecuteAsync(
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 80m, 40m, 90m, clock.UtcNow),
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -46,8 +47,9 @@ public sealed class MeasurementUseCaseTests
         var profiles = new FakeProfileRepository();
         profiles.Items.Add(profile);
         var measurements = new FakeMeasurementRepository();
-        var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
-            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 0m, 40m, 90m, DateTimeOffset.UtcNow),
+        var clock = new FakeClock();
+        var result = await new RecordMeasurement(profiles, measurements, clock).ExecuteAsync(
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 0m, 40m, 90m, clock.UtcNow),
             CancellationToken.None);
 
         Assert.False(result.IsSuccess);
@@ -78,9 +80,10 @@ public sealed class MeasurementUseCaseTests
         var profiles = new FakeProfileRepository();
         profiles.Items.Add(profile);
         var measurements = new FakeMeasurementRepository();
+        var clock = new FakeClock();
 
-        var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
-            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightOnly, 79m, null, null, DateTimeOffset.UtcNow),
+        var result = await new RecordMeasurement(profiles, measurements, clock).ExecuteAsync(
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightOnly, 79m, null, null, clock.UtcNow),
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -101,9 +104,10 @@ public sealed class MeasurementUseCaseTests
         var profiles = new FakeProfileRepository();
         profiles.Items.Add(profile);
         var measurements = new FakeMeasurementRepository();
+        var clock = new FakeClock();
 
-        var result = await new RecordMeasurement(profiles, measurements, new FakeClock()).ExecuteAsync(
-            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 80m, 40m, 90m, DateTimeOffset.UtcNow),
+        var result = await new RecordMeasurement(profiles, measurements, clock).ExecuteAsync(
+            new RecordMeasurementCommand(profile.Id, MeasurementType.WeightAndSizes, 80m, 40m, 90m, clock.UtcNow),
             CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -126,5 +130,61 @@ public sealed class MeasurementUseCaseTests
 
         Assert.False(result.IsSuccess);
         Assert.Equal("profile.settings.required", result.Error!.Code);
+    }
+
+    [Fact]
+    public async Task Free_user_cannot_record_a_past_measurement()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var clock = new FakeClock { UtcNow = new DateTimeOffset(2026, 9, 20, 12, 0, 0, TimeSpan.Zero) };
+
+        var result = await new RecordMeasurement(
+            profiles,
+            measurements,
+            clock,
+            new FakeEntitlementProvider(EntitlementTestData.Free)).ExecuteAsync(
+            new RecordMeasurementCommand(
+                profile.Id,
+                MeasurementType.WeightOnly,
+                79m,
+                null,
+                null,
+                clock.UtcNow.AddDays(-1)),
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.pastDate.premiumRequired", result.Error!.Code);
+        Assert.Empty(measurements.Items);
+    }
+
+    [Fact]
+    public async Task Future_measurements_are_rejected_for_premium_users()
+    {
+        var profile = TestData.Profile();
+        var profiles = new FakeProfileRepository();
+        profiles.Items.Add(profile);
+        var measurements = new FakeMeasurementRepository();
+        var clock = new FakeClock { UtcNow = new DateTimeOffset(2026, 9, 20, 12, 0, 0, TimeSpan.Zero) };
+
+        var result = await new RecordMeasurement(
+            profiles,
+            measurements,
+            clock,
+            new FakeEntitlementProvider(EntitlementTestData.Premium)).ExecuteAsync(
+            new RecordMeasurementCommand(
+                profile.Id,
+                MeasurementType.WeightOnly,
+                79m,
+                null,
+                null,
+                clock.UtcNow.AddDays(1)),
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("measurement.date.invalid", result.Error!.Code);
+        Assert.Empty(measurements.Items);
     }
 }

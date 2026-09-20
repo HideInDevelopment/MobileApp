@@ -239,4 +239,7 @@
   <data name="HelpDailyReminderBody" xml:space="preserve"><value>Configura una hora diaria para recibir una notificación que te recuerde registrar una medición.</value></data>
   <data name="HelpInactivityReminderBody" xml:space="preserve"><value>También puedes recibir un recordatorio después de 7 o 14 días sin abrir la aplicación.</value></data>
   <data name="HelpReminderPrivacy" xml:space="preserve"><value>Los recordatorios se programan localmente en tu dispositivo. Puedes cambiarlos o desactivarlos en cualquier momento desde Ajustes.</value></data>
+  <data name="MeasurementDate"><value>Fecha de medición</value></data>
+  <data name="MeasurementDateError"><value>Elige hoy o una fecha Premium válida.</value></data>
+  <data name="PremiumRequired"><value>Se requiere Premium</value></data>
 </root>

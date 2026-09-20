@@ -18,6 +18,10 @@ internal static class ApplicationErrors
 
     public static DomainError MeasurementHistoryDateRangeInvalid => new("measurementHistory.dateRange.invalid", "Errors.MeasurementHistoryDateRangeInvalid");
 
+    public static DomainError MeasurementPastDatePremiumRequired => new("measurement.pastDate.premiumRequired", "Errors.MeasurementPastDatePremiumRequired");
+
+    public static DomainError MeasurementDateInvalid => new("measurement.date.invalid", "Errors.MeasurementDateInvalid");
+
     public static DomainError MetricHistoryDateRangeInvalid => new("metricHistory.dateRange.invalid", "Errors.MetricHistoryDateRangeInvalid");
 
     public static DomainError PersistenceUnavailable => new("persistence.unavailable", "Errors.PersistenceUnavailable");

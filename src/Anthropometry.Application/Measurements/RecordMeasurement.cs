@@ -1,5 +1,6 @@
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Domain.Common;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
@@ -20,12 +21,18 @@ public sealed class RecordMeasurement
     private readonly IProfileRepository _profiles;
     private readonly IMeasurementRepository _measurements;
     private readonly IClock _clock;
+    private readonly IEntitlementProvider _entitlementProvider;
 
-    public RecordMeasurement(IProfileRepository profiles, IMeasurementRepository measurements, IClock clock)
+    public RecordMeasurement(
+        IProfileRepository profiles,
+        IMeasurementRepository measurements,
+        IClock clock,
+        IEntitlementProvider? entitlementProvider = null)
     {
         _profiles = profiles;
         _measurements = measurements;
         _clock = clock;
+        _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
     }
 
     public async Task<Result<MeasurementDto>> ExecuteAsync(RecordMeasurementCommand command, CancellationToken cancellationToken)
@@ -41,6 +48,13 @@ public sealed class RecordMeasurement
             if (profile.Settings is null)
             {
                 return Result.Failure<MeasurementDto>(ApplicationErrors.ProfileSettingsRequired);
+            }
+
+            var entitlement = await _entitlementProvider.GetCurrentAsync(cancellationToken);
+            var dateValidation = MeasurementDatePolicy.Validate(command.MeasuredAtUtc, entitlement, _clock.UtcNow);
+            if (!dateValidation.IsSuccess)
+            {
+                return Result.Failure<MeasurementDto>(dateValidation.Error!);
             }
 
             var input = new MeasurementInput(

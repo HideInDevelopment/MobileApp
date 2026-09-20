@@ -1,5 +1,6 @@
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Common;
 using Anthropometry.Domain.Measurements;
@@ -25,11 +26,19 @@ public sealed class UpdateMeasurement
 {
     private readonly IMeasurementRepository _measurements;
     private readonly ICalculationResultRepository _results;
+    private readonly IClock? _clock;
+    private readonly IEntitlementProvider _entitlementProvider;
 
-    public UpdateMeasurement(IMeasurementRepository measurements, ICalculationResultRepository results)
+    public UpdateMeasurement(
+        IMeasurementRepository measurements,
+        ICalculationResultRepository results,
+        IClock? clock = null,
+        IEntitlementProvider? entitlementProvider = null)
     {
         _measurements = measurements;
         _results = results;
+        _clock = clock;
+        _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
     }
 
     public async Task<Result<MeasurementDto>> ExecuteAsync(
@@ -42,6 +51,19 @@ public sealed class UpdateMeasurement
             if (existing is null || existing.ProfileId != command.ProfileId)
             {
                 return Result.Failure<MeasurementDto>(ApplicationErrors.MeasurementNotFound);
+            }
+
+            if (command.MeasuredAtUtc != existing.MeasuredAtUtc)
+            {
+                var entitlement = await _entitlementProvider.GetCurrentAsync(cancellationToken);
+                var dateValidation = MeasurementDatePolicy.Validate(
+                    command.MeasuredAtUtc,
+                    entitlement,
+                    _clock?.UtcNow ?? DateTimeOffset.UtcNow);
+                if (!dateValidation.IsSuccess)
+                {
+                    return Result.Failure<MeasurementDto>(dateValidation.Error!);
+                }
             }
 
             var updated = Measurement.Rehydrate(

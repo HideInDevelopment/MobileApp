@@ -1,6 +1,8 @@
 using System.Globalization;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Abstractions;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Display;
 using Anthropometry.App.Features.Help;
@@ -25,6 +27,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private readonly IMeasurementNavigation _navigation;
     private readonly LanguageService _languageService;
     private readonly DisplayPreferencesService _displayPreferences;
+    private readonly IEntitlementProvider _entitlementProvider;
+    private readonly IClock? _clock;
     private readonly MeasurementDto? _existingMeasurement;
     private string _weightText = string.Empty;
     private string _neckText = string.Empty;
@@ -36,6 +40,14 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private string? _errorMessage;
     private string _weightUnitCode;
     private string _circumferenceUnitCode;
+    private DateTime _measurementDate;
+    private EntitlementSnapshot _entitlement = new(
+        EntitlementTier.Free,
+        SubscriptionState.Active,
+        null,
+        null,
+        null);
+    private bool _entitlementsLoaded;
 
     public MeasurementEditorViewModel(
         RecordMeasurement recordMeasurement,
@@ -48,7 +60,9 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         LanguageService languageService,
         DisplayPreferencesService displayPreferences,
         UpdateMeasurement? updateMeasurement = null,
-        MeasurementDto? existingMeasurement = null)
+        MeasurementDto? existingMeasurement = null,
+        IEntitlementProvider? entitlementProvider = null,
+        IClock? clock = null)
     {
         _recordMeasurement = recordMeasurement;
         _updateMeasurement = updateMeasurement;
@@ -61,8 +75,11 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _languageService = languageService;
         _displayPreferences = displayPreferences;
         _existingMeasurement = existingMeasurement;
+        _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
+        _clock = clock;
         _weightUnitCode = _displayPreferences.WeightUnitCode;
         _circumferenceUnitCode = _displayPreferences.CircumferenceUnitCode;
+        _measurementDate = (_existingMeasurement?.MeasuredAtUtc ?? NowUtc).ToLocalTime().Date;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
         ShowGuidanceCommand = new AsyncRelayCommand<GuidanceTopic>(_navigation.ShowGuidanceAsync);
@@ -81,6 +98,28 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         : _languageService.Get("CalculateResults");
 
     public bool IsExtended => _measurementType == MeasurementType.WeightAndSizes;
+
+    public DateTime MeasurementDate
+    {
+        get => _measurementDate;
+        set
+        {
+            if (SetProperty(ref _measurementDate, value.Date))
+            {
+                OnPropertyChanged(nameof(CanSave));
+                SaveCommand.NotifyCanExecuteChanged();
+            }
+        }
+    }
+
+    public DateTime MaximumMeasurementDate => NowUtc.ToLocalTime().Date;
+
+    public bool IsMeasurementDateEnabled
+        => FeatureAccessPolicy.CanUse(_entitlement, PremiumFeature.PastMeasurements);
+
+    public bool IsMeasurementDateLocked => !IsMeasurementDateEnabled;
+
+    public string MeasurementDatePremiumText => _languageService.Get("PremiumRequired");
 
     public bool IsFemale => _profile.Gender == ProfileGender.Female;
 
@@ -157,6 +196,36 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
     public IAsyncRelayCommand<GuidanceTopic> ShowGuidanceCommand { get; }
 
+    public async Task LoadEntitlementsAsync()
+    {
+        if (_entitlementsLoaded)
+        {
+            return;
+        }
+
+        try
+        {
+            _entitlement = await _entitlementProvider.GetCurrentAsync(CancellationToken.None);
+        }
+        catch
+        {
+            _entitlement = new EntitlementSnapshot(
+                EntitlementTier.Free,
+                SubscriptionState.Active,
+                null,
+                null,
+                null);
+        }
+        finally
+        {
+            _entitlementsLoaded = true;
+            OnPropertyChanged(nameof(IsMeasurementDateEnabled));
+            OnPropertyChanged(nameof(IsMeasurementDateLocked));
+            OnPropertyChanged(nameof(CanSave));
+            SaveCommand.NotifyCanExecuteChanged();
+        }
+    }
+
     private async Task SaveAsync()
     {
         ValidationMessage = null;
@@ -177,7 +246,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                 : await UpdateExistingMeasurementAsync(command);
             if (!recorded.IsSuccess)
             {
+                if (recorded.Error!.Code is "measurement.pastDate.premiumRequired" or "measurement.date.invalid")
+                {
+                    ValidationMessage = _languageService.Get("MeasurementDateError");
+                }
                 ValidationMessage = recorded.Error!.Code.StartsWith("measurement.", StringComparison.Ordinal)
+                    && recorded.Error!.Code is not "measurement.pastDate.premiumRequired" and not "measurement.date.invalid"
                     ? _languageService.Get("MeasurementValuesError")
                     : null;
                 ErrorMessage = recorded.Error!.Code == "profile.settings.required"
@@ -256,7 +330,14 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             }
         }
 
-        command = new RecordMeasurementCommand(_profile.Id, _measurementType, weight, neck, abdomen, DateTimeOffset.UtcNow, hip);
+        command = new RecordMeasurementCommand(
+            _profile.Id,
+            _measurementType,
+            weight,
+            neck,
+            abdomen,
+            _existingMeasurement is null ? NewMeasurementTimestampUtc() : _existingMeasurement.MeasuredAtUtc,
+            hip);
         return true;
     }
 
@@ -267,6 +348,13 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             return Task.FromResult(Result.Failure<MeasurementDto>(new DomainError(
                 "measurement.update.unavailable",
                 "Errors.PersistenceUnavailable")));
+        }
+
+        var measuredAtUtc = _existingMeasurement.MeasuredAtUtc;
+        if (IsMeasurementDateEnabled
+            && MeasurementDate != _existingMeasurement.MeasuredAtUtc.ToLocalTime().Date)
+        {
+            measuredAtUtc = ToUtcAtLocalNoon(MeasurementDate);
         }
 
         return _updateMeasurement.ExecuteAsync(
@@ -280,7 +368,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                 command.AbdomenCm,
                 _profile.Settings.AgeYears,
                 _profile.Settings.ActivityLevel,
-                _existingMeasurement.MeasuredAtUtc,
+                measuredAtUtc,
                 command.HipCm,
                 _profile.Gender),
             CancellationToken.None);
@@ -288,6 +376,18 @@ public sealed class MeasurementEditorViewModel : ObservableObject
 
     private bool HasValidInput()
         => TryCreateCommand(out _);
+
+    private DateTimeOffset NowUtc => _clock?.UtcNow ?? DateTimeOffset.UtcNow;
+
+    private DateTimeOffset NewMeasurementTimestampUtc()
+        => ToUtcAtLocalNoon(IsMeasurementDateEnabled ? MeasurementDate : NowUtc.ToLocalTime().Date);
+
+    private static DateTimeOffset ToUtcAtLocalNoon(DateTime localDate)
+    {
+        var localNoon = localDate.Date.AddHours(12);
+        var offset = TimeZoneInfo.Local.GetUtcOffset(localNoon);
+        return new DateTimeOffset(localNoon, offset).ToUniversalTime();
+    }
 
     private static bool TryParseDecimal(string value, out decimal result)
     {
@@ -329,6 +429,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         OnPropertyChanged(nameof(NeckText));
         OnPropertyChanged(nameof(AbdomenText));
         OnPropertyChanged(nameof(HipText));
+        OnPropertyChanged(nameof(MeasurementDate));
     }
 
     private void OnDisplayPreferencesChanged(object? sender, EventArgs e)

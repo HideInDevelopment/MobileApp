@@ -3,10 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:help="clr-namespace:Anthropometry.App.Features.Help"
              x:Class="Anthropometry.App.Features.Measurements.MeasurementEditorPage"
+             Appearing="OnAppearing"
              Title="{Binding Title}">
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="12">
             <Label Text="{DynamicResource ResultsEstimateDisclaimer}" />
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4" ColumnSpacing="8">
+                <Label Grid.Row="0" Text="{DynamicResource MeasurementDate}" VerticalOptions="Center" />
+                <DatePicker Grid.Row="0" Grid.Column="1"
+                            Date="{Binding MeasurementDate}"
+                            MaximumDate="{Binding MaximumMeasurementDate}"
+                            IsEnabled="{Binding IsMeasurementDateEnabled}"
+                            MinimumHeightRequest="48" />
+                <Label Grid.Row="1" Grid.ColumnSpan="2"
+                       Text="{Binding MeasurementDatePremiumText}"
+                       IsVisible="{Binding IsMeasurementDateLocked}"
+                       TextColor="{DynamicResource Gray600}" />
+            </Grid>
             <Grid ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Weight}" VerticalOptions="Center" />
                 <Entry Grid.Row="0" Grid.Column="1" Text="{Binding WeightText}" Keyboard="Numeric" WidthRequest="150" />

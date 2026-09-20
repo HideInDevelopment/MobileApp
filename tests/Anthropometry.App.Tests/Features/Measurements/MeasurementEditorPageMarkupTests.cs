@@ -32,4 +32,19 @@ public sealed class MeasurementEditorPageMarkupTests
         Assert.Contains("SemanticProperties.Description=\"{DynamicResource GuidanceHipTitle}\"", markup);
         Assert.True(markup.Split("MinimumHeightRequest=\"48\"").Length - 1 >= 5);
     }
+
+    [Fact]
+    public void Date_picker_is_bound_to_the_premium_locked_state()
+    {
+        var path = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Features", "Measurements", "MeasurementEditorPage.xaml"));
+        var markup = File.ReadAllText(path);
+
+        Assert.Contains("DatePicker", markup);
+        Assert.Contains("Date=\"{Binding MeasurementDate}\"", markup);
+        Assert.Contains("IsEnabled=\"{Binding IsMeasurementDateEnabled}\"", markup);
+        Assert.Contains("IsVisible=\"{Binding IsMeasurementDateLocked}\"", markup);
+    }
 }

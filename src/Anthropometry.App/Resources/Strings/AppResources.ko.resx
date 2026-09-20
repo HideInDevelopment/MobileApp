@@ -34,4 +34,7 @@
   <data name="HelpDailyReminderBody"><value>측정 기록을 안내하는 알림을 매일 받을 시간을 설정할 수 있습니다.</value></data>
   <data name="HelpInactivityReminderBody"><value>앱을 7일 또는 14일 동안 열지 않으면 알림을 받을 수도 있습니다.</value></data>
   <data name="HelpReminderPrivacy"><value>알림은 기기에서 로컬로 예약됩니다. 설정에서 언제든지 변경하거나 끌 수 있습니다.</value></data>
+  <data name="MeasurementDate"><value>측정 날짜</value></data>
+  <data name="MeasurementDateError"><value>오늘 또는 유효한 Premium 날짜를 선택하세요.</value></data>
+  <data name="PremiumRequired"><value>Premium 필요</value></data>
 </root>

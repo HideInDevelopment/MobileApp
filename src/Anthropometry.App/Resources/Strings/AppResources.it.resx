@@ -35,4 +35,7 @@
   <data name="HelpDailyReminderBody"><value>Imposta un orario giornaliero per ricevere una notifica che ti ricordi di registrare una misurazione.</value></data>
   <data name="HelpInactivityReminderBody"><value>Puoi anche ricevere un promemoria dopo 7 o 14 giorni senza aprire l’app.</value></data>
   <data name="HelpReminderPrivacy"><value>I promemoria vengono programmati localmente sul dispositivo. Puoi modificarli o disattivarli in qualsiasi momento nelle impostazioni.</value></data>
+  <data name="MeasurementDate"><value>Data della misurazione</value></data>
+  <data name="MeasurementDateError"><value>Scegli oggi o una data Premium valida.</value></data>
+  <data name="PremiumRequired"><value>Premium richiesto</value></data>
 </root>

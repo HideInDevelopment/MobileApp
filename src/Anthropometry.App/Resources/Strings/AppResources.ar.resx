@@ -126,4 +126,7 @@
   <data name="SevenDays"><value>7 أيام</value></data>
   <data name="FourteenDays"><value>14 يومًا</value></data>
   <data name="ReminderPermissionRequired"><value>اسمح بالإشعارات لتفعيل التذكيرات.</value></data>
+  <data name="MeasurementDate"><value>تاريخ القياس</value></data>
+  <data name="MeasurementDateError"><value>اختر اليوم أو تاريخ Premium صالحًا.</value></data>
+  <data name="PremiumRequired"><value>يتطلب Premium</value></data>
 </root>

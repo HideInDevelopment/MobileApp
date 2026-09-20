@@ -239,4 +239,7 @@
   <data name="HelpDailyReminderBody" xml:space="preserve"><value>Set a daily time to receive a notification that reminds you to record a measurement.</value></data>
   <data name="HelpInactivityReminderBody" xml:space="preserve"><value>You can also be reminded after 7 or 14 days without opening the app.</value></data>
   <data name="HelpReminderPrivacy" xml:space="preserve"><value>Reminders are scheduled locally on your device. You can change or disable them at any time in Settings.</value></data>
+  <data name="MeasurementDate" xml:space="preserve"><value>Measurement date</value></data>
+  <data name="MeasurementDateError" xml:space="preserve"><value>Choose today or a valid Premium date.</value></data>
+  <data name="PremiumRequired" xml:space="preserve"><value>Premium required</value></data>
 </root>

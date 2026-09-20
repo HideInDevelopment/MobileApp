@@ -34,4 +34,7 @@
   <data name="HelpDailyReminderBody"><value>測定値の記録を促す通知を毎日受け取る時刻を設定できます。</value></data>
   <data name="HelpInactivityReminderBody"><value>アプリを7日間または14日間開いていない場合にも、リマインダーを受け取れます。</value></data>
   <data name="HelpReminderPrivacy"><value>リマインダーは端末上でローカルに設定されます。設定からいつでも変更または無効化できます。</value></data>
+  <data name="MeasurementDate"><value>測定日</value></data>
+  <data name="MeasurementDateError"><value>今日または有効なPremiumの日付を選択してください。</value></data>
+  <data name="PremiumRequired"><value>Premiumが必要です</value></data>
 </root>

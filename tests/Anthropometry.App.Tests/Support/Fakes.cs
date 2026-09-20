@@ -1,5 +1,6 @@
 using System.Globalization;
 using Anthropometry.Application.Abstractions;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
@@ -8,9 +9,24 @@ using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.App.Tests.Support;
 
+public sealed class FakeEntitlementProvider(EntitlementSnapshot snapshot) : IEntitlementProvider
+{
+    public Task<EntitlementSnapshot> GetCurrentAsync(CancellationToken cancellationToken)
+        => Task.FromResult(snapshot);
+}
+
+public static class EntitlementTestData
+{
+    public static EntitlementSnapshot Free =>
+        new(EntitlementTier.Free, SubscriptionState.Active, null, null, null);
+
+    public static EntitlementSnapshot Premium =>
+        new(EntitlementTier.Premium, SubscriptionState.Active, "anthropometry.premium.monthly", null, null);
+}
+
 public sealed class FakeClock : IClock
 {
-    public DateTimeOffset UtcNow { get; set; } = new(2026, 9, 8, 12, 0, 0, TimeSpan.Zero);
+    public DateTimeOffset UtcNow { get; set; } = new(2026, 9, 20, 12, 0, 0, TimeSpan.Zero);
 }
 
 public sealed class FakeProfileRepository : IProfileRepository
@@ -76,7 +92,7 @@ public static class TestData
     public static Measurement Measurement(ProfileId profileId)
         => Anthropometry.Domain.Measurements.Measurement.Create(
             profileId,
-            new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow),
+            new MeasurementInput(MeasurementType.WeightAndSizes, 80m, 180m, 40m, 90m, 35, ActivityLevel.Moderate, DateTimeOffset.UtcNow.AddDays(-1)),
             DateTimeOffset.UtcNow).Value;
 }
 
