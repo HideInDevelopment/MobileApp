@@ -17,5 +17,7 @@ public sealed class MetricChartPageMarkupTests
         Assert.Contains("Date=\"{Binding FromDate}\"", markup);
         Assert.Contains("Date=\"{Binding ToDate}\"", markup);
         Assert.Contains("Command=\"{Binding ClearDateRangeCommand}\"", markup);
+        Assert.Contains("IsVisible=\"{Binding IsFullGraphicsLocked}\"", markup);
+        Assert.Contains("{DynamicResource PremiumRequired}", markup);
     }
 }

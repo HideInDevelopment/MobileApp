@@ -106,6 +106,30 @@ public sealed class WeightGraphicViewModelTests
     }
 
     [Fact]
+    public async Task Free_chart_exposes_only_the_kilogram_weight_series()
+    {
+        var profile = TestData.Profile();
+        var repository = new FakeMeasurementRepository();
+        repository.Items.Add(CreateMeasurement(profile.Id, 80m, new DateTimeOffset(2026, 9, 8, 12, 0, 0, TimeSpan.Zero)));
+        var displayPreferences = TestData.DisplayPreferences();
+        displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
+        var viewModel = CreateViewModel(
+            repository,
+            profile.Id,
+            displayPreferences: displayPreferences,
+            entitlement: EntitlementTestData.Free);
+
+        await viewModel.LoadCommand.ExecuteAsync(null);
+
+        var point = Assert.Single(viewModel.Points);
+        Assert.Single(viewModel.MetricOptions);
+        Assert.Equal(MetricKind.Weight, viewModel.MetricOptions[0].Value);
+        Assert.Equal(80m, point.DisplayedWeight);
+        Assert.Equal("kg", point.Unit);
+        Assert.True(viewModel.IsFullGraphicsLocked);
+    }
+
+    [Fact]
     public async Task Selecting_no_point_hides_the_legend()
     {
         var profile = TestData.Profile();
@@ -124,7 +148,7 @@ public sealed class WeightGraphicViewModelTests
     [Fact]
     public void Metric_selector_command_updates_the_selected_metric()
     {
-        var viewModel = CreateViewModel(new FakeMeasurementRepository(), TestData.Profile().Id);
+        var viewModel = CreateViewModel(new FakeMeasurementRepository(), TestData.Profile().Id, entitlement: EntitlementTestData.Premium);
 
         viewModel.SelectMetricCommand.Execute(MetricKind.BodyFatPercentage.ToString());
 
@@ -142,7 +166,7 @@ public sealed class WeightGraphicViewModelTests
         repository.Items.Add(older);
         repository.Items.Add(newerWithoutResult);
         resultRepository.Items.Add(CreateResult(older, CalculationType.BodyFatPercentage, 18.5m, "%"));
-        var viewModel = CreateViewModel(repository, profile.Id, resultRepository: resultRepository);
+        var viewModel = CreateViewModel(repository, profile.Id, resultRepository: resultRepository, entitlement: EntitlementTestData.Premium);
 
         viewModel.SelectedMetric = MetricKind.BodyFatPercentage;
         await viewModel.LoadCommand.ExecuteAsync(null);

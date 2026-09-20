@@ -64,6 +64,7 @@ public sealed class WeightGraphicViewModel : ObservableObject
     private DateTime _fromDate = DateTime.Today.AddDays(-30);
     private DateTime _toDate = DateTime.Today;
     private bool _suppressFilterReload;
+    private readonly bool _isFullGraphicsLocked;
 
     public WeightGraphicViewModel(
         GetMetricHistory getHistory,
@@ -76,9 +77,10 @@ public sealed class WeightGraphicViewModel : ObservableObject
         _profileId = profileId;
         _languageService = languageService;
         _displayPreferences = displayPreferences;
-        _entitledDisplayPreferences = new EntitledDisplayPreferences(
-            _displayPreferences,
-            entitlement ?? new EntitlementSnapshot(EntitlementTier.Free, SubscriptionState.Active, null, null, null));
+        var currentEntitlement = entitlement
+            ?? new EntitlementSnapshot(EntitlementTier.Free, SubscriptionState.Active, null, null, null);
+        _entitledDisplayPreferences = new EntitledDisplayPreferences(_displayPreferences, currentEntitlement);
+        _isFullGraphicsLocked = !FeatureAccessPolicy.CanUse(currentEntitlement, PremiumFeature.FullMeasurementGraphics);
         Points = new ReadOnlyObservableCollection<WeightGraphicPoint>(_points);
         MetricOptions = CreateMetricOptions();
         _selectedMetricOption = MetricOptions[0];
@@ -93,6 +95,10 @@ public sealed class WeightGraphicViewModel : ObservableObject
 
     public IReadOnlyList<MetricOption> MetricOptions { get; private set; }
 
+    public bool IsFullGraphicsLocked => _isFullGraphicsLocked;
+
+    public string PremiumGraphicsText => _languageService.Get("PremiumRequired");
+
     public MetricKind SelectedMetric
     {
         get => _selectedMetric;
@@ -100,6 +106,15 @@ public sealed class WeightGraphicViewModel : ObservableObject
         {
             if (!SetProperty(ref _selectedMetric, value))
             {
+                return;
+            }
+
+            if (MetricOptions.All(option => option.Value != value))
+            {
+                _selectedMetric = MetricKind.Weight;
+                _selectedMetricOption = MetricOptions[0];
+                OnPropertyChanged(nameof(SelectedMetric));
+                OnPropertyChanged(nameof(SelectedMetricOption));
                 return;
             }
 
@@ -348,7 +363,10 @@ public sealed class WeightGraphicViewModel : ObservableObject
     {
         if (Enum.TryParse<MetricKind>(value, ignoreCase: true, out var metric))
         {
-            SelectedMetric = metric;
+            if (MetricOptions.Any(option => option.Value == metric))
+            {
+                SelectedMetric = metric;
+            }
         }
     }
 
@@ -360,14 +378,21 @@ public sealed class WeightGraphicViewModel : ObservableObject
         }
     }
 
-    private IReadOnlyList<MetricOption> CreateMetricOptions()
-        =>
-        [
-            new(MetricKind.Weight, _languageService.Get("Weight")),
-            new(MetricKind.BodyFatPercentage, _languageService.Get("BodyFatPercentage")),
-            new(MetricKind.BasalMetabolicRate, _languageService.Get("BasalMetabolicRate")),
-            new(MetricKind.TotalDailyEnergyExpenditure, _languageService.Get("TotalDailyEnergyExpenditure"))
-        ];
+    private List<MetricOption> CreateMetricOptions()
+    {
+        var options = new List<MetricOption>
+        {
+            new(MetricKind.Weight, _languageService.Get("Weight"))
+        };
+        if (!_isFullGraphicsLocked)
+        {
+            options.Add(new(MetricKind.BodyFatPercentage, _languageService.Get("BodyFatPercentage")));
+            options.Add(new(MetricKind.BasalMetabolicRate, _languageService.Get("BasalMetabolicRate")));
+            options.Add(new(MetricKind.TotalDailyEnergyExpenditure, _languageService.Get("TotalDailyEnergyExpenditure")));
+        }
+
+        return options;
+    }
 
     private WeightGraphicPoint CreatePoint(MetricHistoryDto metric)
     {
@@ -409,7 +434,10 @@ public sealed class WeightGraphicViewModel : ObservableObject
     {
         var selectedMetric = SelectedMetric;
         MetricOptions = CreateMetricOptions();
-        _selectedMetricOption = MetricOptions.First(option => option.Value == selectedMetric);
+        _selectedMetric = MetricOptions.Any(option => option.Value == selectedMetric)
+            ? selectedMetric
+            : MetricKind.Weight;
+        _selectedMetricOption = MetricOptions.First(option => option.Value == _selectedMetric);
         OnPropertyChanged(nameof(MetricOptions));
         OnPropertyChanged(nameof(SelectedMetricOption));
         NotifyMetricChanged();
