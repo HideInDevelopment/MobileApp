@@ -1,3 +1,4 @@
+using System.Globalization;
 using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
@@ -8,17 +9,19 @@ namespace Anthropometry.App.Tests.Features.Settings;
 public sealed class SettingsViewModelTests
 {
     [Fact]
-    public void Exposes_english_spanish_and_german_and_restores_the_saved_selection()
+    public void Exposes_supported_languages_and_restores_the_saved_selection()
     {
         var preferences = new FakeLanguagePreferenceStore { LanguageCode = "de" };
         var service = new LanguageService(preferences);
-        service.Initialize();
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
         var themeService = new ThemeService(new FakeThemePreferenceStore { ThemeCode = "dark" });
         themeService.Initialize();
 
         var viewModel = new SettingsViewModel(service, themeService, CreateDisplayPreferences());
 
-        Assert.Equal(["en", "es", "de"], viewModel.Languages.Select(language => language.Code));
+        Assert.Equal(
+            ["en", "es", "de", "fr", "pt-BR", "it", "ja", "ko", "zh-CN", "ar", "hi"],
+            viewModel.Languages.Select(language => language.Code));
         Assert.Equal("de", viewModel.SelectedLanguage!.Code);
         Assert.Equal(["light", "dark"], viewModel.Themes.Select(theme => theme.Code));
         Assert.Equal("dark", viewModel.SelectedTheme!.Code);
@@ -29,7 +32,7 @@ public sealed class SettingsViewModelTests
     {
         var preferences = new FakeLanguagePreferenceStore();
         var service = new LanguageService(preferences);
-        service.Initialize();
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
         var themeService = new ThemeService(new FakeThemePreferenceStore());
         themeService.Initialize();
         var viewModel = new SettingsViewModel(service, themeService, CreateDisplayPreferences());
@@ -44,7 +47,7 @@ public sealed class SettingsViewModelTests
     public void Selecting_a_theme_applies_and_persists_it()
     {
         var languageService = new LanguageService(new FakeLanguagePreferenceStore());
-        languageService.Initialize();
+        languageService.Initialize(CultureInfo.GetCultureInfo("en-US"));
         var preferences = new FakeThemePreferenceStore();
         var themeService = new ThemeService(preferences);
         themeService.Initialize();
@@ -61,7 +64,7 @@ public sealed class SettingsViewModelTests
     {
         var languageStore = new FakeLanguagePreferenceStore();
         var languageService = new LanguageService(languageStore);
-        languageService.Initialize();
+        languageService.Initialize(CultureInfo.GetCultureInfo("en-US"));
         var themeService = new ThemeService(new FakeThemePreferenceStore());
         themeService.Initialize();
         var displayPreferences = CreateDisplayPreferences();
@@ -84,7 +87,7 @@ public sealed class SettingsViewModelTests
     public void Exposes_and_persists_date_and_measurement_system_preferences()
     {
         var languageService = new LanguageService(new FakeLanguagePreferenceStore());
-        languageService.Initialize();
+        languageService.Initialize(CultureInfo.GetCultureInfo("en-US"));
         var displayStore = new FakeDisplayPreferenceStore
         {
             DateFormatCode = DisplayPreferencesService.MonthDayYearCode,

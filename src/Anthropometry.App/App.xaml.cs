@@ -53,6 +53,7 @@ public partial class App : Microsoft.Maui.Controls.Application
         {
             await _migrationRunner.InitializeAsync(CancellationToken.None);
             window.Page = _services.GetRequiredService<AppShell>();
+            ApplyFlowDirection();
         }
         catch (Exception)
         {
@@ -94,6 +95,22 @@ public partial class App : Microsoft.Maui.Controls.Application
         {
             Resources[key] = _languageService.Get(key);
         }
+
+        ApplyFlowDirection();
+    }
+
+    private void ApplyFlowDirection()
+    {
+        if (Shell.Current is not { } shell)
+        {
+            return;
+        }
+
+        var language = LanguageService.SupportedLanguages.Single(option =>
+            string.Equals(option.Code, _languageService.CurrentLanguageCode, StringComparison.OrdinalIgnoreCase));
+        shell.FlowDirection = language.IsRightToLeft
+            ? FlowDirection.RightToLeft
+            : FlowDirection.LeftToRight;
     }
 
     private void ApplyTheme()

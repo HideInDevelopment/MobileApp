@@ -6,6 +6,8 @@ namespace Anthropometry.App.Localization;
 public sealed record LanguageOption(string Code, string DisplayName, string CultureName)
 {
     public CultureInfo Culture => CultureInfo.GetCultureInfo(CultureName);
+
+    public bool IsRightToLeft => Culture.TextInfo.IsRightToLeft;
 }
 
 public sealed class LanguageService
@@ -14,7 +16,15 @@ public sealed class LanguageService
     [
         new("en", "English", "en-US"),
         new("es", "Español", "es-ES"),
-        new("de", "Deutsch", "de-DE")
+        new("de", "Deutsch", "de-DE"),
+        new("fr", "Français", "fr-FR"),
+        new("pt-BR", "Português (Brasil)", "pt-BR"),
+        new("it", "Italiano", "it-IT"),
+        new("ja", "日本語", "ja-JP"),
+        new("ko", "한국어", "ko-KR"),
+        new("zh-CN", "简体中文", "zh-CN"),
+        new("ar", "العربية", "ar-SA"),
+        new("hi", "हिन्दी", "hi-IN")
     ];
 
     public static IReadOnlyList<LanguageOption> SupportedLanguages => Languages;
@@ -83,11 +93,13 @@ public sealed class LanguageService
 
     public string CurrentLanguageCode { get; private set; } = "en";
 
-    public void Initialize()
+    public void Initialize(CultureInfo? deviceCulture = null)
     {
         var savedCode = _preferences.GetLanguageCode();
         var language = Languages.FirstOrDefault(candidate =>
-            string.Equals(candidate.Code, savedCode, StringComparison.OrdinalIgnoreCase)) ?? Languages[0];
+            string.Equals(candidate.Code, savedCode, StringComparison.OrdinalIgnoreCase))
+            ?? FindByCulture(deviceCulture ?? CultureInfo.InstalledUICulture)
+            ?? Languages[0];
         Apply(language, persist: false);
     }
 
@@ -123,4 +135,13 @@ public sealed class LanguageService
         CultureInfo.CurrentUICulture = _culture;
         LanguageChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    private static LanguageOption? FindByCulture(CultureInfo culture)
+        => Languages.FirstOrDefault(candidate =>
+            string.Equals(candidate.Culture.Name, culture.Name, StringComparison.OrdinalIgnoreCase))
+            ?? Languages.FirstOrDefault(candidate =>
+                string.Equals(
+                    candidate.Culture.TwoLetterISOLanguageName,
+                    culture.TwoLetterISOLanguageName,
+                    StringComparison.OrdinalIgnoreCase));
 }

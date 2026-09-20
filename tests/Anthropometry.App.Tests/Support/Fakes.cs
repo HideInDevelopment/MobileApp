@@ -1,3 +1,4 @@
+using System.Globalization;
 using Anthropometry.Application.Abstractions;
 using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
@@ -55,7 +56,7 @@ public static class TestData
     public static LanguageService LanguageService()
     {
         var service = new LanguageService(new InMemoryLanguagePreferenceStore());
-        service.Initialize();
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
         return service;
     }
 

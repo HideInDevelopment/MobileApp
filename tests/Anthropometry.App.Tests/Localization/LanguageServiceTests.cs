@@ -1,3 +1,4 @@
+using System.Globalization;
 using Anthropometry.App.Localization;
 
 namespace Anthropometry.App.Tests.Localization;
@@ -10,7 +11,7 @@ public sealed class LanguageServiceTests
         var preferences = new FakeLanguagePreferenceStore();
         var service = new LanguageService(preferences);
 
-        service.Initialize();
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
 
         Assert.Equal("en", service.CurrentLanguageCode);
         Assert.Equal("Settings", service.Get("SettingsTitle"));
@@ -22,7 +23,7 @@ public sealed class LanguageServiceTests
         var preferences = new FakeLanguagePreferenceStore { LanguageCode = "de" };
         var service = new LanguageService(preferences);
 
-        service.Initialize();
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
 
         Assert.Equal("de", service.CurrentLanguageCode);
         Assert.Equal("Einstellungen", service.Get("SettingsTitle"));
@@ -33,7 +34,7 @@ public sealed class LanguageServiceTests
     {
         var preferences = new FakeLanguagePreferenceStore();
         var service = new LanguageService(preferences);
-        service.Initialize();
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
 
         service.SetLanguage("es");
 
@@ -47,7 +48,7 @@ public sealed class LanguageServiceTests
     {
         var service = new LanguageService(new FakeLanguagePreferenceStore());
 
-        Assert.Throws<ArgumentException>(() => service.SetLanguage("fr"));
+        Assert.Throws<ArgumentException>(() => service.SetLanguage("xx"));
     }
 
     [Fact]
@@ -67,11 +68,73 @@ public sealed class LanguageServiceTests
             "ProfileTransferLegacyWarning"
         };
 
-        service.Initialize();
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
         foreach (var language in new[] { "en", "es", "de" })
         {
             service.SetLanguage(language);
             Assert.All(keys, key => Assert.NotEqual(key, service.Get(key)));
+        }
+    }
+
+    [Fact]
+    public void Device_language_is_used_only_until_the_user_saves_an_override()
+    {
+        var preferences = new FakeLanguagePreferenceStore();
+        var service = new LanguageService(preferences);
+
+        service.Initialize(CultureInfo.GetCultureInfo("fr-FR"));
+
+        Assert.Equal("fr", service.CurrentLanguageCode);
+        Assert.Null(preferences.LanguageCode);
+
+        service.SetLanguage("de");
+        service.Initialize(CultureInfo.GetCultureInfo("fr-FR"));
+
+        Assert.Equal("de", service.CurrentLanguageCode);
+        Assert.Equal("de", preferences.LanguageCode);
+    }
+
+    [Fact]
+    public void Device_language_matches_supported_language_by_language_code()
+    {
+        var service = new LanguageService(new FakeLanguagePreferenceStore());
+
+        service.Initialize(CultureInfo.GetCultureInfo("pt-PT"));
+
+        Assert.Equal("pt-BR", service.CurrentLanguageCode);
+    }
+
+    [Fact]
+    public void Unsupported_device_language_falls_back_to_english()
+    {
+        var service = new LanguageService(new FakeLanguagePreferenceStore());
+
+        service.Initialize(CultureInfo.GetCultureInfo("pl-PL"));
+
+        Assert.Equal("en", service.CurrentLanguageCode);
+    }
+
+    [Fact]
+    public void Arabic_language_option_is_marked_right_to_left()
+    {
+        var arabic = LanguageService.SupportedLanguages.Single(language => language.Code == "ar");
+        var french = LanguageService.SupportedLanguages.Single(language => language.Code == "fr");
+
+        Assert.True(arabic.IsRightToLeft);
+        Assert.False(french.IsRightToLeft);
+    }
+
+    [Fact]
+    public void Core_localized_copy_is_available_for_supported_languages()
+    {
+        var service = new LanguageService(new FakeLanguagePreferenceStore());
+        var requiredKeys = new[] { "SettingsTitle", "Language", "AddProfile", "Save", "Cancel" };
+
+        service.Initialize(CultureInfo.GetCultureInfo("en-US"));
+        foreach (var language in LanguageService.SupportedLanguages.Where(language => language.Code != "en"))
+        {
+            service.SetLanguage(language.Code);
+            Assert.All(requiredKeys, key => Assert.NotEqual(key, service.Get(key)));
         }
     }
 
