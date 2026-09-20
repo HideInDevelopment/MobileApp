@@ -102,21 +102,32 @@ public sealed class ProfileUseCaseTests
     }
 
     [Fact]
-    public async Task Create_profile_rejects_the_fifth_profile()
+    public async Task Create_profile_rejects_the_second_free_profile()
     {
         var repository = new FakeProfileRepository();
-        for (var index = 0; index < 4; index++)
-        {
-            repository.Items.Add(TestData.Profile($"Profile {index}"));
-        }
+        repository.Items.Add(TestData.Profile("Profile 1"));
 
         var result = await new CreateProfile(repository, new FakeClock()).ExecuteAsync(
-            new CreateProfileCommand("Profile 5", new ProfileSettingsInput(180m, 35, ActivityLevel.Moderate)),
+            new CreateProfileCommand("Profile 2", new ProfileSettingsInput(180m, 35, ActivityLevel.Moderate)),
             CancellationToken.None);
 
         Assert.False(result.IsSuccess);
         Assert.Equal("profile.limit.reached", result.Error!.Code);
-        Assert.Equal(4, repository.Items.Count);
+        Assert.Single(repository.Items);
+    }
+
+    [Fact]
+    public async Task Create_profile_allows_a_second_premium_profile()
+    {
+        var repository = new FakeProfileRepository();
+        repository.Items.Add(TestData.Profile("Profile 1"));
+
+        var result = await new CreateProfile(repository, new FakeClock(), new FakeEntitlementProvider(EntitlementTestData.Premium)).ExecuteAsync(
+            new CreateProfileCommand("Profile 2", new ProfileSettingsInput(180m, 35, ActivityLevel.Moderate)),
+            CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(2, repository.Items.Count);
     }
 
     [Fact]

@@ -1,5 +1,6 @@
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Common;
 using Anthropometry.Domain.Measurements;
@@ -9,17 +10,21 @@ namespace Anthropometry.Application.Profiles;
 
 public sealed class ImportProfile
 {
-    private const int MaxProfiles = 4;
     private readonly IProfileTransferRepository _transferRepository;
     private readonly IProfileRepository _profileRepository;
+    private readonly IEntitlementProvider _entitlementProvider;
 
-    public ImportProfile(IProfileTransferRepository transferRepository, IProfileRepository profileRepository)
+    public ImportProfile(
+        IProfileTransferRepository transferRepository,
+        IProfileRepository profileRepository,
+        IEntitlementProvider? entitlementProvider = null)
     {
         _transferRepository = transferRepository;
         _profileRepository = profileRepository;
+        _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
     }
 
-    public Task<Result<ProfileImportPreview>> PreviewAsync(
+    public async Task<Result<ProfileImportPreview>> PreviewAsync(
         byte[] content,
         string? passphrase,
         CancellationToken cancellationToken)
@@ -28,26 +33,32 @@ public sealed class ImportProfile
         {
             _ = _transferRepository;
             cancellationToken.ThrowIfCancellationRequested();
+            var entitlement = await _entitlementProvider.GetCurrentAsync(cancellationToken);
+            if (!FeatureAccessPolicy.CanUse(entitlement, PremiumFeature.EncryptedProfileTransfer))
+            {
+                return Result.Failure<ProfileImportPreview>(ApplicationErrors.PremiumFeatureRequired);
+            }
+
             var protectedPayload = ProfileTransferProtection.Unprotect(content, passphrase);
             if (!protectedPayload.IsSuccess)
             {
-                return Task.FromResult(Result.Failure<ProfileImportPreview>(MapTransferError(protectedPayload.Error!)));
+                return Result.Failure<ProfileImportPreview>(MapTransferError(protectedPayload.Error!));
             }
 
             var parsed = ProfileTransferCsvSerializer.Parse(new MemoryStream(protectedPayload.Value.CsvContent, writable: false));
             if (!parsed.IsSuccess)
             {
-                return Task.FromResult(Result.Failure<ProfileImportPreview>(MapCsvError(parsed.Error!)));
+                return Result.Failure<ProfileImportPreview>(MapCsvError(parsed.Error!));
             }
 
             var document = parsed.Value;
-            return Task.FromResult(Result.Success(new ProfileImportPreview(
+            return Result.Success(new ProfileImportPreview(
                 document,
                 document.Profile.Name,
                 document.Profile.Gender,
                 document.Measurements.Count,
                 document.Results.Count,
-                protectedPayload.Value.IsLegacyUnprotected)));
+                protectedPayload.Value.IsLegacyUnprotected));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -55,7 +66,7 @@ public sealed class ImportProfile
         }
         catch (Exception)
         {
-            return Task.FromResult(Result.Failure<ProfileImportPreview>(ApplicationErrors.ProfileTransferFileInvalid));
+            return Result.Failure<ProfileImportPreview>(ApplicationErrors.ProfileTransferFileInvalid);
         }
     }
 
@@ -65,8 +76,14 @@ public sealed class ImportProfile
     {
         try
         {
+            var entitlement = await _entitlementProvider.GetCurrentAsync(cancellationToken);
+            if (!FeatureAccessPolicy.CanUse(entitlement, PremiumFeature.EncryptedProfileTransfer))
+            {
+                return Result.Failure<ImportedProfile>(ApplicationErrors.PremiumFeatureRequired);
+            }
+
             var profiles = await _profileRepository.GetAllAsync(cancellationToken);
-            if (profiles.Count >= MaxProfiles)
+            if (profiles.Count >= FeatureAccessPolicy.GetMaximumProfiles(entitlement))
             {
                 return Result.Failure<ImportedProfile>(ApplicationErrors.ProfileLimitReached);
             }

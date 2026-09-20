@@ -1,5 +1,6 @@
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Domain.Common;
 using Anthropometry.Domain.Profiles;
 using Anthropometry.Domain.Calculations;
@@ -8,14 +9,18 @@ namespace Anthropometry.Application.Profiles;
 
 public sealed class CreateProfile
 {
-    private const int MaxProfiles = 4;
     private readonly IProfileRepository _repository;
     private readonly IClock _clock;
+    private readonly IEntitlementProvider _entitlementProvider;
 
-    public CreateProfile(IProfileRepository repository, IClock clock)
+    public CreateProfile(
+        IProfileRepository repository,
+        IClock clock,
+        IEntitlementProvider? entitlementProvider = null)
     {
         _repository = repository;
         _clock = clock;
+        _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
     }
 
     public async Task<Result<ProfileDto>> ExecuteAsync(CreateProfileCommand command, CancellationToken cancellationToken)
@@ -23,7 +28,8 @@ public sealed class CreateProfile
         try
         {
             var profiles = await _repository.GetAllAsync(cancellationToken);
-            if (profiles.Count >= MaxProfiles)
+            var entitlement = await _entitlementProvider.GetCurrentAsync(cancellationToken);
+            if (profiles.Count >= FeatureAccessPolicy.GetMaximumProfiles(entitlement))
             {
                 return Result.Failure<ProfileDto>(ApplicationErrors.ProfileLimitReached);
             }

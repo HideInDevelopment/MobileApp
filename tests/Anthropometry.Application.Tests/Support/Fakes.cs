@@ -1,9 +1,25 @@
 using Anthropometry.Application.Abstractions;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
 using Anthropometry.Domain.Profiles;
 
 namespace Anthropometry.Application.Tests.Support;
+
+public sealed class FakeEntitlementProvider(EntitlementSnapshot snapshot) : IEntitlementProvider
+{
+    public Task<EntitlementSnapshot> GetCurrentAsync(CancellationToken cancellationToken)
+        => Task.FromResult(snapshot);
+}
+
+public static class EntitlementTestData
+{
+    public static EntitlementSnapshot Free =>
+        new(EntitlementTier.Free, SubscriptionState.Active, null, null, DateTimeOffset.UtcNow);
+
+    public static EntitlementSnapshot Premium =>
+        new(EntitlementTier.Premium, SubscriptionState.Active, "anthropometry.premium.monthly", null, DateTimeOffset.UtcNow);
+}
 
 public sealed class FakeClock : IClock
 {

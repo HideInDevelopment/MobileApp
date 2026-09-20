@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text;
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Domain.Common;
 using Anthropometry.Domain.Profiles;
 
@@ -13,11 +14,16 @@ public sealed class ExportProfile
 {
     private readonly IProfileTransferRepository _repository;
     private readonly IClock _clock;
+    private readonly IEntitlementProvider _entitlementProvider;
 
-    public ExportProfile(IProfileTransferRepository repository, IClock clock)
+    public ExportProfile(
+        IProfileTransferRepository repository,
+        IClock clock,
+        IEntitlementProvider? entitlementProvider = null)
     {
         _repository = repository;
         _clock = clock;
+        _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
     }
 
     public async Task<Result<ProfileExportFile>> ExecuteAsync(
@@ -26,6 +32,12 @@ public sealed class ExportProfile
     {
         try
         {
+            var entitlement = await _entitlementProvider.GetCurrentAsync(cancellationToken);
+            if (!FeatureAccessPolicy.CanUse(entitlement, PremiumFeature.EncryptedProfileTransfer))
+            {
+                return Result.Failure<ProfileExportFile>(ApplicationErrors.PremiumFeatureRequired);
+            }
+
             var snapshot = await _repository.GetSnapshotAsync(command.ProfileId, cancellationToken);
             if (snapshot is null)
             {

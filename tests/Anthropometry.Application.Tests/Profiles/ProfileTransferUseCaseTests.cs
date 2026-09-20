@@ -18,7 +18,7 @@ public sealed class ProfileTransferUseCaseTests
     {
         var repository = new FakeProfileTransferRepository();
 
-        var result = await new ExportProfile(repository, new FakeClock()).ExecuteAsync(
+        var result = await new ExportProfile(repository, new FakeClock(), new FakeEntitlementProvider(EntitlementTestData.Premium)).ExecuteAsync(
             new ExportProfileCommand(ProfileId.New()),
             CancellationToken.None);
 
@@ -32,7 +32,7 @@ public sealed class ProfileTransferUseCaseTests
         var snapshot = CreateSnapshot("Anna / Imported");
         var repository = new FakeProfileTransferRepository { Snapshot = snapshot };
 
-        var result = await new ExportProfile(repository, new FakeClock()).ExecuteAsync(
+        var result = await new ExportProfile(repository, new FakeClock(), new FakeEntitlementProvider(EntitlementTestData.Premium)).ExecuteAsync(
             new ExportProfileCommand(snapshot.Profile.Id),
             CancellationToken.None);
 
@@ -55,7 +55,7 @@ public sealed class ProfileTransferUseCaseTests
             ProfileTransferCsvSerializer.Serialize(snapshot),
             Passphrase).Value;
 
-        var result = await new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository())
+        var result = await new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository(), new FakeEntitlementProvider(EntitlementTestData.Premium))
             .PreviewAsync(content, Passphrase, CancellationToken.None);
 
         Assert.True(result.IsSuccess);
@@ -71,7 +71,7 @@ public sealed class ProfileTransferUseCaseTests
         var source = CreateSnapshot();
         var transferRepository = new FakeProfileTransferRepository();
         var profiles = new FakeProfileRepository();
-        var useCase = new ImportProfile(transferRepository, profiles);
+        var useCase = new ImportProfile(transferRepository, profiles, new FakeEntitlementProvider(EntitlementTestData.Premium));
         var content = ProfileTransferProtection.Protect(
             ProfileTransferCsvSerializer.Serialize(source),
             Passphrase).Value;
@@ -107,13 +107,13 @@ public sealed class ProfileTransferUseCaseTests
     public async Task Import_at_profile_limit_does_not_write()
     {
         var profiles = new FakeProfileRepository();
-        for (var index = 0; index < 4; index++)
+        for (var index = 0; index < 10; index++)
         {
             profiles.Items.Add(TestData.Profile($"Existing {index}"));
         }
 
         var transferRepository = new FakeProfileTransferRepository();
-        var useCase = new ImportProfile(transferRepository, profiles);
+        var useCase = new ImportProfile(transferRepository, profiles, new FakeEntitlementProvider(EntitlementTestData.Premium));
         var content = ProfileTransferProtection.Protect(
             ProfileTransferCsvSerializer.Serialize(CreateSnapshot()),
             Passphrase).Value;
@@ -127,13 +127,13 @@ public sealed class ProfileTransferUseCaseTests
         Assert.False(result.IsSuccess);
         Assert.Equal("profile.limit.reached", result.Error!.Code);
         Assert.False(transferRepository.ImportCalled);
-        Assert.Equal(4, profiles.Items.Count);
+        Assert.Equal(10, profiles.Items.Count);
     }
 
     [Fact]
     public async Task Preview_rejects_malformed_or_unsupported_files()
     {
-        var useCase = new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository());
+        var useCase = new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository(), new FakeEntitlementProvider(EntitlementTestData.Premium));
 
         var malformed = await useCase.PreviewAsync(
             Encoding.UTF8.GetBytes("not,a,profile"),
@@ -156,7 +156,7 @@ public sealed class ProfileTransferUseCaseTests
     public async Task Import_repository_failure_returns_persistence_error()
     {
         var transferRepository = new FakeProfileTransferRepository { ThrowOnImport = true };
-        var useCase = new ImportProfile(transferRepository, new FakeProfileRepository());
+        var useCase = new ImportProfile(transferRepository, new FakeProfileRepository(), new FakeEntitlementProvider(EntitlementTestData.Premium));
         var content = ProfileTransferProtection.Protect(
             ProfileTransferCsvSerializer.Serialize(CreateSnapshot()),
             Passphrase).Value;
@@ -175,7 +175,7 @@ public sealed class ProfileTransferUseCaseTests
     [Fact]
     public async Task Preview_requires_a_passphrase_for_protected_content()
     {
-        var useCase = new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository());
+        var useCase = new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository(), new FakeEntitlementProvider(EntitlementTestData.Premium));
         var content = ProfileTransferProtection.Protect(
             ProfileTransferCsvSerializer.Serialize(CreateSnapshot()),
             Passphrase).Value;
@@ -189,7 +189,7 @@ public sealed class ProfileTransferUseCaseTests
     [Fact]
     public async Task Preview_marks_previous_plain_csv_as_unprotected_legacy_content()
     {
-        var useCase = new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository());
+        var useCase = new ImportProfile(new FakeProfileTransferRepository(), new FakeProfileRepository(), new FakeEntitlementProvider(EntitlementTestData.Premium));
 
         var result = await useCase.PreviewAsync(
             ProfileTransferCsvSerializer.Serialize(CreateSnapshot()),
@@ -198,6 +198,60 @@ public sealed class ProfileTransferUseCaseTests
 
         Assert.True(result.IsSuccess);
         Assert.True(result.Value.IsLegacyUnprotected);
+    }
+
+    [Fact]
+    public async Task Free_export_is_rejected_before_reading_profile_data()
+    {
+        var repository = new FakeProfileTransferRepository { Snapshot = CreateSnapshot() };
+        var result = await new ExportProfile(repository, new FakeClock(), new FakeEntitlementProvider(EntitlementTestData.Free)).ExecuteAsync(
+            new ExportProfileCommand(repository.Snapshot!.Profile.Id),
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("premium.feature.required", result.Error!.Code);
+        Assert.Equal(0, repository.SnapshotReads);
+    }
+
+    [Fact]
+    public async Task Free_import_is_rejected_before_decrypting_file()
+    {
+        var useCase = new ImportProfile(
+            new FakeProfileTransferRepository(),
+            new FakeProfileRepository(),
+            new FakeEntitlementProvider(EntitlementTestData.Free));
+
+        var result = await useCase.PreviewAsync(
+            Encoding.UTF8.GetBytes("not a protected file"),
+            null,
+            CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("premium.feature.required", result.Error!.Code);
+    }
+
+    [Fact]
+    public async Task Free_import_execute_is_rejected_even_for_a_valid_preview()
+    {
+        var transferRepository = new FakeProfileTransferRepository();
+        var profiles = new FakeProfileRepository();
+        var content = ProfileTransferProtection.Protect(
+            ProfileTransferCsvSerializer.Serialize(CreateSnapshot()),
+            Passphrase).Value;
+        var premiumUseCase = new ImportProfile(
+            transferRepository,
+            profiles,
+            new FakeEntitlementProvider(EntitlementTestData.Premium));
+        var preview = (await premiumUseCase.PreviewAsync(content, Passphrase, CancellationToken.None)).Value;
+
+        var result = await new ImportProfile(
+            transferRepository,
+            profiles,
+            new FakeEntitlementProvider(EntitlementTestData.Free)).ExecuteAsync(preview, CancellationToken.None);
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal("premium.feature.required", result.Error!.Code);
+        Assert.False(transferRepository.ImportCalled);
     }
 
     private static ProfileTransferSnapshot CreateSnapshot(string name = "Anna")
@@ -233,12 +287,16 @@ public sealed class ProfileTransferUseCaseTests
         public ProfileTransferSnapshot? Snapshot { get; init; }
         public bool ThrowOnImport { get; init; }
         public bool ImportCalled { get; private set; }
+        public int SnapshotReads { get; private set; }
         public Profile? ImportedProfile { get; private set; }
         public IReadOnlyList<Measurement> ImportedMeasurements { get; private set; } = [];
         public IReadOnlyList<CalculationResult> ImportedResults { get; private set; } = [];
 
         public Task<ProfileTransferSnapshot?> GetSnapshotAsync(ProfileId profileId, CancellationToken cancellationToken)
-            => Task.FromResult(Snapshot?.Profile.Id == profileId ? Snapshot : null);
+        {
+            SnapshotReads++;
+            return Task.FromResult(Snapshot?.Profile.Id == profileId ? Snapshot : null);
+        }
 
         public Task ImportAsync(Profile profile, IReadOnlyList<Measurement> measurements, IReadOnlyList<CalculationResult> results, CancellationToken cancellationToken)
         {
