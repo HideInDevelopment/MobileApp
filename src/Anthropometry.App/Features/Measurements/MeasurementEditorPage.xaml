@@ -15,11 +15,6 @@
                             MaximumDate="{Binding MaximumMeasurementDate}"
                             IsEnabled="{Binding IsMeasurementDateEnabled}"
                             MinimumHeightRequest="48" />
-                <Button Grid.Row="1" Grid.ColumnSpan="2"
-                        Text="{Binding MeasurementDatePremiumText}"
-                        Command="{Binding ShowPremiumCommand}"
-                        IsVisible="{Binding IsMeasurementDateLocked}"
-                        Style="{StaticResource SecondaryButton}" />
             </Grid>
             <Grid ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto" RowSpacing="10" ColumnSpacing="8">
                 <Label Grid.Row="0" Text="{DynamicResource Weight}" VerticalOptions="Center" />

@@ -18,8 +18,6 @@ public interface IMeasurementNavigation
 
     Task ShowWeightGraphicAsync(ProfileId profileId);
 
-    Task ShowPremiumAsync();
-
     Task CloseMeasurementAsync();
 
     Task CancelAsync();

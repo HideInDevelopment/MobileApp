@@ -15,10 +15,6 @@
                         <Label Style="{StaticResource DropdownArrow}" />
                     </Grid>
                 </Grid>
-                <Button Text="{DynamicResource PremiumRequired}"
-                        Command="{Binding ShowPremiumCommand}"
-                        IsVisible="{Binding IsFullGraphicsLocked}"
-                        Style="{StaticResource SecondaryButton}" />
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                     <CheckBox Grid.Column="0" IsChecked="{Binding UseFromDate}" VerticalOptions="Center" />
                     <Label Grid.Column="1" Text="{DynamicResource FromDate}" VerticalOptions="Center" />

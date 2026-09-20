@@ -157,8 +157,7 @@ public sealed class MauiNavigation : IProfileNavigation, IMeasurementNavigation
             profileId,
             _languageService,
             _displayPreferences,
-            entitlement,
-            ShowPremiumAsync)));
+            entitlement)));
     }
 
     public async Task ShowSettingsAsync()

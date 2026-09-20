@@ -45,6 +45,8 @@ public sealed class MeasurementEditorPageMarkupTests
         Assert.Contains("DatePicker", markup);
         Assert.Contains("Date=\"{Binding MeasurementDate}\"", markup);
         Assert.Contains("IsEnabled=\"{Binding IsMeasurementDateEnabled}\"", markup);
-        Assert.Contains("IsVisible=\"{Binding IsMeasurementDateLocked}\"", markup);
+        Assert.DoesNotContain("IsVisible=\"{Binding IsMeasurementDateLocked}\"", markup);
+        Assert.DoesNotContain("MeasurementDatePremiumText", markup);
+        Assert.DoesNotContain("ShowPremiumCommand", markup);
     }
 }

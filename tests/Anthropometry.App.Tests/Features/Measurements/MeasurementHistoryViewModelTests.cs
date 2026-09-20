@@ -349,7 +349,6 @@ public sealed class MeasurementHistoryViewModelTests
             return Task.CompletedTask;
         }
 
-        public Task ShowPremiumAsync() => Task.CompletedTask;
 
         public Task CloseMeasurementAsync() => Task.CompletedTask;
 

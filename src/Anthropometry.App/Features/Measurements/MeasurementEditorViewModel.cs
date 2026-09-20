@@ -85,7 +85,6 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
         ShowGuidanceCommand = new AsyncRelayCommand<GuidanceTopic>(_navigation.ShowGuidanceAsync);
-        ShowPremiumCommand = new AsyncRelayCommand(_navigation.ShowPremiumAsync);
         _displayPreferences.PreferencesChanged += OnDisplayPreferencesChanged;
         LoadExistingMeasurement();
     }
@@ -198,8 +197,6 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     public IAsyncRelayCommand CancelCommand { get; }
 
     public IAsyncRelayCommand<GuidanceTopic> ShowGuidanceCommand { get; }
-
-    public IAsyncRelayCommand ShowPremiumCommand { get; }
 
     public async Task LoadEntitlementsAsync()
     {
