@@ -206,7 +206,8 @@ public sealed class ProfileEditorViewModelTests
             null,
             new NavigationSpy(),
             TestData.LanguageService(),
-            displayPreferences)
+            displayPreferences,
+            EntitlementTestData.Premium)
         {
             Name = "Manuel",
             HeightText = "5.9055118",
@@ -230,7 +231,8 @@ public sealed class ProfileEditorViewModelTests
             null,
             new NavigationSpy(),
             TestData.LanguageService(),
-            displayPreferences)
+            displayPreferences,
+            EntitlementTestData.Premium)
         {
             Name = "Anna",
             HeightText = "5.1",
@@ -261,7 +263,8 @@ public sealed class ProfileEditorViewModelTests
                 ProfileGender.Female),
             new NavigationSpy(),
             TestData.LanguageService(),
-            displayPreferences);
+            displayPreferences,
+            EntitlementTestData.Premium);
 
         Assert.Equal("5.1", viewModel.HeightText);
     }
@@ -277,7 +280,8 @@ public sealed class ProfileEditorViewModelTests
             new ProfileDto(profile.Id, profile.Name, new ProfileSettingsDto(180m, 35, ActivityLevel.Moderate), profile.CreatedAtUtc, profile.UpdatedAtUtc),
             new NavigationSpy(),
             TestData.LanguageService(),
-            displayPreferences);
+            displayPreferences,
+            EntitlementTestData.Premium);
 
         displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
 

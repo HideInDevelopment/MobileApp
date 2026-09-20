@@ -4,6 +4,7 @@ using Anthropometry.App.Tests.Support;
 using Anthropometry.Application.Abstractions;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Measurements;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Domain.Calculations;
 using Anthropometry.Domain.Measurements;
 using Xunit;
@@ -91,7 +92,7 @@ public sealed class WeightGraphicViewModelTests
         var displayPreferences = TestData.DisplayPreferences();
         displayPreferences.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
         displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
-        var viewModel = CreateViewModel(repository, profile.Id, displayPreferences: displayPreferences);
+        var viewModel = CreateViewModel(repository, profile.Id, displayPreferences: displayPreferences, entitlement: EntitlementTestData.Premium);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
         viewModel.SelectPoint(viewModel.Points[0]);
@@ -213,12 +214,14 @@ public sealed class WeightGraphicViewModelTests
         Anthropometry.Domain.Profiles.ProfileId profileId,
         Anthropometry.App.Localization.LanguageService? languageService = null,
         DisplayPreferencesService? displayPreferences = null,
-        FakeCalculationResultRepository? resultRepository = null)
+        FakeCalculationResultRepository? resultRepository = null,
+        EntitlementSnapshot? entitlement = null)
         => new(
             new GetMetricHistory(repository, resultRepository ?? new FakeCalculationResultRepository()),
             profileId,
             languageService ?? TestData.LanguageService(),
-            displayPreferences ?? TestData.DisplayPreferences());
+            displayPreferences ?? TestData.DisplayPreferences(),
+            entitlement);
 
     private static Measurement CreateMeasurement(
         Anthropometry.Domain.Profiles.ProfileId profileId,

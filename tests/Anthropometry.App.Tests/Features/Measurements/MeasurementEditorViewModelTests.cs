@@ -191,8 +191,10 @@ public sealed class MeasurementEditorViewModelTests
             profiles,
             measurements,
             results,
-            displayPreferences: displayPreferences);
+            displayPreferences: displayPreferences,
+            entitlementProvider: new FakeEntitlementProvider(EntitlementTestData.Premium));
 
+        await viewModel.LoadEntitlementsAsync();
         viewModel.WeightText = "176.3698";
         viewModel.NeckText = "15.7480";
         viewModel.AbdomenText = "35.4331";
@@ -208,7 +210,7 @@ public sealed class MeasurementEditorViewModelTests
     }
 
     [Fact]
-    public void Changing_measurement_units_reformats_entered_values()
+    public async Task Changing_measurement_units_reformats_entered_values()
     {
         var displayPreferences = TestData.DisplayPreferences();
         var viewModel = CreateViewModel(
@@ -217,7 +219,9 @@ public sealed class MeasurementEditorViewModelTests
             new FakeProfileRepository(),
             new FakeMeasurementRepository(),
             new FakeCalculationResultRepository(),
-            displayPreferences: displayPreferences);
+            displayPreferences: displayPreferences,
+            entitlementProvider: new FakeEntitlementProvider(EntitlementTestData.Premium));
+        await viewModel.LoadEntitlementsAsync();
         viewModel.WeightText = "80";
         viewModel.NeckText = "40";
         viewModel.AbdomenText = "90";

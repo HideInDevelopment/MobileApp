@@ -1,6 +1,7 @@
 using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
+using Anthropometry.Application.Entitlements;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -25,22 +26,35 @@ public sealed class SettingsViewModel : ObservableObject
     private TimeSpan _reminderTime;
     private int _selectedInactivityDays;
     private string _reminderStatus = string.Empty;
+    private readonly EntitlementSnapshot _entitlement;
+    private readonly Func<Task>? _showPremiumAsync;
+    private readonly EntitledDisplayPreferences _entitledDisplayPreferences;
 
     public SettingsViewModel(
         LanguageService languageService,
         ThemeService themeService,
         DisplayPreferencesService displayPreferences,
-        ReminderCoordinator? reminders = null)
+        ReminderCoordinator? reminders = null,
+        EntitlementSnapshot? entitlement = null,
+        Func<Task>? showPremiumAsync = null)
     {
         _languageService = languageService;
         _themeService = themeService;
         _displayPreferences = displayPreferences;
+        _entitlement = entitlement ?? new EntitlementSnapshot(
+            EntitlementTier.Free,
+            SubscriptionState.Active,
+            null,
+            null,
+            null);
+        _showPremiumAsync = showPremiumAsync;
+        _entitledDisplayPreferences = new EntitledDisplayPreferences(_displayPreferences, _entitlement);
         _reminders = reminders;
         Languages = LanguageService.SupportedLanguages;
         _selectedLanguage = Languages.Single(language => language.Code == _languageService.CurrentLanguageCode);
         _selectedThemeCode = _themeService.CurrentThemeCode;
         _selectedDateFormatCode = _displayPreferences.DateFormatCode;
-        _selectedMeasurementSystemCode = _displayPreferences.MeasurementSystemCode;
+        _selectedMeasurementSystemCode = _entitledDisplayPreferences.MeasurementSystemCode;
         var reminderSettings = _reminders?.Current ?? ReminderSettings.Default;
         _isDailyReminderEnabled = reminderSettings.DailyEnabled;
         _isInactivityReminderEnabled = reminderSettings.InactivityEnabled;
@@ -89,6 +103,9 @@ public sealed class SettingsViewModel : ObservableObject
         new(DisplayPreferencesService.MetricCode, _languageService.Get("Metric")),
         new(DisplayPreferencesService.ImperialCode, _languageService.Get("Imperial"))
     ];
+
+    public bool IsMeasurementSystemLocked
+        => !FeatureAccessPolicy.CanUse(_entitlement, PremiumFeature.ImperialUnits);
 
     public IReadOnlyList<ReminderIntervalOption> InactivityIntervals =>
     [
@@ -209,6 +226,14 @@ public sealed class SettingsViewModel : ObservableObject
             }
 
             _selectedMeasurementSystemCode = value.Code;
+            if (value.Code == DisplayPreferencesService.ImperialCode && IsMeasurementSystemLocked)
+            {
+                _selectedMeasurementSystemCode = _entitledDisplayPreferences.MeasurementSystemCode;
+                OnPropertyChanged(nameof(SelectedMeasurementSystem));
+                _ = _showPremiumAsync?.Invoke();
+                return;
+            }
+
             OnPropertyChanged();
             _displayPreferences.SetMeasurementSystem(value.Code);
         }

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Application.Measurements;
 using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
@@ -19,6 +20,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     private readonly IMeasurementNavigation _navigation;
     private readonly LanguageService _languageService;
     private readonly DisplayPreferencesService _displayPreferences;
+    private readonly EntitledDisplayPreferences _entitledDisplayPreferences;
     private readonly ObservableCollection<MeasurementHistoryItem> _measurements = [];
     private bool _isLoading;
     private string? _errorMessage;
@@ -38,7 +40,8 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         ProfileDto profile,
         IMeasurementNavigation navigation,
         LanguageService languageService,
-        DisplayPreferencesService displayPreferences)
+        DisplayPreferencesService displayPreferences,
+        EntitlementSnapshot? entitlement = null)
     {
         _getHistory = getHistory;
         _deleteMeasurement = deleteMeasurement;
@@ -46,6 +49,9 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
         _navigation = navigation;
         _languageService = languageService;
         _displayPreferences = displayPreferences;
+        _entitledDisplayPreferences = new EntitledDisplayPreferences(
+            _displayPreferences,
+            entitlement ?? new EntitlementSnapshot(EntitlementTier.Free, SubscriptionState.Active, null, null, null));
         Measurements = new ReadOnlyObservableCollection<MeasurementHistoryItem>(_measurements);
         MeasurementTypeOptions = CreateMeasurementTypeOptions();
         _selectedTypeOption = MeasurementTypeOptions[0];
@@ -353,7 +359,7 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
     private MeasurementHistoryItem CreateItem(MeasurementDto measurement)
         => new(
             measurement,
-            _displayPreferences.FormatDate(measurement.MeasuredAtUtc),
+            _entitledDisplayPreferences.FormatDate(measurement.MeasuredAtUtc),
             measurement.Type == MeasurementType.WeightOnly
                 ? _languageService.Get("WeightOnly")
                 : _languageService.Get("WeightAndSizes"),
@@ -361,14 +367,14 @@ public sealed class MeasurementHistoryViewModel : ObservableObject
                 CultureInfo.CurrentCulture,
                 "{0}: {1:0.##} {2}",
                 _languageService.Get("Weight"),
-                _displayPreferences.ToDisplayWeight(measurement.WeightKg),
-                _languageService.Get(_displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg")),
+                _entitledDisplayPreferences.ToDisplayWeight(measurement.WeightKg),
+                _languageService.Get(_entitledDisplayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg")),
             string.Format(
                 CultureInfo.CurrentCulture,
                 "{0}: {1:0.##} {2}",
                 _languageService.Get("Height"),
-                _displayPreferences.ToDisplayHeight(measurement.HeightCm),
-                _languageService.Get(_displayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "M")));
+                _entitledDisplayPreferences.ToDisplayHeight(measurement.HeightCm),
+                _languageService.Get(_entitledDisplayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "M")));
 
     private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
         => RefreshItems();

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using Anthropometry.Application.Calculations;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.Domain.Calculations;
@@ -51,6 +52,7 @@ public sealed class WeightGraphicViewModel : ObservableObject
     private readonly ProfileId _profileId;
     private readonly LanguageService _languageService;
     private readonly DisplayPreferencesService _displayPreferences;
+    private readonly EntitledDisplayPreferences _entitledDisplayPreferences;
     private readonly ObservableCollection<WeightGraphicPoint> _points = [];
     private bool _isLoading;
     private string? _errorMessage;
@@ -67,12 +69,16 @@ public sealed class WeightGraphicViewModel : ObservableObject
         GetMetricHistory getHistory,
         ProfileId profileId,
         LanguageService languageService,
-        DisplayPreferencesService displayPreferences)
+        DisplayPreferencesService displayPreferences,
+        EntitlementSnapshot? entitlement = null)
     {
         _getHistory = getHistory;
         _profileId = profileId;
         _languageService = languageService;
         _displayPreferences = displayPreferences;
+        _entitledDisplayPreferences = new EntitledDisplayPreferences(
+            _displayPreferences,
+            entitlement ?? new EntitlementSnapshot(EntitlementTier.Free, SubscriptionState.Active, null, null, null));
         Points = new ReadOnlyObservableCollection<WeightGraphicPoint>(_points);
         MetricOptions = CreateMetricOptions();
         _selectedMetricOption = MetricOptions[0];
@@ -195,7 +201,7 @@ public sealed class WeightGraphicViewModel : ObservableObject
             CultureInfo.CurrentCulture,
             "{0}: {1}{2}{3}: {4} {5}",
             DateAxisLabel,
-            _displayPreferences.FormatDate(_selectedPoint.MeasuredAtUtc),
+            _entitledDisplayPreferences.FormatDate(_selectedPoint.MeasuredAtUtc),
             Environment.NewLine,
             MetricAxisLabel,
             _selectedPoint.DisplayedValue.ToString("0.##", CultureInfo.CurrentCulture),
@@ -366,16 +372,16 @@ public sealed class WeightGraphicViewModel : ObservableObject
     private WeightGraphicPoint CreatePoint(MetricHistoryDto metric)
     {
         var displayedValue = metric.CalculationType is null
-            ? _displayPreferences.ToDisplayWeight(metric.Value)
+            ? _entitledDisplayPreferences.ToDisplayWeight(metric.Value)
             : metric.Value;
         var unit = metric.CalculationType is null
-            ? _languageService.Get(_displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg")
+            ? _languageService.Get(_entitledDisplayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg")
             : metric.Unit;
         return new WeightGraphicPoint(
             metric.MeasuredAtUtc,
             metric.Value,
             displayedValue,
-            _displayPreferences.FormatCompactDate(metric.MeasuredAtUtc),
+            _entitledDisplayPreferences.FormatCompactDate(metric.MeasuredAtUtc),
             metric.Value,
             displayedValue,
             unit,
@@ -386,7 +392,7 @@ public sealed class WeightGraphicViewModel : ObservableObject
     }
 
     private decimal ChartPadding => SelectedMetric == MetricKind.Weight
-        ? _displayPreferences.ToDisplayWeight(10m)
+        ? _entitledDisplayPreferences.ToDisplayWeight(10m)
         : 10m;
 
     private void OnDisplayPreferencesChanged(object? sender, EventArgs e)
@@ -433,16 +439,16 @@ public sealed class WeightGraphicViewModel : ObservableObject
         {
             var value = point.MetricValue ?? point.WeightKg;
             var displayedValue = point.MetricCalculationType is null
-                ? _displayPreferences.ToDisplayWeight(value)
+                ? _entitledDisplayPreferences.ToDisplayWeight(value)
                 : value;
             var unit = point.MetricCalculationType is null
-                ? _languageService.Get(_displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg")
+                ? _languageService.Get(_entitledDisplayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg")
                 : point.MetricUnit;
             _points.Add(new WeightGraphicPoint(
                 point.MeasuredAtUtc,
                 point.WeightKg,
                 displayedValue,
-                _displayPreferences.FormatCompactDate(point.MeasuredAtUtc),
+                _entitledDisplayPreferences.FormatCompactDate(point.MeasuredAtUtc),
                 value,
                 displayedValue,
                 unit,

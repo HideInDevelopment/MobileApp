@@ -3,6 +3,8 @@ using Anthropometry.App.Features.Settings;
 using Anthropometry.App.Display;
 using Anthropometry.App.Localization;
 using Anthropometry.App.Theme;
+using Anthropometry.Application.Entitlements;
+using Anthropometry.App.Tests.Support;
 
 namespace Anthropometry.App.Tests.Features.Settings;
 
@@ -69,7 +71,7 @@ public sealed class SettingsViewModelTests
         var preferences = new FakeThemePreferenceStore();
         var themeService = new ThemeService(preferences);
         themeService.Initialize();
-        var viewModel = new SettingsViewModel(languageService, themeService, CreateDisplayPreferences());
+        var viewModel = new SettingsViewModel(languageService, themeService, CreateDisplayPreferences(), entitlement: EntitlementTestData.Premium);
 
         viewModel.SelectedTheme = viewModel.Themes.Single(theme => theme.Code == "dark");
 
@@ -86,7 +88,7 @@ public sealed class SettingsViewModelTests
         var themeService = new ThemeService(new FakeThemePreferenceStore());
         themeService.Initialize();
         var displayPreferences = CreateDisplayPreferences();
-        var viewModel = new SettingsViewModel(languageService, themeService, displayPreferences);
+        var viewModel = new SettingsViewModel(languageService, themeService, displayPreferences, entitlement: EntitlementTestData.Premium);
 
         viewModel.SelectLanguageCommand.Execute("de");
         viewModel.SelectThemeCommand.Execute("dark");
@@ -116,7 +118,7 @@ public sealed class SettingsViewModelTests
         var themeService = new ThemeService(new FakeThemePreferenceStore());
         themeService.Initialize();
 
-        var viewModel = new SettingsViewModel(languageService, themeService, displayPreferences);
+        var viewModel = new SettingsViewModel(languageService, themeService, displayPreferences, entitlement: EntitlementTestData.Premium);
 
         Assert.Equal(["dd/MM/yyyy", "MM/dd/yyyy"], viewModel.DateFormats.Select(option => option.Code));
         Assert.Equal(["metric", "imperial"], viewModel.MeasurementSystems.Select(option => option.Code));
@@ -128,6 +130,41 @@ public sealed class SettingsViewModelTests
 
         Assert.Equal("dd/MM/yyyy", displayStore.DateFormatCode);
         Assert.Equal("metric", displayStore.MeasurementSystemCode);
+    }
+
+    [Fact]
+    public void Free_users_see_imperial_units_locked_and_are_sent_to_premium()
+    {
+        var languageService = new LanguageService(new FakeLanguagePreferenceStore());
+        languageService.Initialize(CultureInfo.GetCultureInfo("en-US"));
+        var displayStore = new FakeDisplayPreferenceStore
+        {
+            MeasurementSystemCode = DisplayPreferencesService.ImperialCode
+        };
+        var displayPreferences = new DisplayPreferencesService(displayStore);
+        displayPreferences.Initialize();
+        var themeService = new ThemeService(new FakeThemePreferenceStore());
+        themeService.Initialize();
+        var premiumOpened = false;
+        var viewModel = new SettingsViewModel(
+            languageService,
+            themeService,
+            displayPreferences,
+            entitlement: EntitlementTestData.Free,
+            showPremiumAsync: () =>
+            {
+                premiumOpened = true;
+                return Task.CompletedTask;
+            });
+
+        Assert.True(viewModel.IsMeasurementSystemLocked);
+        Assert.Equal(DisplayPreferencesService.MetricCode, viewModel.SelectedMeasurementSystem!.Code);
+
+        viewModel.SelectMeasurementSystemCommand.Execute(DisplayPreferencesService.ImperialCode);
+
+        Assert.True(premiumOpened);
+        Assert.Equal(DisplayPreferencesService.ImperialCode, displayStore.MeasurementSystemCode);
+        Assert.Equal(DisplayPreferencesService.MetricCode, viewModel.SelectedMeasurementSystem!.Code);
     }
 
     private sealed class FakeLanguagePreferenceStore : ILanguagePreferenceStore

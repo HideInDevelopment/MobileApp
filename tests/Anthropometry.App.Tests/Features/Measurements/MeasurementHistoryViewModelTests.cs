@@ -1,6 +1,7 @@
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Display;
 using Anthropometry.Application.Measurements;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Application.Common;
 using Anthropometry.App.Tests.Support;
 using Anthropometry.Domain.Measurements;
@@ -84,7 +85,7 @@ public sealed class MeasurementHistoryViewModelTests
         var displayPreferences = TestData.DisplayPreferences();
         displayPreferences.SetDateFormat(DisplayPreferencesService.MonthDayYearCode);
         displayPreferences.SetMeasurementSystem(DisplayPreferencesService.ImperialCode);
-        var viewModel = CreateViewModel(repository, out _, profile, displayPreferences: displayPreferences);
+        var viewModel = CreateViewModel(repository, out _, profile, displayPreferences: displayPreferences, entitlement: EntitlementTestData.Premium);
 
         await viewModel.LoadCommand.ExecuteAsync(null);
 
@@ -273,7 +274,8 @@ public sealed class MeasurementHistoryViewModelTests
         out NavigationSpy navigation,
         Anthropometry.Domain.Profiles.Profile profile,
         Anthropometry.App.Localization.LanguageService? languageService = null,
-        DisplayPreferencesService? displayPreferences = null)
+        DisplayPreferencesService? displayPreferences = null,
+        EntitlementSnapshot? entitlement = null)
     {
         navigation = new NavigationSpy();
         return new MeasurementHistoryViewModel(
@@ -288,7 +290,8 @@ public sealed class MeasurementHistoryViewModelTests
                 profile.Gender),
             navigation,
             languageService ?? TestData.LanguageService(),
-            displayPreferences ?? TestData.DisplayPreferences());
+            displayPreferences ?? TestData.DisplayPreferences(),
+            entitlement);
     }
 
     private static Measurement CreateMeasurement(Anthropometry.Domain.Profiles.ProfileId profileId, MeasurementType type, DateTimeOffset measuredAtUtc)

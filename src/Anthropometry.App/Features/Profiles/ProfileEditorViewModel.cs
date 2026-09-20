@@ -1,5 +1,6 @@
 using System.Globalization;
 using Anthropometry.Application.Common;
+using Anthropometry.Application.Entitlements;
 using Anthropometry.Application.Profiles;
 using Anthropometry.App.Display;
 using Anthropometry.App.Features.Help;
@@ -19,6 +20,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     private readonly IProfileNavigation _navigation;
     private readonly LanguageService _languageService;
     private readonly DisplayPreferencesService _displayPreferences;
+    private readonly EntitledDisplayPreferences _entitledDisplayPreferences;
     private string _name;
     private string _heightText;
     private string _ageText;
@@ -36,7 +38,8 @@ public sealed class ProfileEditorViewModel : ObservableObject
         ProfileDto? existingProfile,
         IProfileNavigation navigation,
         LanguageService languageService,
-        DisplayPreferencesService displayPreferences)
+        DisplayPreferencesService displayPreferences,
+        EntitlementSnapshot? entitlement = null)
     {
         _createProfile = createProfile;
         _updateProfile = updateProfile;
@@ -44,10 +47,13 @@ public sealed class ProfileEditorViewModel : ObservableObject
         _navigation = navigation;
         _languageService = languageService;
         _displayPreferences = displayPreferences;
-        _heightUnitCode = _displayPreferences.HeightUnitCode;
+        _entitledDisplayPreferences = new EntitledDisplayPreferences(
+            _displayPreferences,
+            entitlement ?? new EntitlementSnapshot(EntitlementTier.Free, SubscriptionState.Active, null, null, null));
+        _heightUnitCode = _entitledDisplayPreferences.HeightUnitCode;
         _name = existingProfile?.Name ?? string.Empty;
         _heightText = existingProfile?.Settings is { } existingSettings
-            ? FormatHeight(existingSettings.HeightCm, _displayPreferences.HeightUnitCode)
+            ? FormatHeight(existingSettings.HeightCm, _entitledDisplayPreferences.HeightUnitCode)
             : string.Empty;
         _ageText = existingProfile?.Settings?.AgeYears.ToString(CultureInfo.CurrentCulture) ?? string.Empty;
         ActivityLevels =
@@ -88,7 +94,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     }
 
     public string HeightUnitText => _languageService.Get(
-        _displayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "M");
+        _entitledDisplayPreferences.HeightUnitCode == DisplayPreferencesService.FeetCode ? "Ft" : "M");
 
     public string AgeText
     {
@@ -199,7 +205,7 @@ public sealed class ProfileEditorViewModel : ObservableObject
     {
         if (!TryParseDecimal(HeightText, out var enteredHeight)
             || !int.TryParse(AgeText, NumberStyles.Integer, CultureInfo.CurrentCulture, out var age)
-            || !TryConvertHeight(enteredHeight, _displayPreferences.HeightUnitCode, out var height)
+            || !TryConvertHeight(enteredHeight, _entitledDisplayPreferences.HeightUnitCode, out var height)
             || height is < 50m or > 300m
             || age is < 1 or > 120
             || SelectedActivityLevel is null)
@@ -255,11 +261,11 @@ public sealed class ProfileEditorViewModel : ObservableObject
         if (TryParseDecimal(_heightText, out var enteredHeight)
             && TryConvertHeight(enteredHeight, _heightUnitCode, out var heightCm))
         {
-            _heightText = FormatHeight(heightCm, _displayPreferences.HeightUnitCode);
+            _heightText = FormatHeight(heightCm, _entitledDisplayPreferences.HeightUnitCode);
             OnPropertyChanged(nameof(HeightText));
         }
 
-        _heightUnitCode = _displayPreferences.HeightUnitCode;
+        _heightUnitCode = _entitledDisplayPreferences.HeightUnitCode;
         OnPropertyChanged(nameof(HeightUnitText));
     }
 }

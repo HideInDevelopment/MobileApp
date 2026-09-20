@@ -45,6 +45,9 @@
                     <Label Style="{StaticResource DropdownArrow}" />
                 </Grid>
             </Grid>
+            <Label Text="{DynamicResource PremiumRequired}"
+                   IsVisible="{Binding IsMeasurementSystemLocked}"
+                   Style="{StaticResource SecondaryText}" />
             <Border Style="{StaticResource CardBorder}" Padding="16" Margin="0,8,0,0">
                 <VerticalStackLayout Spacing="12">
                     <Label Text="{DynamicResource ReminderSettings}" Style="{StaticResource CardTitle}" />

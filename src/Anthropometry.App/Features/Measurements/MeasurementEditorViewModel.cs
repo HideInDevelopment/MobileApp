@@ -27,6 +27,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     private readonly IMeasurementNavigation _navigation;
     private readonly LanguageService _languageService;
     private readonly DisplayPreferencesService _displayPreferences;
+    private readonly EntitledDisplayPreferences _entitledDisplayPreferences;
     private readonly IEntitlementProvider _entitlementProvider;
     private readonly IClock? _clock;
     private readonly MeasurementDto? _existingMeasurement;
@@ -77,8 +78,9 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         _existingMeasurement = existingMeasurement;
         _entitlementProvider = entitlementProvider ?? FreeEntitlementProvider.Instance;
         _clock = clock;
-        _weightUnitCode = _displayPreferences.WeightUnitCode;
-        _circumferenceUnitCode = _displayPreferences.CircumferenceUnitCode;
+        _entitledDisplayPreferences = new EntitledDisplayPreferences(_displayPreferences, _entitlement);
+        _weightUnitCode = _entitledDisplayPreferences.WeightUnitCode;
+        _circumferenceUnitCode = _entitledDisplayPreferences.CircumferenceUnitCode;
         _measurementDate = (_existingMeasurement?.MeasuredAtUtc ?? NowUtc).ToLocalTime().Date;
         SaveCommand = new AsyncRelayCommand(SaveAsync, () => CanSave);
         CancelCommand = new AsyncRelayCommand(_navigation.CancelAsync);
@@ -128,10 +130,10 @@ public sealed class MeasurementEditorViewModel : ObservableObject
     public GuidanceTopic TrunkGuidanceTopic => IsFemale ? GuidanceTopic.Waist : GuidanceTopic.Abdomen;
 
     public string WeightUnitText => _languageService.Get(
-        _displayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg");
+        _entitledDisplayPreferences.WeightUnitCode == DisplayPreferencesService.PoundsCode ? "Lb" : "Kg");
 
     public string LengthUnitText => _languageService.Get(
-        _displayPreferences.CircumferenceUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm");
+        _entitledDisplayPreferences.CircumferenceUnitCode == DisplayPreferencesService.InchesCode ? "In" : "Cm");
 
     public string WeightText
     {
@@ -206,6 +208,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         try
         {
             _entitlement = await _entitlementProvider.GetCurrentAsync(CancellationToken.None);
+            _entitledDisplayPreferences.SetEntitlement(_entitlement);
+            OnDisplayPreferencesChanged(this, EventArgs.Empty);
         }
         catch
         {
@@ -286,7 +290,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             return false;
         }
 
-        var weight = _displayPreferences.ToMetricWeight(enteredWeight);
+        var weight = _entitledDisplayPreferences.ToMetricWeight(enteredWeight);
         if (weight is < 1m or > 500m)
         {
             command = null!;
@@ -305,8 +309,8 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                 return false;
             }
 
-            neck = _displayPreferences.ToMetricCircumference(neckValue);
-            abdomen = _displayPreferences.ToMetricCircumference(abdomenValue);
+            neck = _entitledDisplayPreferences.ToMetricCircumference(neckValue);
+            abdomen = _entitledDisplayPreferences.ToMetricCircumference(abdomenValue);
             if (neck is < 1m or > 100m || abdomen is < 1m or > 400m)
             {
                 command = null!;
@@ -321,7 +325,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
                     return false;
                 }
 
-                hip = _displayPreferences.ToMetricCircumference(hipValue);
+                hip = _entitledDisplayPreferences.ToMetricCircumference(hipValue);
                 if (hip is < 1m or > 400m)
                 {
                     command = null!;
@@ -415,15 +419,15 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             return;
         }
 
-        _weightText = _displayPreferences.ToDisplayWeight(_existingMeasurement.WeightKg).ToString("0.##", CultureInfo.CurrentCulture);
+        _weightText = _entitledDisplayPreferences.ToDisplayWeight(_existingMeasurement.WeightKg).ToString("0.##", CultureInfo.CurrentCulture);
         _neckText = _existingMeasurement.NeckCm.HasValue
-            ? _displayPreferences.ToDisplayCircumference(_existingMeasurement.NeckCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
+            ? _entitledDisplayPreferences.ToDisplayCircumference(_existingMeasurement.NeckCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
             : string.Empty;
         _abdomenText = _existingMeasurement.AbdomenCm.HasValue
-            ? _displayPreferences.ToDisplayCircumference(_existingMeasurement.AbdomenCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
+            ? _entitledDisplayPreferences.ToDisplayCircumference(_existingMeasurement.AbdomenCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
             : string.Empty;
         _hipText = _existingMeasurement.HipCm.HasValue
-            ? _displayPreferences.ToDisplayCircumference(_existingMeasurement.HipCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
+            ? _entitledDisplayPreferences.ToDisplayCircumference(_existingMeasurement.HipCm.Value).ToString("0.##", CultureInfo.CurrentCulture)
             : string.Empty;
         OnPropertyChanged(nameof(WeightText));
         OnPropertyChanged(nameof(NeckText));
@@ -437,7 +441,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
         if (TryParseDecimal(_weightText, out var enteredWeight))
         {
             var weightKg = DisplayPreferencesService.ConvertWeightToMetric(enteredWeight, _weightUnitCode);
-            _weightText = DisplayPreferencesService.ConvertWeightToDisplay(weightKg, _displayPreferences.WeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+            _weightText = DisplayPreferencesService.ConvertWeightToDisplay(weightKg, _entitledDisplayPreferences.WeightUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
             OnPropertyChanged(nameof(WeightText));
         }
 
@@ -446,7 +450,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             var neckCm = DisplayPreferencesService.ConvertCircumferenceToMetric(enteredNeck, _circumferenceUnitCode);
             _neckText = DisplayPreferencesService.ConvertCircumferenceToDisplay(
                 neckCm,
-                _displayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+                _entitledDisplayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
             OnPropertyChanged(nameof(NeckText));
         }
 
@@ -455,7 +459,7 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             var abdomenCm = DisplayPreferencesService.ConvertCircumferenceToMetric(enteredAbdomen, _circumferenceUnitCode);
             _abdomenText = DisplayPreferencesService.ConvertCircumferenceToDisplay(
                 abdomenCm,
-                _displayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+                _entitledDisplayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
             OnPropertyChanged(nameof(AbdomenText));
         }
 
@@ -464,12 +468,12 @@ public sealed class MeasurementEditorViewModel : ObservableObject
             var hipCm = DisplayPreferencesService.ConvertCircumferenceToMetric(enteredHip, _circumferenceUnitCode);
             _hipText = DisplayPreferencesService.ConvertCircumferenceToDisplay(
                 hipCm,
-                _displayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
+                _entitledDisplayPreferences.CircumferenceUnitCode).ToString("0.##", CultureInfo.CurrentCulture);
             OnPropertyChanged(nameof(HipText));
         }
 
-        _weightUnitCode = _displayPreferences.WeightUnitCode;
-        _circumferenceUnitCode = _displayPreferences.CircumferenceUnitCode;
+        _weightUnitCode = _entitledDisplayPreferences.WeightUnitCode;
+        _circumferenceUnitCode = _entitledDisplayPreferences.CircumferenceUnitCode;
         OnPropertyChanged(nameof(WeightUnitText));
         OnPropertyChanged(nameof(LengthUnitText));
         OnPropertyChanged(nameof(CanSave));
