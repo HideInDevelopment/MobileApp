@@ -23,4 +23,11 @@
   <data name="LanguageSimplifiedChinese"><value>中国語（簡体字）</value></data>
   <data name="LanguageArabic"><value>アラビア語</value></data>
   <data name="LanguageHindi"><value>ヒンディー語</value></data>
+  <data name="HelpTransferTitle"><value>プロフィール転送コード</value></data>
+  <data name="HelpTransferBody"><value>プロフィールをエクスポートすると、アプリはランダムな16桁の転送コードを作成し、ファイルを共有する前に表示します。</value></data>
+  <data name="HelpTransferCodeBody"><value>別のデバイスにプロフィールをインポートするときに、このコードを入力してください。後で開くために必要なので、エクスポートしたファイルと一緒に保管してください。</value></data>
+  <data name="HelpTransferUsefulness"><value>このコードにより個人の健康データを保護しながら、プロフィールを簡単に転送できます。</value></data>
+  <data name="HelpTransferSafety"><value>エクスポートごとに新しいコードが作成されます。コードを失うと、暗号化されたプロフィールを開けません。</value></data>
+  <data name="Previous"><value>前へ</value></data>
+  <data name="Next"><value>次へ</value></data>
 </root>

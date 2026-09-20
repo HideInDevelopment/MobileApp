@@ -107,4 +107,11 @@
   <data name="LanguageSimplifiedChinese"><value>الصينية المبسطة</value></data>
   <data name="LanguageArabic"><value>العربية</value></data>
   <data name="LanguageHindi"><value>الهندية</value></data>
+  <data name="HelpTransferTitle"><value>رموز نقل الملف الشخصي</value></data>
+  <data name="HelpTransferBody"><value>عند تصدير ملف شخصي، ينشئ التطبيق رمز نقل عشوائيًا من 16 رقمًا ويعرضه قبل مشاركة الملف.</value></data>
+  <data name="HelpTransferCodeBody"><value>أدخل هذا الرمز عند استيراد الملف الشخصي على جهاز آخر. احتفظ بالرمز مع الملف المُصدَّر لأنك ستحتاج إليه لفتحه لاحقًا.</value></data>
+  <data name="HelpTransferUsefulness"><value>يحافظ الرمز على حماية بياناتك الصحية الشخصية، ويجعل نقل الملفات الشخصية بسيطًا وسهل الفهم.</value></data>
+  <data name="HelpTransferSafety"><value>يُنشأ رمز جديد لكل عملية تصدير. إذا فقدت الرمز، فلن تتمكن من فتح الملف الشخصي المشفّر.</value></data>
+  <data name="Previous"><value>السابق</value></data>
+  <data name="Next"><value>التالي</value></data>
 </root>

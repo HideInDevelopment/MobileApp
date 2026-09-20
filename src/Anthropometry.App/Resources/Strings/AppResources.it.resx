@@ -24,4 +24,11 @@
   <data name="LanguageSimplifiedChinese"><value>Cinese semplificato</value></data>
   <data name="LanguageArabic"><value>Arabo</value></data>
   <data name="LanguageHindi"><value>Hindi</value></data>
+  <data name="HelpTransferTitle"><value>Codici di trasferimento del profilo</value></data>
+  <data name="HelpTransferBody"><value>Quando esporti un profilo, l’app crea un codice di trasferimento casuale di 16 cifre e lo mostra prima di condividere il file.</value></data>
+  <data name="HelpTransferCodeBody"><value>Inserisci questo codice quando importi il profilo su un altro dispositivo. Conserva il codice insieme al file esportato, perché ti servirà per aprirlo in seguito.</value></data>
+  <data name="HelpTransferUsefulness"><value>Il codice protegge i tuoi dati personali sulla salute e rende il trasferimento dei profili semplice e facile da capire.</value></data>
+  <data name="HelpTransferSafety"><value>Per ogni esportazione viene creato un nuovo codice. Se perdi il codice, il profilo crittografato non può essere aperto.</value></data>
+  <data name="Previous"><value>Precedente</value></data>
+  <data name="Next"><value>Avanti</value></data>
 </root>

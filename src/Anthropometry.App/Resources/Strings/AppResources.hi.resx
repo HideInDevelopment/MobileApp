@@ -107,4 +107,11 @@
   <data name="LanguageSimplifiedChinese"><value>सरल चीनी</value></data>
   <data name="LanguageArabic"><value>अरबी</value></data>
   <data name="LanguageHindi"><value>हिंदी</value></data>
+  <data name="HelpTransferTitle"><value>प्रोफ़ाइल स्थानांतरण कोड</value></data>
+  <data name="HelpTransferBody"><value>प्रोफ़ाइल निर्यात करते समय ऐप एक यादृच्छिक 16 अंकों का स्थानांतरण कोड बनाता है और फ़ाइल साझा करने से पहले उसे दिखाता है।</value></data>
+  <data name="HelpTransferCodeBody"><value>किसी दूसरे डिवाइस पर प्रोफ़ाइल आयात करते समय यह कोड दर्ज करें। कोड को निर्यात की गई फ़ाइल के साथ सुरक्षित रखें, क्योंकि बाद में फ़ाइल खोलने के लिए इसकी आवश्यकता होगी।</value></data>
+  <data name="HelpTransferUsefulness"><value>यह कोड आपके व्यक्तिगत स्वास्थ्य डेटा को सुरक्षित रखता है और प्रोफ़ाइल स्थानांतरण को सरल बनाता है।</value></data>
+  <data name="HelpTransferSafety"><value>हर निर्यात के लिए नया कोड बनाया जाता है। कोड खो जाने पर एन्क्रिप्ट की गई प्रोफ़ाइल नहीं खोली जा सकती।</value></data>
+  <data name="Previous"><value>पिछला</value></data>
+  <data name="Next"><value>अगला</value></data>
 </root>

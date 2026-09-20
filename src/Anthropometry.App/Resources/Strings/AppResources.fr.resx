@@ -215,4 +215,11 @@
   <data name="LanguageSimplifiedChinese"><value>Chinois simplifié</value></data>
   <data name="LanguageArabic"><value>Arabe</value></data>
   <data name="LanguageHindi"><value>Hindi</value></data>
+  <data name="HelpTransferTitle"><value>Codes de transfert de profil</value></data>
+  <data name="HelpTransferBody"><value>Lorsque vous exportez un profil, l’application crée un code de transfert aléatoire à 16 chiffres et l’affiche avant le partage du fichier.</value></data>
+  <data name="HelpTransferCodeBody"><value>Saisissez ce code lorsque vous importez le profil sur un autre appareil. Conservez le code avec le fichier exporté, car vous en aurez besoin pour l’ouvrir plus tard.</value></data>
+  <data name="HelpTransferUsefulness"><value>Le code protège vos données de santé personnelles tout en rendant le transfert des profils simple et facile à comprendre.</value></data>
+  <data name="HelpTransferSafety"><value>Un nouveau code est créé pour chaque exportation. Si vous perdez le code, le profil chiffré ne peut pas être ouvert.</value></data>
+  <data name="Previous"><value>Précédent</value></data>
+  <data name="Next"><value>Suivant</value></data>
 </root>

@@ -23,4 +23,11 @@
   <data name="LanguageSimplifiedChinese"><value>简体中文</value></data>
   <data name="LanguageArabic"><value>阿拉伯语</value></data>
   <data name="LanguageHindi"><value>印地语</value></data>
+  <data name="HelpTransferTitle"><value>个人资料传输代码</value></data>
+  <data name="HelpTransferBody"><value>导出个人资料时，应用会生成一个随机的16位传输代码，并在分享文件前显示该代码。</value></data>
+  <data name="HelpTransferCodeBody"><value>在另一台设备上导入个人资料时请输入此代码。请将代码与导出的文件一起保存，因为之后打开文件时需要它。</value></data>
+  <data name="HelpTransferUsefulness"><value>该代码可以保护您的个人健康数据，同时让个人资料传输变得简单易懂。</value></data>
+  <data name="HelpTransferSafety"><value>每次导出都会生成新的代码。如果丢失代码，将无法打开加密的个人资料。</value></data>
+  <data name="Previous"><value>上一步</value></data>
+  <data name="Next"><value>下一步</value></data>
 </root>

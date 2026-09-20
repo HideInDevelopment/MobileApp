@@ -82,6 +82,35 @@ public sealed class LanguageServiceTests
     }
 
     [Fact]
+    public void Help_transfer_copy_is_declared_for_every_supported_language()
+    {
+        var keys = new[]
+        {
+            "HelpTransferTitle",
+            "HelpTransferBody",
+            "HelpTransferCodeBody",
+            "HelpTransferUsefulness",
+            "HelpTransferSafety",
+            "Previous",
+            "Next"
+        };
+        var resourceDirectory = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Resources", "Strings"));
+
+        foreach (var language in LanguageService.SupportedLanguages)
+        {
+            var resourceName = language.Code == "en"
+                ? "AppResources.resx"
+                : $"AppResources.{language.Code}.resx";
+            var markup = File.ReadAllText(Path.Combine(resourceDirectory, resourceName));
+
+            Assert.All(keys, key => Assert.Contains($"name=\"{key}\"", markup));
+        }
+    }
+
+    [Fact]
     public void Device_language_is_used_only_until_the_user_saves_an_override()
     {
         var preferences = new FakeLanguagePreferenceStore();

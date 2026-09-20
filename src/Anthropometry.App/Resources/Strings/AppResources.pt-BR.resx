@@ -28,4 +28,11 @@
   <data name="LanguageSimplifiedChinese"><value>Chinês simplificado</value></data>
   <data name="LanguageArabic"><value>Árabe</value></data>
   <data name="LanguageHindi"><value>Hindi</value></data>
+  <data name="HelpTransferTitle"><value>Códigos de transferência do perfil</value></data>
+  <data name="HelpTransferBody"><value>Ao exportar um perfil, o aplicativo cria um código de transferência aleatório de 16 dígitos e o mostra antes de compartilhar o arquivo.</value></data>
+  <data name="HelpTransferCodeBody"><value>Digite este código ao importar o perfil em outro dispositivo. Guarde o código junto com o arquivo exportado, pois você precisará dele para abri-lo mais tarde.</value></data>
+  <data name="HelpTransferUsefulness"><value>O código mantém seus dados pessoais de saúde protegidos e torna a transferência de perfis simples e fácil de entender.</value></data>
+  <data name="HelpTransferSafety"><value>Um novo código é criado para cada exportação. Se você perder o código, não será possível abrir o perfil criptografado.</value></data>
+  <data name="Previous"><value>Anterior</value></data>
+  <data name="Next"><value>Avançar</value></data>
 </root>
