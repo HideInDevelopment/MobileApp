@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="228" cy="228" r="132" fill="none" stroke="#FFFFFF" stroke-width="22" />
-    <rect x="216" y="116" width="24" height="224" rx="12" fill="#FFFFFF" />
-    <rect x="116" y="216" width="112" height="24" rx="12" fill="#FFFFFF" />
-    <rect x="228" y="216" width="112" height="24" rx="12" fill="#FFFFFF" />
+    <!-- Measurement loop: the primary cue for anthropometric tracking. -->
+    <ellipse cx="228" cy="264" rx="111" ry="63" fill="none" stroke="#2DD4BF" stroke-width="15" />
+
+    <!-- Simple body mark, kept inside the adaptive-icon safe area. -->
+    <circle cx="228" cy="117" r="31" fill="#F9FAFB" />
+    <path d="M147 349c0-75 30-132 81-132s81 57 81 132H147Z" fill="#F9FAFB" />
+
+    <!-- A restrained ruler axis keeps the original icon's measurement idea. -->
+    <path d="M228 220v108" fill="none" stroke="#0F766E" stroke-width="9" stroke-linecap="round" />
+    <path d="M228 218h25M228 248h17M228 278h25M228 308h17" fill="none" stroke="#0F766E" stroke-width="7" stroke-linecap="round" />
 </svg>
