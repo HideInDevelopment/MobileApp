@@ -82,9 +82,35 @@ try {
         throw "The APK was signed with an unexpected certificate. Expected '$expectedCertificate' but found '$actualCertificate'."
     }
 
-    & $adb -e install -r $apk
-    if ($LASTEXITCODE -ne 0) {
-        throw "The APK installation failed with exit code $LASTEXITCODE."
+    $installOutput = & $adb -e install -r $apk 2>&1 | Out-String
+    $installExitCode = $LASTEXITCODE
+    if ($installOutput) {
+        Write-Host $installOutput.TrimEnd()
+    }
+
+    if ($installExitCode -ne 0 -and $installOutput -match 'INSTALL_FAILED_UPDATE_INCOMPATIBLE') {
+        Write-Warning 'The emulator has this app installed with a different signing key.'
+        Write-Warning 'Android requires uninstalling that copy before this APK can be installed.'
+        Write-Warning 'Uninstalling clears this app data on the emulator. Export any profile you need first.'
+        $confirmation = Read-Host "Type RESET to uninstall '$packageName' and continue"
+        if ($confirmation -cne 'RESET') {
+            throw 'Installation cancelled. The existing app and its data were left untouched.'
+        }
+
+        & $adb -e uninstall $packageName
+        if ($LASTEXITCODE -ne 0) {
+            throw "The old APK could not be uninstalled. Exit code $LASTEXITCODE."
+        }
+
+        $installOutput = & $adb -e install $apk 2>&1 | Out-String
+        $installExitCode = $LASTEXITCODE
+        if ($installOutput) {
+            Write-Host $installOutput.TrimEnd()
+        }
+    }
+
+    if ($installExitCode -ne 0) {
+        throw "The APK installation failed with exit code $installExitCode."
     }
 
     & $adb -e shell am force-stop $packageName
