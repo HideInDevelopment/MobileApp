@@ -228,4 +228,11 @@
   <data name="ProfileTransferCodePlaceholder" xml:space="preserve"><value>Código de transferencia o contraseña antigua</value></data>
   <data name="ProfileTransferCodeInvalid" xml:space="preserve"><value>Introduce un código de transferencia válido de 16 dígitos o la contraseña de una exportación antigua.</value></data>
   <data name="ProfileTransferCodeMessage" xml:space="preserve"><value>Tu código de transferencia de 16 dígitos es:&#xA;&#xA;{0}&#xA;&#xA;Guárdalo en un lugar seguro. Lo necesitarás para importar este archivo.</value></data>
+  <data name="HelpTransferTitle" xml:space="preserve"><value>Códigos de transferencia del perfil</value></data>
+  <data name="HelpTransferBody" xml:space="preserve"><value>Cuando exportas un perfil, la aplicación crea un código de transferencia aleatorio de 16 dígitos y lo muestra antes de compartir el archivo.</value></data>
+  <data name="HelpTransferCodeBody" xml:space="preserve"><value>Introduce este código al importar el perfil en otro dispositivo. Guarda el código junto al archivo exportado porque lo necesitarás para abrirlo más adelante.</value></data>
+  <data name="HelpTransferUsefulness" xml:space="preserve"><value>El código mantiene protegidos tus datos personales de salud y hace que transferir perfiles sea sencillo.</value></data>
+  <data name="HelpTransferSafety" xml:space="preserve"><value>Se crea un código nuevo para cada exportación. Si lo pierdes, no podrás abrir el perfil cifrado.</value></data>
+  <data name="Previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="Next" xml:space="preserve"><value>Siguiente</value></data>
 </root>

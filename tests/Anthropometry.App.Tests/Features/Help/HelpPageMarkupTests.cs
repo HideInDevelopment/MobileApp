@@ -39,4 +39,21 @@ public sealed class HelpPageMarkupTests
         Assert.Contains("Text=\"{DynamicResource GuidanceNeckBody}\"", markup);
         Assert.Contains("Text=\"{DynamicResource GuidanceEstimateDisclaimerBody}\"", markup);
     }
+
+    [Fact]
+    public void Provides_a_second_help_page_for_profile_transfer_codes()
+    {
+        var path = Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..", "..", "..", "..", "..",
+            "src", "Anthropometry.App", "Features", "Help", "HelpPage.xaml"));
+        var markup = File.ReadAllText(path);
+
+        Assert.Contains("x:Name=\"TransferPage\"", markup);
+        Assert.Contains("Text=\"{DynamicResource HelpTransferTitle}\"", markup);
+        Assert.Contains("Text=\"{DynamicResource HelpTransferCodeBody}\"", markup);
+        Assert.Contains("Clicked=\"OnNextClicked\"", markup);
+        Assert.Contains("Clicked=\"OnPreviousClicked\"", markup);
+        Assert.DoesNotContain("CSV", markup, StringComparison.OrdinalIgnoreCase);
+    }
 }

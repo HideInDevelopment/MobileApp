@@ -164,7 +164,14 @@
   <data name="HelpTdeeFormula" xml:space="preserve"><value>TDEE = BMR × activity factor</value></data>
   <data name="HelpActivityFactors" xml:space="preserve"><value>Activity factors: Sedentary 1.2 · Lightly active 1.375 · Moderately active 1.55 · Highly active 1.725 · Very highly active 1.9</value></data>
   <data name="HelpUnits" xml:space="preserve"><value>Calculations use kilograms and centimetres internally. Display values can be changed in Settings; age is in years and energy is in kcal/day.</value></data>
+  <data name="HelpTransferTitle" xml:space="preserve"><value>Profile transfer codes</value></data>
+  <data name="HelpTransferBody" xml:space="preserve"><value>When you export a profile, the app creates a random 16-digit transfer code and shows it before sharing the file.</value></data>
+  <data name="HelpTransferCodeBody" xml:space="preserve"><value>Enter this code when importing the profile on another device. Keep the code with the exported file because it is required to open it later.</value></data>
+  <data name="HelpTransferUsefulness" xml:space="preserve"><value>The code keeps your personal health data protected while making profile transfers simple and easy to understand.</value></data>
+  <data name="HelpTransferSafety" xml:space="preserve"><value>A new code is created for every export. If you lose the code, the encrypted profile cannot be opened.</value></data>
   <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Previous" xml:space="preserve"><value>Previous</value></data>
+  <data name="Next" xml:space="preserve"><value>Next</value></data>
   <data name="GuidanceActivityLevelTitle" xml:space="preserve"><value>Activity level</value></data>
   <data name="GuidanceActivityLevelBody" xml:space="preserve"><value>Choose the option that best matches your usual weekly activity. This helps estimate your daily energy needs.</value></data>
   <data name="GuidanceWeightTitle" xml:space="preserve"><value>How to measure weight</value></data>

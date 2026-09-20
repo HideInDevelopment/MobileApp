@@ -3,79 +3,111 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Anthropometry.App.Features.Help.HelpPage"
              Title="{DynamicResource HelpTitle}">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="16">
-            <Label Text="{DynamicResource HelpAboutTitle}" FontSize="22" FontAttributes="Bold" />
-            <Label Text="{DynamicResource HelpDisclaimer}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource HelpMeasurementConsistency}" LineBreakMode="WordWrap" />
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView x:Name="OverviewPage" Grid.Row="0">
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <Label Text="{DynamicResource HelpAboutTitle}" FontSize="22" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpDisclaimer}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource HelpMeasurementConsistency}" LineBreakMode="WordWrap" />
 
-            <Label Text="{DynamicResource GuidanceActivityLevelTitle}" FontSize="22" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceActivityLevelBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceWeightTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceWeightBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceNeckTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceNeckBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceAbdomenTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceAbdomenBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceWaistTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceWaistBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceHipTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceHipBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceBodyFatTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceBodyFatBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceBmrTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceBmrBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceTdeeTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceTdeeBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceReusedSizesTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceReusedSizesBody}" LineBreakMode="WordWrap" />
-            <Label Text="{DynamicResource GuidanceEstimateDisclaimerTitle}" FontAttributes="Bold" />
-            <Label Text="{DynamicResource GuidanceEstimateDisclaimerBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceActivityLevelTitle}" FontSize="22" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceActivityLevelBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceWeightTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceWeightBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceNeckTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceNeckBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceAbdomenTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceAbdomenBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceWaistTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceWaistBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceHipTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceHipBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceBodyFatTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceBodyFatBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceBmrTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceBmrBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceTdeeTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceTdeeBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceReusedSizesTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceReusedSizesBody}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource GuidanceEstimateDisclaimerTitle}" FontAttributes="Bold" />
+                <Label Text="{DynamicResource GuidanceEstimateDisclaimerBody}" LineBreakMode="WordWrap" />
 
-            <Label Text="{DynamicResource HelpEquationsTitle}" FontSize="22" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpEquationsTitle}" FontSize="22" FontAttributes="Bold" />
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{DynamicResource HelpBodyFatTitle}" FontAttributes="Bold" />
-                <Label Text="{DynamicResource HelpBodyFatDescription}" LineBreakMode="WordWrap" />
-                <Border Padding="12" StrokeThickness="1">
-                    <Label Text="{DynamicResource HelpBodyFatFormula}" LineBreakMode="WordWrap" />
-                </Border>
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{DynamicResource HelpBodyFatTitle}" FontAttributes="Bold" />
+                    <Label Text="{DynamicResource HelpBodyFatDescription}" LineBreakMode="WordWrap" />
+                    <Border Padding="12" StrokeThickness="1">
+                        <Label Text="{DynamicResource HelpBodyFatFormula}" LineBreakMode="WordWrap" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{DynamicResource HelpFemaleBodyFatTitle}" FontAttributes="Bold" />
+                    <Label Text="{DynamicResource HelpFemaleBodyFatDescription}" LineBreakMode="WordWrap" />
+                    <Border Padding="12" StrokeThickness="1">
+                        <Label Text="{DynamicResource HelpFemaleBodyFatFormula}" LineBreakMode="WordWrap" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{DynamicResource HelpBmrTitle}" FontAttributes="Bold" />
+                    <Label Text="{DynamicResource HelpBmrDescription}" LineBreakMode="WordWrap" />
+                    <Border Padding="12" StrokeThickness="1">
+                        <Label Text="{DynamicResource HelpBmrFormula}" LineBreakMode="WordWrap" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{DynamicResource HelpFemaleBmrTitle}" FontAttributes="Bold" />
+                    <Label Text="{DynamicResource HelpFemaleBmrDescription}" LineBreakMode="WordWrap" />
+                    <Border Padding="12" StrokeThickness="1">
+                        <Label Text="{DynamicResource HelpFemaleBmrFormula}" LineBreakMode="WordWrap" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{DynamicResource HelpTdeeTitle}" FontAttributes="Bold" />
+                    <Label Text="{DynamicResource HelpTdeeDescription}" LineBreakMode="WordWrap" />
+                    <Border Padding="12" StrokeThickness="1">
+                        <Label Text="{DynamicResource HelpTdeeFormula}" LineBreakMode="WordWrap" />
+                    </Border>
+                    <Label Text="{DynamicResource HelpActivityFactors}" LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+
+                <Label Text="{DynamicResource HelpUnits}" LineBreakMode="WordWrap" />
             </VerticalStackLayout>
+        </ScrollView>
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{DynamicResource HelpFemaleBodyFatTitle}" FontAttributes="Bold" />
-                <Label Text="{DynamicResource HelpFemaleBodyFatDescription}" LineBreakMode="WordWrap" />
+        <ScrollView x:Name="TransferPage" Grid.Row="0" IsVisible="False">
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <Label Text="{DynamicResource HelpTransferTitle}" FontSize="22" FontAttributes="Bold" />
+                <Label Text="{DynamicResource HelpTransferBody}" LineBreakMode="WordWrap" />
                 <Border Padding="12" StrokeThickness="1">
-                    <Label Text="{DynamicResource HelpFemaleBodyFatFormula}" LineBreakMode="WordWrap" />
+                    <Label Text="{DynamicResource HelpTransferCodeBody}" LineBreakMode="WordWrap" />
                 </Border>
+                <Label Text="{DynamicResource HelpTransferUsefulness}" LineBreakMode="WordWrap" />
+                <Label Text="{DynamicResource HelpTransferSafety}" LineBreakMode="WordWrap" />
             </VerticalStackLayout>
+        </ScrollView>
 
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{DynamicResource HelpBmrTitle}" FontAttributes="Bold" />
-                <Label Text="{DynamicResource HelpBmrDescription}" LineBreakMode="WordWrap" />
-                <Border Padding="12" StrokeThickness="1">
-                    <Label Text="{DynamicResource HelpBmrFormula}" LineBreakMode="WordWrap" />
-                </Border>
-            </VerticalStackLayout>
-
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{DynamicResource HelpFemaleBmrTitle}" FontAttributes="Bold" />
-                <Label Text="{DynamicResource HelpFemaleBmrDescription}" LineBreakMode="WordWrap" />
-                <Border Padding="12" StrokeThickness="1">
-                    <Label Text="{DynamicResource HelpFemaleBmrFormula}" LineBreakMode="WordWrap" />
-                </Border>
-            </VerticalStackLayout>
-
-            <VerticalStackLayout Spacing="6">
-                <Label Text="{DynamicResource HelpTdeeTitle}" FontAttributes="Bold" />
-                <Label Text="{DynamicResource HelpTdeeDescription}" LineBreakMode="WordWrap" />
-                <Border Padding="12" StrokeThickness="1">
-                    <Label Text="{DynamicResource HelpTdeeFormula}" LineBreakMode="WordWrap" />
-                </Border>
-                <Label Text="{DynamicResource HelpActivityFactors}" LineBreakMode="WordWrap" />
-            </VerticalStackLayout>
-
-            <Label Text="{DynamicResource HelpUnits}" LineBreakMode="WordWrap" />
-        </VerticalStackLayout>
-    </ScrollView>
+        <Grid Grid.Row="1" Padding="12,8" ColumnDefinitions="Auto,*,Auto">
+            <Button x:Name="PreviousButton"
+                    Grid.Column="0"
+                    Text="{DynamicResource Previous}"
+                    Clicked="OnPreviousClicked"
+                    MinimumHeightRequest="48" />
+            <Label x:Name="PageIndicator"
+                   Grid.Column="1"
+                   Text="1 / 2"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="Center" />
+            <Button x:Name="NextButton"
+                    Grid.Column="2"
+                    Text="{DynamicResource Next}"
+                    Clicked="OnNextClicked"
+                    MinimumHeightRequest="48" />
+        </Grid>
+    </Grid>
 </ContentPage>
