@@ -19,30 +19,35 @@ public sealed class ImportProfile
         _profileRepository = profileRepository;
     }
 
-    public async Task<Result<ProfileImportPreview>> PreviewAsync(
-        Stream content,
+    public Task<Result<ProfileImportPreview>> PreviewAsync(
+        byte[] content,
+        string? passphrase,
         CancellationToken cancellationToken)
     {
         try
         {
             _ = _transferRepository;
             cancellationToken.ThrowIfCancellationRequested();
-            var parsed = ProfileTransferCsvSerializer.Parse(content);
+            var protectedPayload = ProfileTransferProtection.Unprotect(content, passphrase);
+            if (!protectedPayload.IsSuccess)
+            {
+                return Task.FromResult(Result.Failure<ProfileImportPreview>(MapTransferError(protectedPayload.Error!)));
+            }
+
+            var parsed = ProfileTransferCsvSerializer.Parse(new MemoryStream(protectedPayload.Value.CsvContent, writable: false));
             if (!parsed.IsSuccess)
             {
-                return Result.Failure<ProfileImportPreview>(
-                    parsed.Error!.Code == "profileTransfer.formatVersion.unsupported"
-                        ? ApplicationErrors.ProfileTransferFormatUnsupported
-                        : ApplicationErrors.ProfileTransferFileInvalid);
+                return Task.FromResult(Result.Failure<ProfileImportPreview>(MapCsvError(parsed.Error!)));
             }
 
             var document = parsed.Value;
-            return Result.Success(new ProfileImportPreview(
+            return Task.FromResult(Result.Success(new ProfileImportPreview(
                 document,
                 document.Profile.Name,
                 document.Profile.Gender,
                 document.Measurements.Count,
-                document.Results.Count));
+                document.Results.Count,
+                protectedPayload.Value.IsLegacyUnprotected)));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -50,7 +55,7 @@ public sealed class ImportProfile
         }
         catch (Exception)
         {
-            return Result.Failure<ProfileImportPreview>(ApplicationErrors.ProfileTransferFileInvalid);
+            return Task.FromResult(Result.Failure<ProfileImportPreview>(ApplicationErrors.ProfileTransferFileInvalid));
         }
     }
 
@@ -168,4 +173,19 @@ public sealed class ImportProfile
             ? Result.Success<ProfileSettings?>(settings.Value)
             : Result.Failure<ProfileSettings?>(settings.Error!);
     }
+
+    private static DomainError MapTransferError(DomainError error)
+        => error.Code switch
+        {
+            "profile.transfer.password.required" => ApplicationErrors.ProfileTransferPasswordRequired,
+            "profile.transfer.authentication.failed" => ApplicationErrors.ProfileTransferAuthenticationFailed,
+            "profile.transfer.passphrase.invalid" => ApplicationErrors.ProfileTransferPassphraseInvalid,
+            "profile.transfer.format.unsupported" => ApplicationErrors.ProfileTransferFormatUnsupported,
+            _ => ApplicationErrors.ProfileTransferFileInvalid
+        };
+
+    private static DomainError MapCsvError(DomainError error)
+        => error.Code == "profileTransfer.formatVersion.unsupported"
+            ? ApplicationErrors.ProfileTransferFormatUnsupported
+            : ApplicationErrors.ProfileTransferFileInvalid;
 }
