@@ -65,6 +65,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Condition="'$(TargetFramework)' == 'net10.0'" />
 		<PackageReference Include="Microsoft.Maui.Controls" Condition="'$(TargetFramework)' == 'net10.0-android'" />
 	</ItemGroup>
 

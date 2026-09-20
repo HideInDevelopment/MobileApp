@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
     <PackageVersion Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageVersion Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
     <PackageVersion Include="SQLitePCLRaw.core" Version="2.1.13" />

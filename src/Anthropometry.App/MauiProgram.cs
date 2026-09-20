@@ -1,4 +1,5 @@
 using Anthropometry.App.Common;
+using Anthropometry.App.Composition;
 using Anthropometry.App.Display;
 using Anthropometry.App.Features.Measurements;
 using Anthropometry.App.Features.Profiles;
@@ -83,6 +84,7 @@ public static class MauiProgram
         builder.Services.AddTransient<CalculateBasalMetabolicRate>();
         builder.Services.AddTransient<CalculateTotalDailyEnergyExpenditure>();
         builder.Services.AddTransient<GetCalculationResults>();
+        builder.Services.AddProfileTransferUseCases();
 
         builder.Services.AddSingleton<MauiNavigation>();
         builder.Services.AddSingleton<IProfileNavigation>(services => services.GetRequiredService<MauiNavigation>());
