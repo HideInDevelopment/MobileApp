@@ -26,6 +26,7 @@ public static class ProfileTransferProtection
 
     private static readonly byte[] MagicBytes = Encoding.ASCII.GetBytes(Magic);
     private static readonly byte[] LegacyCsvPrefix = Encoding.UTF8.GetBytes("record_type,format_version,");
+    private static readonly byte[] Utf8Bom = [0xEF, 0xBB, 0xBF];
     private static readonly int HeaderSize = MagicBytes.Length + 4 + sizeof(int) + SaltSize + NonceSize;
 
     public static Result<byte[]> Protect(byte[] csvContent, string passphrase)
@@ -82,7 +83,7 @@ public static class ProfileTransferProtection
 
         if (!StartsWith(content, MagicBytes))
         {
-            return StartsWith(content, LegacyCsvPrefix)
+            return IsLegacyCsv(content)
                 ? Result.Success(new ProfileTransferProtectedPayload(content.ToArray(), true))
                 : Failure<ProfileTransferProtectedPayload>(ApplicationErrors.ProfileTransferFileInvalid);
         }
@@ -189,7 +190,17 @@ public static class ProfileTransferProtection
         => Rfc2898DeriveBytes.Pbkdf2(passwordBytes, salt, iterations, HashAlgorithmName.SHA256, KeySize);
 
     private static bool StartsWith(byte[] value, byte[] prefix)
-        => value.Length >= prefix.Length && value.AsSpan(0, prefix.Length).SequenceEqual(prefix);
+        => StartsWith(value.AsSpan(), prefix);
+
+    private static bool IsLegacyCsv(byte[] content)
+    {
+        var bytes = content.AsSpan();
+        return StartsWith(bytes, LegacyCsvPrefix)
+            || (StartsWith(bytes, Utf8Bom) && StartsWith(bytes[Utf8Bom.Length..], LegacyCsvPrefix));
+    }
+
+    private static bool StartsWith(ReadOnlySpan<byte> value, ReadOnlySpan<byte> prefix)
+        => value.Length >= prefix.Length && value[..prefix.Length].SequenceEqual(prefix);
 
     private static Result<T> Failure<T>(DomainError error) => Result.Failure<T>(error);
 }

@@ -123,6 +123,18 @@ public sealed class ProfileTransferProtectionTests
     }
 
     [Fact]
+    public void Previous_plain_csv_with_utf8_bom_is_detected_as_legacy_payload()
+    {
+        var withBom = new byte[] { 0xEF, 0xBB, 0xBF }.Concat(CsvPayload).ToArray();
+
+        var result = ProfileTransferProtection.Unprotect(withBom, null);
+
+        Assert.True(result.IsSuccess);
+        Assert.True(result.Value.IsLegacyUnprotected);
+        Assert.Equal(withBom, result.Value.CsvContent);
+    }
+
+    [Fact]
     public void Unrelated_bytes_are_not_accepted_as_a_transfer_file()
     {
         var result = ProfileTransferProtection.Unprotect(
